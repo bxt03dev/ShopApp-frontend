@@ -1,0 +1,81 @@
+<app-header></app-header>
+<div class="container">
+  <div class="intro-section">
+    <h1>Your orders</h1>
+    <p>pay for your orders!</p>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="product-header">Consignee information</h2>
+      <form action="" method="post">
+        <div class="mb-3">
+          <label for="name" class="form-label">Full name</label>
+          <input type="text" class="form-control" id="name">
+        </div>
+        <div class="mb-3">
+          <label for="email" class="form-label">Email address</label>
+          <input type="email" class="form-control" id="email">
+        </div>
+        <div class="mb-3">
+          <label for="phone" class="form-label">Phone number</label>
+          <input type="text" class="form-control" id="phone">
+        </div>
+      </form>
+    </div>
+    <div class="col-md-6">
+      <h2 class="product-header">Products</h2>
+      <table class="table-product-list">
+        <thead>
+        <tr class="table-product-content">
+          <th scope="col">Products</th>
+          <th scope="col">Quantity</th>
+          <th scope="col">Price</th>
+          <th scope="col">Total price</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="table-product-content">
+          <td>
+            <div class="product-info">
+              <img
+                src="https://images.pexels.com/photos/11026293/pexels-photo-11026293.jpeg?auto=compress&cs=tinysrgb&w=600"
+                alt="" class="product-image">
+              <span class="product-name">Product name</span>
+            </div>
+          </td>
+          <td>2</td>
+          <td>$100000</td>
+          <td>$200000</td>
+        </tr>
+        <tr class="table-product-content">
+          <td>
+            <div class="product-info">
+              <img
+                src="https://images.pexels.com/photos/11026293/pexels-photo-11026293.jpeg?auto=compress&cs=tinysrgb&w=600"
+                alt="" class="product-image">
+              <span class="product-name">Product name</span>
+            </div>
+          </td>
+          <td>2</td>
+          <td>$100000</td>
+          <td>$200000</td>
+        </tr>
+        </tbody>
+      </table>
+      <div class="text-start mt-3">
+        <h4 class="header-text text-end">Total price: $400000</h4>
+      </div>
+      <div class="mt3">
+        <div class="product-header">Coupon</div>
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="Enter coupon...">
+          <button class="btn btn-order" type="button">Apply</button>
+        </div>
+      </div>
+      <div class="text-start mt-3">
+        <button class="btn btn-order col-sm-12 col-md-3" type="button">Place order</button>
+      </div>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>
