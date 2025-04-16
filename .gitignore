@@ -1,16 +1,19 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
-# compiled output
+# Compiled output
 /dist
 /tmp
 /out-tsc
 # Only exists if Bazel was run
 /bazel-out
 
-# dependencies
+# Dependencies
 /node_modules
 
-# profiling files
+# Angular CLI cache
+.angular/
+
+# Profiling files
 chrome-profiler-events*.json
 
 # IDEs and editors
@@ -30,7 +33,14 @@ chrome-profiler-events*.json
 !.vscode/extensions.json
 .history/*
 
-# misc
+# Environment files (biến môi trường, thông tin nhạy cảm)
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Misc
 /.sass-cache
 /connect.lock
 /coverage
@@ -43,3 +53,10 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# Build output (nếu có thêm)
+dist/
+build/
+
+# Test output
+test-output/
