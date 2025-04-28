@@ -1,5 +1,7 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {NgForm} from "@angular/forms";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-register',
@@ -16,13 +18,13 @@ export class RegisterComponent implements OnInit {
   isAccepted: boolean;
   dateOfBirth: Date;
 
-  constructor() {
-    this.phoneNumber = '';
-    this.password = '';
-    this.retypePassword = '';
-    this.fullName = '';
-    this.address = '';
-    this.isAccepted = false;
+  constructor(private http: HttpClient, private router: Router) {
+    this.phoneNumber = '0886249250';
+    this.password = 'hehee';
+    this.retypePassword = 'hehee';
+    this.fullName = 'bxtsamaoke';
+    this.address = 'hy';
+    this.isAccepted = true;
     this.dateOfBirth = new Date();
     this.dateOfBirth.setFullYear(this.dateOfBirth.getFullYear() - 18);
   }
@@ -30,21 +32,47 @@ export class RegisterComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  onPhoneNumberChange(){
+  onPhoneNumberChange() {
     console.log(`phone type: ${this.phoneNumber}`)
   }
 
-  onRegister(){
-    alert("Register success");
+  onRegister() {
+    //alert("Register success");
+    debugger
+    const apiUrl = 'http://localhost:8080/api/v1/users/register';
+    const registerData = {
+      "fullName": this.fullName,
+      "phoneNumber": this.phoneNumber,
+      "address": this.address,
+      "password": this.password,
+      "retypePassword": this.retypePassword,
+      "dateOfBirth": this.dateOfBirth,
+      "facebookAccountId": 0,
+      "googleAccountId": 0,
+      "roleId": 1
+    }
+    const headers = new HttpHeaders({'Content-Type': 'application/json'});
+    this.http.post(apiUrl, registerData, { headers }, )
+      .subscribe({
+        next: (response: any) => {
+          debugger
+          this.router.navigate(['/login']);
+        },
+        error: (error: any) => {
+          const errorMessage = error.error?.message || 'server error';
+          alert(`Register failed: ${errorMessage}`);
+        }
+      });
   }
 
-  onDateOfBirthChange(){
+  onDateOfBirthChange() {
 
   }
-  checkPasswordMatch(){
-    if(this.password !== this.retypePassword){
+
+  checkPasswordMatch() {
+    if (this.password !== this.retypePassword) {
       this.registerForm.form.controls['retypePassword'].setErrors({'passwordMisMatch': true});
-    } else{
+    } else {
       this.registerForm.form.controls['retypePassword'].setErrors(null);
     }
   }
@@ -54,7 +82,7 @@ export class RegisterComponent implements OnInit {
       const today = new Date();
       const birthDate = new Date(this.dateOfBirth);
       if (birthDate > today) {
-        this.registerForm.controls['dateOfBirth'].setErrors({ 'futureDate': true });
+        this.registerForm.controls['dateOfBirth'].setErrors({'futureDate': true});
         return;
       }
       let age = today.getFullYear() - birthDate.getFullYear();
@@ -63,7 +91,7 @@ export class RegisterComponent implements OnInit {
         age--;
       }
       if (age < 18) {
-        this.registerForm.controls['dateOfBirth'].setErrors({ 'invalidAge': true });
+        this.registerForm.controls['dateOfBirth'].setErrors({'invalidAge': true});
       } else {
         this.registerForm.controls['dateOfBirth'].setErrors(null);
       }

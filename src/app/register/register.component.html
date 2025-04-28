@@ -1,32 +1,8 @@
 <div class="container">
   <form class="register-form" action="" #registerForm="ngForm">
     <div class="register-form-content">
-      <h2 class="register-header">Register</h2>
-      <div class="form-group">
-        <label for="fullName">Full Name</label>
-        <input type="text"
-               class="form-control"
-               [(ngModel)]="fullName"
-               required
-               id="fullName">
-      </div>
-      <div class="form-group">
-        <label for="dateOfBirth">Date of birth</label>
-        <input type="date" class="form-control"
-               [(ngModel)]="dateOfBirth"
-               required
-               name="dateOfBirth"
-               (input)="registerForm.form.markAsTouched(); checkAge()"
-               id="dateOfBirth">
-        <p class="text-danger"
-           *ngIf="registerForm.controls['dateOfBirth'].hasError('invalidAge') && registerForm.form.touched">
-          Age must be at least 18
-        </p>
-        <p class="text-danger"
-           *ngIf="registerForm.controls['dateOfBirth'].hasError('futureDate') && registerForm.controls['dateOfBirth'].touched">
-          Date of birth cannot be in the future
-        </p>
-      </div>
+      <h2 class="register-header">Register an account</h2>
+
       <div class="form-group">
         <label for="phoneNumber">Phone number</label>
         <input type="text" class="form-control"
@@ -39,12 +15,7 @@
         <p class="text-danger" *ngIf="phoneNumber.length < 8 && registerForm.form.touched">Phone number must be at least
           8 characters long</p>
       </div>
-      <div class="form-group">
-        <label for="address">Address</label>
-        <input type="text" class="form-control"
-               [(ngModel)]="address"
-               id="address">
-      </div>
+
       <div class="form-group password-field">
         <label for="password">Password</label>
         <input type="password" class="form-control"
@@ -76,6 +47,39 @@
         </p>
       </div>
       <div class="form-group">
+        <label for="fullName">Full Name</label>
+        <input type="text"
+               class="form-control"
+               [(ngModel)]="fullName"
+               required
+               name="fullName"
+               id="fullName">
+      </div>
+      <div class="form-group">
+        <label for="address">Address</label>
+        <input type="text" class="form-control"
+               [(ngModel)]="address"
+               name="address"
+               id="address">
+      </div>
+      <div class="form-group">
+        <label for="dateOfBirth">Date of birth</label>
+        <input type="date" class="form-control"
+               [(ngModel)]="dateOfBirth"
+               required
+               name="dateOfBirth"
+               (input)="registerForm.form.markAsTouched(); checkAge()"
+               id="dateOfBirth">
+        <p class="text-danger"
+           *ngIf="registerForm.controls['dateOfBirth'].hasError('invalidAge') && registerForm.form.touched">
+          Age must be at least 18
+        </p>
+        <p class="text-danger"
+           *ngIf="registerForm.controls['dateOfBirth'].hasError('futureDate') && registerForm.controls['dateOfBirth'].touched">
+          Date of birth cannot be in the future
+        </p>
+      </div>
+      <div class="form-group">
         <div class="checkbox-text">
           <label class="form-check-label" for="terms">
             <input type="checkbox" class="form-check-input"
@@ -84,7 +88,7 @@
           </label>
         </div>
       </div>
-      <button type="button" class="register-button"
+      <button type="submit" class="register-button"
               (click)="onRegister()"
       >Register
       </button>
