@@ -2,6 +2,8 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {NgForm} from "@angular/forms";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Router} from "@angular/router";
+import {UserService} from "../../service/user.service";
+import {RegisterDTO} from "../../dto/user/register.dto";
 
 @Component({
   selector: 'app-register',
@@ -18,12 +20,12 @@ export class RegisterComponent implements OnInit {
   isAccepted: boolean;
   dateOfBirth: Date;
 
-  constructor(private http: HttpClient, private router: Router) {
-    this.phoneNumber = '0886249250';
-    this.password = 'hehee';
-    this.retypePassword = 'hehee';
-    this.fullName = 'bxtsamaoke';
-    this.address = 'hy';
+  constructor(private router: Router, private userService: UserService) {
+    this.phoneNumber = '';
+    this.password = '';
+    this.retypePassword = '';
+    this.fullName = '';
+    this.address = '';
     this.isAccepted = true;
     this.dateOfBirth = new Date();
     this.dateOfBirth.setFullYear(this.dateOfBirth.getFullYear() - 18);
@@ -39,8 +41,7 @@ export class RegisterComponent implements OnInit {
   onRegister() {
     //alert("Register success");
     debugger
-    const apiUrl = 'http://localhost:8080/api/v1/users/register';
-    const registerData = {
+    const RegisterDTO: RegisterDTO = {
       "fullName": this.fullName,
       "phoneNumber": this.phoneNumber,
       "address": this.address,
@@ -51,18 +52,15 @@ export class RegisterComponent implements OnInit {
       "googleAccountId": 0,
       "roleId": 1
     }
-    const headers = new HttpHeaders({'Content-Type': 'application/json'});
-    this.http.post(apiUrl, registerData, { headers }, )
-      .subscribe({
-        next: (response: any) => {
-          debugger
-          this.router.navigate(['/login']);
-        },
-        error: (error: any) => {
-          const errorMessage = error.error?.message || 'server error';
-          alert(`Register failed: ${errorMessage}`);
-        }
-      });
+    this.userService.register(RegisterDTO).subscribe({
+      next: (response: any) => {
+        this.router.navigate(['/login']);
+      },
+      error: (error: any) => {
+        const errorMessage = error.error?.message || 'server error';
+        alert(`Register failed: ${errorMessage}`);
+      }
+    })
   }
 
   onDateOfBirthChange() {
