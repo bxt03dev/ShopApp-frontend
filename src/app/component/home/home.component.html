@@ -1,107 +1,27 @@
-
 <app-header></app-header>
 <div class="container">
   <div class="row">
-    <div class="col-lg-3 col-md-6">
+    <div class="col-lg-3 col-md-6" *ngFor="let product of products">
       <div class="product-item">
-        <img src="https://images.pexels.com/photos/11026293/pexels-photo-11026293.jpeg?auto=compress&cs=tinysrgb&w=600" alt="" class="product-image">
-        <h3 class="product-name">ducati v4s</h3>
-        <p class="product-description">Lorem ipsum dolor sit amet squam ullam?</p>
-        <p class="product-warranty">warranty: 2years</p>
-        <p class="product-price">$1000000</p>
-        <div class="product-rating">
-          <i class="fa-solid fa-star"></i>
-          <i class="fa-solid fa-star"></i>
-          <i class="fa-solid fa-star"></i>
-          <i class="fa-solid fa-star"></i>
-          <i class="fa-solid fa-star"></i>
-        </div>
+        <img [src]="product.url" alt="{{ product.name }}" class="product-image" loading="lazy">
+        <h3 class="product-name">{{ product.name }}</h3>
+        <p class="product-description">{{ product.description }}</p>
+        <p class="product-price">${{ product.price }}</p>
         <div class="product-actions">
           <button class="btn btn-primary">Add to Cart</button>
           <button class="btn btn-secondary">View Details</button>
         </div>
       </div>
     </div>
-    <div class="col-lg-3 col-md-6">
-      <div class="product-item">
-        <img src="https://images.pexels.com/photos/11026293/pexels-photo-11026293.jpeg?auto=compress&cs=tinysrgb&w=600" alt="" class="product-image">
-        <h3 class="product-name">ducati v4s</h3>
-        <p class="product-description">Lorem ipsum dolor sit amet squam ullam?</p>
-        <p class="product-warranty">warranty: 2years</p>
-        <p class="product-price">$1000000</p>
-        <div class="product-rating">
-          <i class="fa-solid fa-star"></i>
-          <i class="fa-solid fa-star"></i>
-          <i class="fa-solid fa-star"></i>
-          <i class="fa-solid fa-star"></i>
-          <i class="fa-solid fa-star"></i>
-        </div>
-        <div class="product-actions">
-          <button class="btn btn-primary">Add to Cart</button>
-          <button class="btn btn-secondary">View Details</button>
-        </div>
-      </div>
-    </div>
-    <div class="col-lg-3 col-md-6">
-      <div class="product-item">
-        <img src="https://images.pexels.com/photos/11026293/pexels-photo-11026293.jpeg?auto=compress&cs=tinysrgb&w=600" alt="" class="product-image">
-        <h3 class="product-name">ducati v4s</h3>
-        <p class="product-description">Lorem ipsum dolor sit amet squam ullam?</p>
-        <p class="product-warranty">warranty: 2years</p>
-        <p class="product-price">$1000000</p>
-        <div class="product-rating">
-          <i class="fa-solid fa-star"></i>
-          <i class="fa-solid fa-star"></i>
-          <i class="fa-solid fa-star"></i>
-          <i class="fa-solid fa-star"></i>
-          <i class="fa-solid fa-star"></i>
-        </div>
-        <div class="product-actions">
-          <button class="btn btn-primary">Add to Cart</button>
-          <button class="btn btn-secondary">View Details</button>
-        </div>
-      </div>
-    </div>
-    <div class="col-lg-3 col-md-6">
-      <div class="product-item">
-        <img src="https://images.pexels.com/photos/11026293/pexels-photo-11026293.jpeg?auto=compress&cs=tinysrgb&w=600" alt="" class="product-image">
-        <h3 class="product-name">ducati v4s</h3>
-        <p class="product-description">Lorem ipsum dolor sit amet squam ullam?</p>
-        <p class="product-warranty">warranty: 2years</p>
-        <p class="product-price">$1000000</p>
-        <div class="product-rating">
-          <i class="fa-solid fa-star"></i>
-          <i class="fa-solid fa-star"></i>
-          <i class="fa-solid fa-star"></i>
-          <i class="fa-solid fa-star"></i>
-          <i class="fa-solid fa-star"></i>
-        </div>
-        <div class="product-actions">
-          <button class="btn btn-primary">Add to Cart</button>
-          <button class="btn btn-secondary">View Details</button>
-        </div>
-      </div>
-    </div>
-    <div class="col-lg-3 col-md-6">
-      <div class="product-item">
-        <img src="https://images.pexels.com/photos/11026293/pexels-photo-11026293.jpeg?auto=compress&cs=tinysrgb&w=600" alt="" class="product-image">
-        <h3 class="product-name">ducati v4s</h3>
-        <p class="product-description">Lorem ipsum dolor sit amet squam ullam?</p>
-        <p class="product-warranty">warranty: 2years</p>
-        <p class="product-price">$1000000</p>
-        <div class="product-rating">
-          <i class="fa-solid fa-star"></i>
-          <i class="fa-solid fa-star"></i>
-          <i class="fa-solid fa-star"></i>
-          <i class="fa-solid fa-star"></i>
-          <i class="fa-solid fa-star"></i>
-        </div>
-        <div class="product-actions">
-          <button class="btn btn-primary">Add to Cart</button>
-          <button class="btn btn-secondary">View Details</button>
-        </div>
-      </div>
-    </div>
+  </div>
+  <div class="pagination" *ngIf="totalPages > 1">
+    <button (click)="onPageChange(1)" [disabled]="currentPage === 1">First</button>
+    <button (click)="prevPage()" [disabled]="currentPage === 1">&lt;</button>
+    <button (click)="onPageChange(page)" *ngFor="let page of visiblePages" [disabled]="page === currentPage">
+      {{ page }}
+    </button>
+    <button (click)="nextPage()" [disabled]="currentPage === totalPages">&gt;</button>
+    <button (click)="onPageChange(totalPages)" [disabled]="currentPage === totalPages">Last</button>
   </div>
 </div>
 <app-footer></app-footer>
