@@ -39,10 +39,10 @@
   color: #666;
   margin-bottom: 10px;
   display: -webkit-box;
-  -webkit-line-clamp: 2; // Giới hạn 2 dòng
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis; // Thêm dấu ba chấm khi văn bản bị cắt
+  text-overflow: ellipsis;
 }
 
 .product-price {
@@ -98,4 +98,7 @@
       opacity: 0.6;
     }
   }
+}
+.product-detail-card{
+  cursor: pointer;
 }

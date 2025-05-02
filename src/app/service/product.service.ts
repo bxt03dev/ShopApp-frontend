@@ -3,14 +3,11 @@ import { environment } from '../common/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Product } from '../model/product';
+import {ApiResponse} from "../dto/response/api.response";
 
 interface ProductListResponse {
   products: Product[];
   totalPages: number;
-}
-
-interface ApiResponse {
-  result: ProductListResponse;
 }
 
 @Injectable({
@@ -19,12 +16,16 @@ interface ApiResponse {
 export class ProductService {
   private apiGetProducts = `${environment.apiBaseUrl}/products`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  getProducts(page: number, limit: number): Observable<ApiResponse> {
+  getProducts(page: number, limit: number): Observable<ApiResponse<ProductListResponse>> {
     const params = new HttpParams()
       .append('page', page.toString())
       .append('limit', limit.toString());
-    return this.http.get<ApiResponse>(this.apiGetProducts, { params });
+    return this.http.get<ApiResponse<ProductListResponse>>(this.apiGetProducts, { params });
+  }
+
+  getDetailProduct(productId: number): Observable<ApiResponse<Product>> {
+    return this.http.get<ApiResponse<Product>>(`${environment.apiBaseUrl}/products/${productId}`);
   }
 }
