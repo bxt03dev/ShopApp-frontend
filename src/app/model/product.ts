@@ -1,7 +1,7 @@
 import {ProductImage} from "./product.image";
 
 export interface Product {
-  id: string;
+  id: number;
   name: string;
   description: string;
   price: number;

@@ -5,6 +5,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {environment} from "../../common/environment";
 import {ProductImage} from "../../model/product.image";
 import {ApiResponse} from "../../dto/response/api.response";
+import {CartService} from "../../service/cart.service";
 
 @Component({
   selector: 'app-detail-product',
@@ -15,14 +16,17 @@ export class DetailProductComponent implements OnInit {
   product?: Product;
   productId: number = 0;
   currentImageIndex: number = 0;
+  quantity: number = 1;
   constructor(
     private productService: ProductService,
+    private cartService: CartService,
     private route: ActivatedRoute,
     private router: Router,
   ) { }
 
   ngOnInit(): void {
     debugger;
+    // this.cartService.clearCart();
     const idParam = 2;
     if (idParam !== null) {
       this.productId += idParam;
@@ -77,5 +81,28 @@ export class DetailProductComponent implements OnInit {
 
   previousImage(): void{
     this.showImage(this.currentImageIndex - 1);
+  }
+
+  addToCart(): void{
+    debugger
+    if(this.product){
+      this.cartService.addToCart(this.product.id, this.quantity);
+    } else{
+      console.error('Product is not defined');
+    }
+  }
+
+  increaseQuantity(): void{
+    this.quantity++;
+  }
+
+  decreaseQuantity(): void{
+    if(this.quantity > 0){
+      this.quantity--;
+    }
+  }
+
+  buyNow(): void{
+
   }
 }
