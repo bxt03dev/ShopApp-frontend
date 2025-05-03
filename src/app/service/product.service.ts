@@ -28,4 +28,10 @@ export class ProductService {
   getDetailProduct(productId: number): Observable<ApiResponse<Product>> {
     return this.http.get<ApiResponse<Product>>(`${environment.apiBaseUrl}/products/${productId}`);
   }
+
+  getProductsByIds(productIds: number[]): Observable<ApiResponse<Product[]>> {
+    debugger
+    const params = new HttpParams().set('ids', productIds.join(','));
+    return this.http.get<ApiResponse<Product[]>>(`${this.apiGetProducts}/by-ids`, { params });
+  }
 }

@@ -15,32 +15,22 @@
       </tr>
       </thead>
       <tbody>
-      <tr class="table-product-content">
-        <td>
-          <div class="product-info">
-            <img
-              src="https://images.pexels.com/photos/11026293/pexels-photo-11026293.jpeg?auto=compress&cs=tinysrgb&w=600"
-              alt="" class="product-image">
-            <span class="product-name">Product name</span>
-          </div>
-        </td>
-        <td>2</td>
-        <td>$200000</td>
-        <td>$400000</td>
-      </tr>
-      <tr class="table-product-content">
-        <td>
-          <div class="product-info">
-            <img
-              src="https://images.pexels.com/photos/11026293/pexels-photo-11026293.jpeg?auto=compress&cs=tinysrgb&w=600"
-              alt="" class="product-image">
-            <span class="product-name">Product name</span>
-          </div>
-        </td>
-        <td>2</td>
-        <td>$200000</td>
-        <td>$400000</td>
-      </tr>
+        <ng-container *ngFor="let item of cartItems">
+          <tr class="table-product-content">
+            <td>
+              <div class="product-info">
+                <img
+                  [src]="item.product.thumbnail"
+                  alt="Product Image"
+                  class="product-image">
+                <span class="product-name">{{item.product.name}}</span>
+              </div>
+            </td>
+            <td>{{ item.quantity }}</td>
+            <td>{{item.product.price}}</td>
+            <td>{{item.product.price * item.quantity}}</td>
+          </tr>
+        </ng-container>
       </tbody>
     </table>
     <div class="text-center mt-3 col-md-4 col-sm-12 mx-auto">
