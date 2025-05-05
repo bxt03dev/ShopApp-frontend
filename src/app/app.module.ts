@@ -17,6 +17,7 @@ import { CommonModule } from "@angular/common";
 import { AppComponent } from './app/app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { SearchComponent } from './component/search/search.component';
+import { StoreComponent } from './component/store/store.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { SearchComponent } from './component/search/search.component';
     LoginComponent,
     RegisterComponent,
     AppComponent,
-    SearchComponent
+    SearchComponent,
+    StoreComponent
   ],
   imports: [
     ReactiveFormsModule,
