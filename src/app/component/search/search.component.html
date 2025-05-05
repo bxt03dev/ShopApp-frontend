@@ -1,0 +1,37 @@
+<app-header></app-header>
+<div class="container">
+  <div class="search-results">
+    <h2 class="search-title">Search Results for "{{ searchQuery }}"</h2>
+    
+    <div *ngIf="loading" class="loading">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <div *ngIf="error" class="alert alert-danger">
+      {{ error }}
+    </div>
+
+    <div *ngIf="!loading && !error">
+      <div *ngIf="searchResults.length === 0" class="no-results">
+        <p>No products found matching your search.</p>
+      </div>
+
+      <div class="row" *ngIf="searchResults.length > 0">
+        <div class="col-lg-3 col-md-6" *ngFor="let product of searchResults">
+          <div class="product-item product-detail-card">
+            <img [src]="product.url" alt="{{ product.name }}" class="product-image" loading="lazy">
+            <h3 class="product-name">{{ product.name }}</h3>
+            <p class="product-description">{{ product.description }}</p>
+            <p class="product-price">${{ product.price }}</p>
+            <div class="product-actions">
+              <button class="btn btn-primary">Add to Cart</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer> 
