@@ -5,15 +5,18 @@ import { HeaderComponent } from './component/header/header.component';
 import { FooterComponent } from './component/footer/footer.component';
 import { DetailProductComponent } from './component/detail-product/detail-product.component';
 import { OrderComponent } from './component/order/order.component';
-import { OrderConfirmComponent } from './component/order-confirm/order-confirm.component';
+import { OrderDetailComponent } from './component/order-detail/order-detail.component';
 import { LoginComponent } from './component/login/login.component';
 import { RegisterComponent } from './component/register/register.component';
-import {FormsModule} from "@angular/forms";
-import {RouterModule} from "@angular/router";
-import {HttpClientModule, HTTP_INTERCEPTORS} from "@angular/common/http";
-import {TokenInterceptor} from "./interceptor/token.interceptor";
-import {ReactiveFormsModule} from "@angular/forms";
-import {CommonModule} from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { RouterModule } from "@angular/router";
+import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
+import { TokenInterceptor } from "./interceptor/token.interceptor";
+import { ReactiveFormsModule } from "@angular/forms";
+import { CommonModule } from "@angular/common";
+import { AppComponent } from './app/app.component';
+import { AppRoutingModule } from './app-routing.module';
+import { SearchComponent } from './component/search/search.component';
 
 @NgModule({
   declarations: [
@@ -22,9 +25,11 @@ import {CommonModule} from "@angular/common";
     FooterComponent,
     DetailProductComponent,
     OrderComponent,
-    OrderConfirmComponent,
+    OrderDetailComponent,
     LoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    AppComponent,
+    SearchComponent
   ],
   imports: [
     ReactiveFormsModule,
@@ -33,7 +38,7 @@ import {CommonModule} from "@angular/common";
     HttpClientModule,
     RouterModule.forRoot([]),
     CommonModule,
-
+    AppRoutingModule
   ],
   providers: [
     {
@@ -44,11 +49,12 @@ import {CommonModule} from "@angular/common";
   ],
   bootstrap: [
     // DetailProductComponent
-    OrderComponent
-    // OrderConfirmComponent
+    // OrderComponent
+    // OrderDetailComponent
     // LoginComponent
     // HomeComponent
     //RegisterComponent
+    AppComponent
   ]
 })
 export class AppModule { }

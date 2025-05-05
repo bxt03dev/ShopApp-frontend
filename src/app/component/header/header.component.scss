@@ -55,7 +55,8 @@
 .nav-link {
   color: #000;
   font-size: 0.7rem;
-  font-weight: 300;
+  font-weight: 400;
+  font-size: 12px;
   text-decoration: none;
   padding: 0 6px;
   height: 44px;
@@ -76,6 +77,7 @@
   width: 100%;
   background-color: #fff;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  border: none;
   padding: 20px;
   display: flex;
   opacity: 0;
@@ -333,5 +335,38 @@
 
   .product-item p {
     font-size: 0.75rem;
+  }
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  margin-right: 15px;
+}
+
+.search-input {
+  padding: 6px 15px 6px 15px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  width: 160px;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  outline: none;
+  height: 32px;
+
+  &:focus {
+    width: 200px;
+  }
+}
+
+.search-container .nav-link {
+  position: absolute;
+  right: 10px;
+  padding: 0;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.7;
   }
 }
