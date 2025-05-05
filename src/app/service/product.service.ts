@@ -32,6 +32,7 @@ export class ProductService {
   getProductsByIds(productIds: number[]): Observable<ApiResponse<Product[]>> {
     debugger
     const params = new HttpParams().set('ids', productIds.join(','));
+    console.log(params)
     return this.http.get<ApiResponse<Product[]>>(`${this.apiGetProducts}/by-ids`, { params });
   }
 }

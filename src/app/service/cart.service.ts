@@ -26,6 +26,7 @@ export class CartService{
   }
 
   getCart(): Map<number, number> {
+    debugger
     return this.cart;
   }
 
@@ -36,5 +37,17 @@ export class CartService{
   clearCart(): void{
     this.cart.clear();
     this.saveCartToLocalStorage();
+  }
+
+  loadCart(): void {
+    const storeCart = localStorage.getItem('cart');
+    if (storeCart) {
+      this.cart = new Map(JSON.parse(storeCart));
+    }
+  }
+
+  setCart(cart: Map<number, number>) {
+    this.cart = cart ?? new Map<number, number>()
+    this.saveCartToLocalStorage()
   }
 }

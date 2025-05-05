@@ -12,6 +12,8 @@ import {FormsModule} from "@angular/forms";
 import {RouterModule} from "@angular/router";
 import {HttpClientModule, HTTP_INTERCEPTORS} from "@angular/common/http";
 import {TokenInterceptor} from "./interceptor/token.interceptor";
+import {ReactiveFormsModule} from "@angular/forms";
+import {CommonModule} from "@angular/common";
 
 @NgModule({
   declarations: [
@@ -25,10 +27,12 @@ import {TokenInterceptor} from "./interceptor/token.interceptor";
     RegisterComponent
   ],
   imports: [
+    ReactiveFormsModule,
     BrowserModule,
     FormsModule,
     HttpClientModule,
     RouterModule.forRoot([]),
+    CommonModule,
 
   ],
   providers: [
@@ -40,8 +44,8 @@ import {TokenInterceptor} from "./interceptor/token.interceptor";
   ],
   bootstrap: [
     // DetailProductComponent
-    // OrderComponent
-    OrderConfirmComponent
+    OrderComponent
+    // OrderConfirmComponent
     // LoginComponent
     // HomeComponent
     //RegisterComponent
