@@ -13,6 +13,7 @@ import {environment} from "../../common/environment";
 import {Router} from "@angular/router";
 import {TokenService} from "../../service/token.service";
 import {CouponService} from "../../service/coupon.service";
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-order',
@@ -46,6 +47,7 @@ export class OrderComponent implements OnInit {
     private orderService: OrderService,
     private router: Router,
     private fb: FormBuilder,
+    private toastr: ToastrService
   ) {
     this.orderForm = this.fb.group({
       fullName: ['', Validators.required],
@@ -112,17 +114,17 @@ export class OrderComponent implements OnInit {
 
       this.orderService.placeOrder(this.orderData).subscribe({
         next: () => {
-          alert('Order placed successfully');
+          this.toastr.success('Đặt hàng thành công!', 'Thông báo');
           this.cartService.clearCart();
           this.loadCartItems();
           this.router.navigate(['/']);
         },
         error: (error: any) => {
-          alert(`Error placing order: ${error.message || 'Unknown error'}`);
+          this.toastr.error(`Lỗi khi đặt hàng: ${error.message || 'Lỗi không xác định'}`, 'Lỗi');
         }
       });
     } else {
-      alert('Please fill in all required fields correctly.');
+      this.toastr.warning('Vui lòng điền đầy đủ thông tin bắt buộc.', 'Cảnh báo');
     }
   }
 
