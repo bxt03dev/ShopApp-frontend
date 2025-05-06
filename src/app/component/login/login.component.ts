@@ -5,6 +5,7 @@ import { UserService } from '../../service/user.service';
 import { Router } from '@angular/router';
 import { LoginResponse } from '../../response/user/login.response';
 import { TokenService } from '../../service/token.service';
+import { UserResponse } from '../../response/user/user.response';
 
 @Component({
   selector: 'app-login',
@@ -47,7 +48,19 @@ export class LoginComponent implements OnInit {
         if (result) {
           this.tokenService.setToken(result, this.rememberMe);
           console.log('Stored token:', this.tokenService.getToken());
-          this.router.navigate(['/']);
+          
+          // Get user details after successful login
+          this.userService.getUserDetail(result).subscribe({
+            next: (response) => {
+              const userResponse = response.result;
+              this.userService.saveUserResponseToLocalStorage(userResponse);
+              this.router.navigate(['/']);
+            },
+            error: (error) => {
+              console.error('Error getting user details:', error);
+              alert('Error getting user details');
+            }
+          });
         } else {
           console.error('Result is undefined or null');
           alert('Login failed: Token not found in response');
