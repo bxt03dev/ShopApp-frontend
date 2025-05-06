@@ -1,10 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { CartService } from '../../service/cart.service';
 import { Subscription } from 'rxjs';
-import { filter } from 'rxjs/operators';
 import { UserService } from '../../service/user.service';
 import { UserResponse } from '../../response/user/user.response';
+import { TokenService } from '../../service/token.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-header',
@@ -17,21 +18,23 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private cartSubscription: Subscription;
   private routerSubscription: Subscription;
   userResponse: UserResponse | null = null;
+  dropdownOpen: boolean = false;
 
   constructor(
     private router: Router,
     private cartService: CartService,
-    private userService: UserService
+    private userService: UserService,
+    private tokenService: TokenService,
+    private toastr: ToastrService
   ) {
     this.cartSubscription = this.cartService.getCartItemCount().subscribe(
       count => this.cartItemCount = count
     );
-
-    // Subscribe to router events to update user info when navigation occurs
-    this.routerSubscription = this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe(() => {
-      this.loadUserInfo();
+    this.routerSubscription = this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.loadUserInfo();
+        this.dropdownOpen = false;
+      }
     });
   }
 
@@ -50,7 +53,27 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   loadUserInfo(): void {
     this.userResponse = this.userService.getUserResponseFromLocalStorage();
-    console.log('User info loaded:', this.userResponse); // Debug log
+  }
+
+  toggleDropdown(): void {
+    this.dropdownOpen = !this.dropdownOpen;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.user-dropdown')) {
+      this.dropdownOpen = false;
+    }
+  }
+
+  logout(): void {
+    this.tokenService.removeToken();
+    this.userService.removeUserFromLocalStorage();
+    this.userResponse = null;
+    this.dropdownOpen = false;
+    this.toastr.success('Đăng xuất thành công!', 'Thông báo');
+    this.router.navigate(['/']);
   }
 
   onSearch(): void {

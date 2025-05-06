@@ -214,9 +214,13 @@
           <a *ngIf="!userResponse" routerLink="/login" class="nav-link">
             <i class="fa-solid fa-circle-user"></i>
           </a>
-          <a *ngIf="userResponse" routerLink="/profile" class="nav-link user-name">
-            {{ userResponse.fullName }}
-          </a>
+          <div *ngIf="userResponse" class="user-dropdown" (click)="toggleDropdown()" [class.open]="dropdownOpen">
+            <span class="nav-link user-name">{{ userResponse.fullName }}</span>
+            <div class="dropdown-menu-user" *ngIf="dropdownOpen">
+              <a class="dropdown-item" routerLink="/profile">Tài khoản</a>
+              <a class="dropdown-item" (click)="logout()">Đăng xuất</a>
+            </div>
+          </div>
         </li>
       </ul>
     </div>
