@@ -2,14 +2,24 @@
 <div class="container">
   <div class="intro-section">
     <h1>Product Detail</h1>
-    <p>{{ product?.description || 'About our products' }}</p>
   </div>
-  <div class="row">
+
+  <div *ngIf="loading" class="text-center my-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger my-5">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && !error && product" class="row">
     <div class="col-md-6">
       <!-- Carousel -->
       <div class="carousel slide" id="carouselExample" data-bs-ride="carousel">
         <div class="carousel-inner">
-          <div *ngFor="let image of product?.productImages; let i = index"
+          <div *ngFor="let image of product.productImages; let i = index"
                class="carousel-item" [ngClass]="{ 'active': i === currentImageIndex }">
             <div class="square-image">
               <img [src]="image.imageUrl" alt="Product image" class="product-image">
@@ -30,7 +40,7 @@
       <!-- Thumbnails -->
       <div class="row">
         <div class="thumbnail-container">
-          <div *ngFor="let image of product?.productImages; let i = index"
+          <div *ngFor="let image of product.productImages; let i = index"
                class="thumbnail-item" [ngClass]="{ 'active': i === currentImageIndex }"
                (click)="thumbnailClick(i)">
             <img [src]="image.imageUrl" alt="Thumbnail" class="thumbnail-image">
@@ -40,9 +50,9 @@
     </div>
     <div class="col-md-6">
       <div class="product-detail">
-        <h2>{{ product?.name || 'Product details' }}</h2>
-        <p>{{ product?.description || 'Product description' }}</p>
-        <p>Price: ${{ product?.price || '0' }}</p>
+        <h2>{{ product.name }}</h2>
+        <p class="product-description">{{ product.description }}</p>
+        <p class="product-price">${{ product.price }}</p>
       </div>
       <div class="product-actions">
         <button class="btn btn-primary" (click)="addToCart()">Add to cart</button>
@@ -51,7 +61,7 @@
       <div class="product-quantity">
         <div class="border-wrapper">
           <button (click)="decreaseQuantity()">-</button>
-          <input type="number" [(ngModel)]="quantity" />
+          <input type="number" [(ngModel)]="quantity" min="1" />
           <button (click)="increaseQuantity()">+</button>
         </div>
       </div>

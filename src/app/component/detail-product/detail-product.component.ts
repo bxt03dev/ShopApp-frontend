@@ -17,92 +17,100 @@ export class DetailProductComponent implements OnInit {
   productId: number = 0;
   currentImageIndex: number = 0;
   quantity: number = 1;
+  loading: boolean = true;
+  error: string = '';
+
   constructor(
     private productService: ProductService,
     private cartService: CartService,
     private route: ActivatedRoute,
-    private router: Router,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
-    debugger;
-    // this.cartService.clearCart();
-    const idParam = 1;
+    this.loading = true;
+    const idParam = this.route.snapshot.paramMap.get('id');
+    
     if (idParam !== null) {
-      this.productId += idParam;
+      this.productId = parseInt(idParam, 10);
     }
+
     if (!isNaN(this.productId)) {
       this.productService.getDetailProduct(this.productId).subscribe({
         next: (response: ApiResponse<Product>) => {
-          debugger;
           console.log('Product response:', response);
-          const product = response.result;
-          if (product && product.productImages && product.productImages.length > 0) {
-            product.productImages.forEach((productImage: ProductImage) => {
-              productImage.imageUrl = `${environment.apiBaseUrl}/products/images/${productImage.imageUrl}`;
-              console.log('Image URL:', productImage.imageUrl);
-            });
+          if (response.result) {
+            const product = response.result;
+            if (product.productImages && product.productImages.length > 0) {
+              product.productImages.forEach((productImage: ProductImage) => {
+                productImage.imageUrl = `${environment.apiBaseUrl}/products/images/${productImage.imageUrl}`;
+              });
+            }
+            this.product = product;
+            this.showImage(0);
+          } else {
+            this.error = 'Product not found';
           }
-          this.product = product;
-          this.showImage(0);
-        },
-        complete: () => {
-          debugger;
         },
         error: (error: any) => {
-          debugger;
           console.error('Error fetching product details:', error);
+          this.error = 'Failed to load product details. Please try again later.';
+        },
+        complete: () => {
+          this.loading = false;
         }
       });
     } else {
-      console.error('Invalid product ID:', idParam);
+      this.error = 'Invalid product ID';
+      this.loading = false;
     }
   }
 
   showImage(index: number): void {
-    debugger
-    if(this.product && this.product.productImages && this.product.productImages.length > 0){
-      if(index < 0){
+    if(this.product && this.product.productImages && this.product.productImages.length > 0) {
+      if(index < 0) {
         index = 0;
-      } else if(index >= this.product.productImages.length){
+      } else if(index >= this.product.productImages.length) {
         index = this.product.productImages.length - 1;
       }
-
       this.currentImageIndex = index;
     }
   }
 
   thumbnailClick(index: number): void {
-    this.currentImageIndex = index;
+    this.showImage(index);
   }
-  nextImage(): void{
+
+  nextImage(): void {
     this.showImage(this.currentImageIndex + 1);
   }
 
-  previousImage(): void{
+  previousImage(): void {
     this.showImage(this.currentImageIndex - 1);
   }
 
-  addToCart(): void{
-    debugger
-    if(this.product){
+  addToCart(): void {
+    if(this.product) {
       this.cartService.addToCart(this.product.id, this.quantity);
-    } else{
+    } else {
       console.error('Product is not defined');
     }
   }
 
-  increaseQuantity(): void{
+  increaseQuantity(): void {
     this.quantity++;
   }
 
-  decreaseQuantity(): void{
-    if(this.quantity > 0){
+  decreaseQuantity(): void {
+    if (this.quantity > 1) {
       this.quantity--;
     }
   }
 
-  buyNow(): void{
-
+  buyNow(): void {
+    if(this.product) {
+      this.cartService.addToCart(this.product.id, this.quantity);
+      this.router.navigate(['/orders']);
+    }
   }
 }

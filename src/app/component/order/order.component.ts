@@ -25,7 +25,7 @@ export class OrderComponent implements OnInit {
   couponCode: string = '';
   totalMoney: number = 0;
   cart: Map<number, number> = new Map();
-  
+
   orderData: OrderDTO = {
     userId: 2,
     fullName: '',
@@ -44,6 +44,7 @@ export class OrderComponent implements OnInit {
     private cartService: CartService,
     private productService: ProductService,
     private orderService: OrderService,
+    private router: Router,
     private fb: FormBuilder,
   ) {
     this.orderForm = this.fb.group({
@@ -65,7 +66,7 @@ export class OrderComponent implements OnInit {
   loadCartItems(): void {
     this.cart = this.cartService.getCart();
     const productIds = Array.from(this.cart.keys());
-    
+
     if (productIds.length === 0) {
       return;
     }
@@ -86,7 +87,7 @@ export class OrderComponent implements OnInit {
               return null;
             })
             .filter((item): item is { product: Product; quantity: number } => item !== null);
-          
+
           this.calculateTotal();
         }
       },
@@ -114,6 +115,7 @@ export class OrderComponent implements OnInit {
           alert('Order placed successfully');
           this.cartService.clearCart();
           this.loadCartItems();
+          this.router.navigate(['/']);
         },
         error: (error: any) => {
           alert(`Error placing order: ${error.message || 'Unknown error'}`);
