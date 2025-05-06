@@ -6,6 +6,7 @@ import {environment} from "../../common/environment";
 import {ProductImage} from "../../model/product.image";
 import {ApiResponse} from "../../dto/response/api.response";
 import {CartService} from "../../service/cart.service";
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-detail-product',
@@ -24,7 +25,8 @@ export class DetailProductComponent implements OnInit {
     private productService: ProductService,
     private cartService: CartService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private toastr: ToastrService
   ) { }
 
   ngOnInit(): void {
@@ -92,8 +94,9 @@ export class DetailProductComponent implements OnInit {
   addToCart(): void {
     if(this.product) {
       this.cartService.addToCart(this.product.id, this.quantity);
+      this.toastr.success(`Đã thêm ${this.quantity} ${this.product.name} vào giỏ hàng!`, 'Thông báo');
     } else {
-      console.error('Product is not defined');
+      this.toastr.error('Không thể thêm sản phẩm vào giỏ hàng', 'Lỗi');
     }
   }
 

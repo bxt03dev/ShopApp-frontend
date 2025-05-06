@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { LoginResponse } from '../../response/user/login.response';
 import { TokenService } from '../../service/token.service';
 import { UserResponse } from '../../response/user/user.response';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-login',
@@ -21,7 +22,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private router: Router,
     private userService: UserService,
-    private tokenService: TokenService
+    private tokenService: TokenService,
+    private toastr: ToastrService
   ) {}
 
   ngOnInit(): void {}
@@ -32,7 +34,7 @@ export class LoginComponent implements OnInit {
 
   onLogin() {
     if (!this.loginForm.valid) {
-      alert('Please fill in all required fields.');
+      this.toastr.warning('Vui lòng điền đầy đủ thông tin.', 'Cảnh báo');
       return;
     }
 
@@ -43,37 +45,34 @@ export class LoginComponent implements OnInit {
 
     this.userService.login(loginDTO).subscribe({
       next: (response: LoginResponse) => {
-        console.log('Response:', response);
         const { result } = response;
         if (result) {
           this.tokenService.setToken(result, this.rememberMe);
-          console.log('Stored token:', this.tokenService.getToken());
           
           // Get user details after successful login
           this.userService.getUserDetail(result).subscribe({
             next: (response) => {
               const userResponse = response.result;
               this.userService.saveUserResponseToLocalStorage(userResponse);
+              this.toastr.success('Đăng nhập thành công!', 'Thông báo');
               this.router.navigate(['/']);
             },
             error: (error) => {
-              console.error('Error getting user details:', error);
-              alert('Error getting user details');
+              this.toastr.error('Lỗi khi lấy thông tin người dùng', 'Lỗi');
             }
           });
         } else {
-          console.error('Result is undefined or null');
-          alert('Login failed: Token not found in response');
+          this.toastr.error('Đăng nhập thất bại: Không tìm thấy token', 'Lỗi');
         }
       },
       error: (error: any) => {
         const errorResponse = error.error as LoginResponse;
-        const errorMessage = errorResponse?.message || 'Server error';
+        const errorMessage = errorResponse?.message || 'Lỗi server';
         const errorCode = errorResponse?.code || 0;
         if (errorCode === 1001) {
-          alert('Invalid phone number or password');
+          this.toastr.error('Số điện thoại hoặc mật khẩu không đúng', 'Lỗi');
         } else {
-          alert(`Login failed: ${errorMessage}`);
+          this.toastr.error(`Đăng nhập thất bại: ${errorMessage}`, 'Lỗi');
         }
       }
     });
