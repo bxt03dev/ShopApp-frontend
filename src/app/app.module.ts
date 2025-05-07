@@ -20,6 +20,7 @@ import { SearchComponent } from './component/search/search.component';
 import { StoreComponent } from './component/store/store.component';
 import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AdminComponent } from './component/admin/admin.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     RegisterComponent,
     AppComponent,
     SearchComponent,
-    StoreComponent
+    StoreComponent,
+    AdminComponent
   ],
   imports: [
     ReactiveFormsModule,

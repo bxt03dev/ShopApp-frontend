@@ -55,7 +55,13 @@ export class LoginComponent implements OnInit {
               const userResponse = response.result;
               this.userService.saveUserResponseToLocalStorage(userResponse);
               this.toastr.success('Đăng nhập thành công!', 'Thông báo');
-              this.router.navigate(['/']);
+              
+              // Điều hướng dựa trên role
+              if (userResponse.role.name === 'ADMIN') {
+                this.router.navigate(['/admin']);
+              } else {
+                this.router.navigate(['/']);
+              }
             },
             error: (error) => {
               this.toastr.error('Lỗi khi lấy thông tin người dùng', 'Lỗi');

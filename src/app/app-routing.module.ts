@@ -8,15 +8,19 @@ import {OrderDetailComponent} from "./component/order-detail/order-detail.compon
 import {NgModule} from "@angular/core";
 import { SearchComponent } from './component/search/search.component';
 import { StoreComponent } from './component/store/store.component';
+import { AdminComponent } from "./component/admin/admin.component";
+import { AuthGuard } from "./guard/auth.guard";
+import { AdminGuard } from "./guard/admin.guard";
 
 export const routes: Routes = [
   {path: '', component: StoreComponent},
   {path: 'home', component: HomeComponent},
   {path: 'login', component: LoginComponent},
+  {path: 'admin', component: AdminComponent, canActivate: [AdminGuard]},
   {path: 'register', component: RegisterComponent},
   {path: 'products/:id', component: DetailProductComponent},
-  {path: 'orders', component: OrderComponent},
-  {path: 'orders/:id', component: OrderDetailComponent},
+  {path: 'orders', component: OrderComponent, canActivate: [AuthGuard]},
+  {path: 'orders/:id', component: OrderDetailComponent, canActivate: [AuthGuard]},
   {path: 'search', component: SearchComponent},
 ];
 @NgModule({

@@ -1,0 +1,46 @@
+<div class="admin-container">
+  <!-- Header -->
+  <header class="admin-header">
+    <div class="logo">
+      <h1>Admin Dashboard</h1>
+    </div>
+    <div class="header-actions">
+      <button class="logout-btn" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i> Đăng xuất
+      </button>
+    </div>
+  </header>
+
+  <div class="admin-content">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <nav>
+        <ul>
+          <li>
+            <a routerLink="/admin/orders" routerLinkActive="active">
+              <i class="fas fa-shopping-cart"></i>
+              Orders
+            </a>
+          </li>
+          <li>
+            <a routerLink="/admin/categories" routerLinkActive="active">
+              <i class="fas fa-tags"></i>
+              Categories
+            </a>
+          </li>
+          <li>
+            <a routerLink="/admin/products" routerLinkActive="active">
+              <i class="fas fa-box"></i>
+              Products
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
