@@ -52,6 +52,14 @@ import {OrderAdminComponent} from "./component/admin/order/order.admin.component
       timeOut: 3000,
       positionClass: 'toast-bottom-right',
       preventDuplicates: true,
+      closeButton: true,
+      progressBar: true,
+      enableHtml: true,
+      tapToDismiss: true,
+      newestOnTop: true,
+      extendedTimeOut: 1000,
+      easeTime: 300,
+      progressAnimation: 'decreasing'
     })
   ],
   providers: [

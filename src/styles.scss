@@ -3,9 +3,22 @@
 
 /* Custom toast styles */
 .toast-container {
+  position: fixed !important;
+  z-index: 9999 !important;
+  
   .ngx-toastr {
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    position: relative !important;
+    overflow: hidden;
+    margin: 0 0 6px;
+    padding: 15px 15px 15px 50px;
+    width: 300px;
+    background-position: 15px center;
+    background-repeat: no-repeat;
+    background-size: 24px;
+    color: #FFFFFF;
+    opacity: 1;
     
     &:hover {
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
