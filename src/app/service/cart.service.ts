@@ -1,26 +1,28 @@
 import {ProductService} from "./product.service";
 import {Injectable} from "@angular/core";
 import { BehaviorSubject } from 'rxjs';
+import { TokenService } from './token.service';
 
 @Injectable({
   providedIn: 'root'
 })
-
-
 export class CartService{
   private cart: Map<number, number> = new Map();
   private cartItemCount = new BehaviorSubject<number>(0);
 
-  constructor(private productService : ProductService) {
-    const storeCart = localStorage.getItem('cart');
-    if(storeCart){
-      this.cart = new Map(JSON.parse(storeCart));
-      this.updateCartItemCount();
-    }
+  constructor(
+    private productService: ProductService,
+    private tokenService: TokenService
+  ) {
+    this.loadCart();
+  }
+
+  private getCartKey(): string {
+    const userId = this.tokenService.getUserId();
+    return userId ? `cart_${userId}` : 'cart_guest';
   }
 
   addToCart(productId: number, quantity: number = 1) {
-    debugger
     if(this.cart.has(productId)){
       this.cart.set(productId, this.cart.get(productId)! + quantity);
     } else{
@@ -31,7 +33,6 @@ export class CartService{
   }
 
   getCart(): Map<number, number> {
-    debugger
     return this.cart;
   }
 
@@ -44,18 +45,18 @@ export class CartService{
     this.cartItemCount.next(count);
   }
 
-  private saveCartToLocalStorage(): void{
-    localStorage.setItem('cart', JSON.stringify(Array.from(this.cart.entries())));
+  private saveCartToLocalStorage(): void {
+    localStorage.setItem(this.getCartKey(), JSON.stringify(Array.from(this.cart.entries())));
   }
 
-  clearCart(): void{
+  clearCart(): void {
     this.cart.clear();
     this.saveCartToLocalStorage();
     this.updateCartItemCount();
   }
 
   loadCart(): void {
-    const storeCart = localStorage.getItem('cart');
+    const storeCart = localStorage.getItem(this.getCartKey());
     if (storeCart) {
       this.cart = new Map(JSON.parse(storeCart));
       this.updateCartItemCount();
@@ -63,8 +64,8 @@ export class CartService{
   }
 
   setCart(cart: Map<number, number>) {
-    this.cart = cart ?? new Map<number, number>()
-    this.saveCartToLocalStorage()
+    this.cart = cart ?? new Map<number, number>();
+    this.saveCartToLocalStorage();
     this.updateCartItemCount();
   }
 }

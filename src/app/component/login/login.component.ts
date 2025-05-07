@@ -7,6 +7,7 @@ import { LoginResponse } from '../../response/user/login.response';
 import { TokenService } from '../../service/token.service';
 import { UserResponse } from '../../response/user/user.response';
 import { ToastrService } from 'ngx-toastr';
+import { CartService } from '../../service/cart.service';
 
 @Component({
   selector: 'app-login',
@@ -23,6 +24,7 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private userService: UserService,
     private tokenService: TokenService,
+    private cartService: CartService,
     private toastr: ToastrService
   ) {}
 
@@ -54,6 +56,7 @@ export class LoginComponent implements OnInit {
             next: (response) => {
               const userResponse = response.result;
               this.userService.saveUserResponseToLocalStorage(userResponse);
+              this.cartService.loadCart(); // Load cart after successful login
               this.toastr.success('Đăng nhập thành công!', 'Thông báo');
               
               // Điều hướng dựa trên role

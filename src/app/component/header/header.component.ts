@@ -70,6 +70,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   logout(): void {
     this.tokenService.removeToken();
     this.userService.removeUserFromLocalStorage();
+    this.cartService.clearCart();
     this.userResponse = null;
     this.dropdownOpen = false;
     this.toastr.success('Đăng xuất thành công!', 'Thông báo');

@@ -1,0 +1,72 @@
+<!-- Search Bar -->
+<div class="search-container">
+  <input
+    type="text"
+    [(ngModel)]="keyword"
+    placeholder="Search orders..."
+    (keyup.enter)="searchOrders()"
+  />
+  <button (click)="searchOrders()">Search</button>
+</div>
+
+<!-- Orders Table -->
+<div class="table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Order ID</th>
+        <th>User ID</th>
+        <th>Full Name</th>
+        <th>Phone Number</th>
+        <th>Address</th>
+        <th>Note</th>
+        <th>Order Date</th>
+        <th>Status</th>
+        <th>Total Money</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let order of orders">
+        <td>{{order.id}}</td>
+        <td>{{order.userId}}</td>
+        <td>{{order.fullName}}</td>
+        <td>{{order.phoneNumber}}</td>
+        <td>{{order.address}}</td>
+        <td>{{order.note}}</td>
+        <td>{{order.orderDate | date:'medium'}}</td>
+        <td>{{order.status}}</td>
+        <td>{{order.totalMoney | currency:'VND'}}</td>
+        <td>
+          <button (click)="viewDetails(order)">View</button>
+          <button (click)="deleteOrder(order.id)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Pagination -->
+<div class="pagination">
+  <button
+    [disabled]="currentPage === 0"
+    (click)="onPageChange(currentPage - 1)"
+  >
+    Previous
+  </button>
+
+  <button
+    *ngFor="let page of visiblePages"
+    [class.active]="page === currentPage"
+    (click)="onPageChange(page)"
+  >
+    {{page}}
+  </button>
+
+  <button
+    [disabled]="currentPage === totalPages - 1"
+    (click)="onPageChange(currentPage + 1)"
+  >
+    Next
+  </button>
+</div>
