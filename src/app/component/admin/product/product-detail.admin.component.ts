@@ -57,9 +57,12 @@ export class ProductDetailAdminComponent implements OnInit {
     this.productService.getDetailProduct(id).subscribe({
       next: (response) => {
         this.product = response.result;
+        console.log('Loaded product details:', this.product);
         if (this.product && this.product.thumbnail) {
-          this.imageUrl = `${environment.apiBaseUrl}/products/images/${this.product.thumbnail}`;
+          // Thêm timestamp để tránh cache
+          this.imageUrl = `${environment.apiBaseUrl}/products/images/${this.product.thumbnail}?t=${new Date().getTime()}`;
           this.imagePreviewUrl = this.imageUrl;
+          console.log('Set image URL to:', this.imageUrl);
         }
         this.updateFormValues();
         this.loading = false;
@@ -151,28 +154,81 @@ export class ProductDetailAdminComponent implements OnInit {
         // Xử lý khi API trả về danh sách ảnh sản phẩm
         if (response && response.length > 0) {
           console.log('Product images received:', response);
+          
           // Lấy ảnh đầu tiên từ danh sách
           const productImage = response[0];
           console.log('Using first image:', productImage);
           
-          // Cập nhật thumbnail
-          if (this.product && productImage.imageUrl) {
-            this.product.thumbnail = productImage.imageUrl;
-            // Cập nhật URL hình ảnh với timestamp để tránh cache
-            this.imageUrl = `${environment.apiBaseUrl}/products/images/${productImage.imageUrl}?t=${new Date().getTime()}`;
-            this.imagePreviewUrl = this.imageUrl;
-            console.log('Updated product thumbnail to:', this.product.thumbnail);
-            console.log('Updated image URL to:', this.imageUrl);
+          // Cập nhật thumbnail cho sản phẩm trong backend
+          if (productImage && productImage.imageUrl) {
+            this.updateProductThumbnail(productImage.imageUrl);
+          } else {
+            this.uploadingImage = false;
+            console.warn('No imageUrl found in the response');
           }
-          
-          // Tắt chế độ chỉnh sửa
-          this.isEditing = false;
-          this.uploadingImage = false;
         } else {
           console.warn('No images returned from server');
           this.uploadingImage = false;
+          
+          Swal.fire({
+            title: 'Cảnh báo',
+            text: 'Không nhận được thông tin ảnh từ server',
+            icon: 'warning',
+            confirmButtonText: 'OK'
+          });
+        }
+      },
+      error: (error) => {
+        console.error('Error uploading image:', error);
+        this.uploadingImage = false;
+        
+        Swal.fire({
+          title: 'Lỗi!',
+          text: 'Không thể tải lên hình ảnh. Vui lòng thử lại sau.',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+      }
+    });
+  }
+
+  // Phương thức mới để cập nhật thumbnail cho sản phẩm
+  updateProductThumbnail(imageUrl: string): void {
+    if (!this.product || !this.productId) {
+      console.error('Product not loaded or product ID missing');
+      this.uploadingImage = false;
+      return;
+    }
+    
+    console.log('Updating product thumbnail to:', imageUrl);
+    
+    // Tạo đối tượng cập nhật với các giá trị hiện tại từ form
+    const updatedProduct: UpdateProductDTO = {
+      name: this.productForm.value.name,
+      price: this.productForm.value.price,
+      description: this.productForm.value.description,
+      categoryId: this.productForm.value.categoryId,
+      thumbnail: imageUrl // Thêm trường thumbnail vào đối tượng cập nhật
+    };
+    
+    // Gọi API cập nhật sản phẩm
+    this.productService.updateProduct(this.productId, updatedProduct).subscribe({
+      next: (response) => {
+        console.log('Product updated with new thumbnail:', response);
+        
+        // Cập nhật thông tin sản phẩm từ response
+        this.product = response.result;
+        
+        // Cập nhật URL hình ảnh với timestamp để tránh cache
+        if (this.product && this.product.thumbnail) {
+          this.imageUrl = `${environment.apiBaseUrl}/products/images/${this.product.thumbnail}?t=${new Date().getTime()}`;
+          this.imagePreviewUrl = this.imageUrl;
+          console.log('Updated image URL to:', this.imageUrl);
         }
         
+        // Hoàn thành quá trình
+        this.uploadingImage = false;
+        this.isEditing = false;
         this.selectedFile = null;
         
         Swal.fire({
@@ -183,12 +239,12 @@ export class ProductDetailAdminComponent implements OnInit {
         });
       },
       error: (error) => {
-        console.error('Error uploading image:', error);
+        console.error('Error updating product thumbnail:', error);
         this.uploadingImage = false;
         
         Swal.fire({
           title: 'Lỗi!',
-          text: 'Không thể tải lên hình ảnh. Vui lòng thử lại sau.',
+          text: 'Không thể cập nhật thumbnail sản phẩm. Vui lòng thử lại sau.',
           icon: 'error',
           confirmButtonText: 'OK'
         });
@@ -235,6 +291,11 @@ export class ProductDetailAdminComponent implements OnInit {
       description: this.productForm.value.description,
       categoryId: this.productForm.value.categoryId
     };
+
+    // Nếu sản phẩm đã có thumbnail, giữ lại
+    if (this.product && this.product.thumbnail) {
+      updatedProduct.thumbnail = this.product.thumbnail;
+    }
 
     this.submitting = true;
     this.productService.updateProduct(this.productId, updatedProduct).subscribe({

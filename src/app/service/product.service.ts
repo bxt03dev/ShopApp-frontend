@@ -15,6 +15,7 @@ export interface UpdateProductDTO {
   price: number;
   description: string;
   categoryId: string;
+  thumbnail?: string;
 }
 
 @Injectable({
