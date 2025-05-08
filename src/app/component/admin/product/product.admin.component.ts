@@ -76,6 +76,10 @@ export class ProductAdminComponent implements OnInit {
     this.router.navigate(['/admin/products', productId]);
   }
 
+  goToCreateProduct(): void {
+    this.router.navigate(['/admin/products/create']);
+  }
+
   deleteProduct(productId: number): void {
     Swal.fire({
       title: 'Bạn có chắc chắn?',

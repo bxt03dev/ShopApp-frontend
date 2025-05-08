@@ -10,13 +10,15 @@ interface ProductListResponse {
   totalPages: number;
 }
 
-export interface UpdateProductDTO {
+export interface ProductDTO {
   name: string;
   price: number;
   description: string;
   categoryId: string;
   thumbnail?: string;
 }
+
+export interface UpdateProductDTO extends ProductDTO {}
 
 @Injectable({
   providedIn: 'root'
@@ -48,6 +50,10 @@ export class ProductService {
   
   updateProduct(productId: number, updatedProduct: UpdateProductDTO): Observable<ApiResponse<Product>> {
     return this.http.put<ApiResponse<Product>>(`${environment.apiBaseUrl}/products/${productId}`, updatedProduct);
+  }
+
+  createProduct(product: ProductDTO): Observable<ApiResponse<Product>> {
+    return this.http.post<ApiResponse<Product>>(`${environment.apiBaseUrl}/products`, product);
   }
 
   uploadProductImage(productId: number, file: File): Observable<any> {

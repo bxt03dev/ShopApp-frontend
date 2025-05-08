@@ -14,6 +14,7 @@ import { AdminGuard } from "./guard/admin.guard";
 import {OrderAdminComponent} from "./component/admin/order/order.admin.component";
 import {ProductAdminComponent} from "./component/admin/product/product.admin.component";
 import {ProductDetailAdminComponent} from "./component/admin/product/product-detail.admin.component";
+import {ProductCreateAdminComponent} from "./component/admin/product/product-create.admin.component";
 
 export const routes: Routes = [
   {path: '', component: StoreComponent},
@@ -27,6 +28,7 @@ export const routes: Routes = [
       {path: '', redirectTo: 'order', pathMatch: 'full'},
       {path: 'order', component: OrderAdminComponent},
       {path: 'products', component: ProductAdminComponent},
+      {path: 'products/create', component: ProductCreateAdminComponent},
       {path: 'products/:id', component: ProductDetailAdminComponent}
     ]
   },
