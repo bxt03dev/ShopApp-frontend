@@ -13,6 +13,7 @@ import { AuthGuard } from "./guard/auth.guard";
 import { AdminGuard } from "./guard/admin.guard";
 import {OrderAdminComponent} from "./component/admin/order/order.admin.component";
 import {ProductAdminComponent} from "./component/admin/product/product.admin.component";
+import {ProductDetailAdminComponent} from "./component/admin/product/product-detail.admin.component";
 
 export const routes: Routes = [
   {path: '', component: StoreComponent},
@@ -25,7 +26,8 @@ export const routes: Routes = [
     children: [
       {path: '', redirectTo: 'order', pathMatch: 'full'},
       {path: 'order', component: OrderAdminComponent},
-      {path: 'products', component: ProductAdminComponent}
+      {path: 'products', component: ProductAdminComponent},
+      {path: 'products/:id', component: ProductDetailAdminComponent}
     ]
   },
   {path: 'register', component: RegisterComponent},

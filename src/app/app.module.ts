@@ -23,6 +23,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AdminComponent } from './component/admin/admin.component';
 import { OrderAdminComponent } from './component/admin/order/order.admin.component';
 import { ProductAdminComponent } from './component/admin/product/product.admin.component';
+import { ProductDetailAdminComponent } from './component/admin/product/product-detail.admin.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { ProductAdminComponent } from './component/admin/product/product.admin.c
     StoreComponent,
     AdminComponent,
     OrderAdminComponent,
-    ProductAdminComponent
+    ProductAdminComponent,
+    ProductDetailAdminComponent
   ],
   imports: [
     ReactiveFormsModule,

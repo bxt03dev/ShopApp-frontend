@@ -3,6 +3,7 @@ import { Product } from '../../../model/product';
 import { ProductService } from '../../../service/product.service';
 import { environment } from '../../../common/environment';
 import Swal from 'sweetalert2';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin-product',
@@ -17,7 +18,10 @@ export class ProductAdminComponent implements OnInit {
   loading = false;
   visiblePages: number[] = [];
   
-  constructor(private productService: ProductService) { }
+  constructor(
+    private productService: ProductService,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
     this.loadProducts();
@@ -69,7 +73,7 @@ export class ProductAdminComponent implements OnInit {
   }
 
   viewProductDetails(productId: number): void {
-    window.open(`/products/${productId}`, '_blank');
+    this.router.navigate(['/admin/products', productId]);
   }
 
   deleteProduct(productId: number): void {

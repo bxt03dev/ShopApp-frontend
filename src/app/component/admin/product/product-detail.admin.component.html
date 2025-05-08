@@ -1,0 +1,63 @@
+<div class="admin-product-detail-container">
+  <div class="admin-product-detail-header">
+    <h2>Chi tiết sản phẩm</h2>
+    <button class="back-btn" (click)="goBack()">
+      <i class="fas fa-arrow-left"></i> Quay lại
+    </button>
+  </div>
+
+  <!-- Loading spinner -->
+  <div class="loading-spinner" *ngIf="loading">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Product details -->
+  <div class="product-detail-content" *ngIf="!loading && product">
+    <div class="product-image-section">
+      <img [src]="imageUrl" alt="{{ product.name }}" class="product-detail-image">
+    </div>
+
+    <div class="product-info-section">
+      <div class="info-group">
+        <h3>Thông tin cơ bản</h3>
+        <div class="info-row">
+          <div class="info-label">ID:</div>
+          <div class="info-value">{{ product.id }}</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">Tên sản phẩm:</div>
+          <div class="info-value">{{ product.name }}</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">Giá:</div>
+          <div class="info-value">{{ product.price | number }} ₫</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">Danh mục:</div>
+          <div class="info-value">{{ product.categoryId }}</div>
+        </div>
+      </div>
+
+      <div class="info-group">
+        <h3>Mô tả sản phẩm</h3>
+        <div class="product-description">
+          {{ product.description }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="product-detail-actions" *ngIf="!loading && product">
+    <button class="action-btn edit-btn">
+      <i class="fas fa-edit"></i> Sửa sản phẩm
+    </button>
+    <button class="action-btn delete-btn">
+      <i class="fas fa-trash"></i> Xóa sản phẩm
+    </button>
+  </div>
+
+  <!-- No product message -->
+  <div class="no-product" *ngIf="!loading && !product">
+    <p>Không tìm thấy thông tin sản phẩm.</p>
+  </div>
+</div> 
