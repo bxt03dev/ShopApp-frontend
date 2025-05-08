@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Product } from '../../../model/product';
-import { ProductService } from '../../../service/product.service';
-import { environment } from '../../../common/environment';
+import { Product } from '../../../../model/product';
+import { ProductService } from '../../../../service/product.service';
+import { environment } from '../../../../common/environment';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
 
@@ -17,7 +17,7 @@ export class ProductAdminComponent implements OnInit {
   pageSize = 10;
   loading = false;
   visiblePages: number[] = [];
-  
+
   constructor(
     private productService: ProductService,
     private router: Router
@@ -117,4 +117,4 @@ export class ProductAdminComponent implements OnInit {
   getImageUrl(product: Product): string {
     return product.thumbnail;
   }
-} 
+}

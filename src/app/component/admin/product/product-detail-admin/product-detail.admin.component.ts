@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Product } from '../../../model/product';
-import { ProductService, UpdateProductDTO } from '../../../service/product.service';
-import { environment } from '../../../common/environment';
+import { Product } from '../../../../model/product';
+import { ProductService, UpdateProductDTO } from '../../../../service/product.service';
+import { environment } from '../../../../common/environment';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 
@@ -99,9 +99,9 @@ export class ProductDetailAdminComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       this.selectedFile = input.files[0];
-      
+
       console.log('Selected file:', this.selectedFile.name, 'Type:', this.selectedFile.type, 'Size:', this.selectedFile.size);
-      
+
       // Validate file type
       const fileType = this.selectedFile.type;
       if (fileType !== 'image/jpeg' && fileType !== 'image/png' && fileType !== 'image/jpg') {
@@ -115,7 +115,7 @@ export class ProductDetailAdminComponent implements OnInit {
         this.selectedFile = null;
         return;
       }
-      
+
       // Validate file size (max 10MB - matching backend limit)
       if (this.selectedFile.size > 10 * 1024 * 1024) {
         console.error('File too large:', this.selectedFile.size);
@@ -128,7 +128,7 @@ export class ProductDetailAdminComponent implements OnInit {
         this.selectedFile = null;
         return;
       }
-      
+
       // Create preview
       const reader = new FileReader();
       reader.onload = () => {
@@ -146,19 +146,19 @@ export class ProductDetailAdminComponent implements OnInit {
 
     console.log('Starting image upload for product ID:', this.productId);
     this.uploadingImage = true;
-    
+
     this.productService.uploadProductImage(this.productId, this.selectedFile).subscribe({
       next: (response) => {
         console.log('Upload response:', response);
-        
+
         // Xử lý khi API trả về danh sách ảnh sản phẩm
         if (response && response.length > 0) {
           console.log('Product images received:', response);
-          
+
           // Lấy ảnh đầu tiên từ danh sách
           const productImage = response[0];
           console.log('Using first image:', productImage);
-          
+
           // Cập nhật thumbnail cho sản phẩm trong backend
           if (productImage && productImage.imageUrl) {
             this.updateProductThumbnail(productImage.imageUrl);
@@ -169,7 +169,7 @@ export class ProductDetailAdminComponent implements OnInit {
         } else {
           console.warn('No images returned from server');
           this.uploadingImage = false;
-          
+
           Swal.fire({
             title: 'Cảnh báo',
             text: 'Không nhận được thông tin ảnh từ server',
@@ -181,7 +181,7 @@ export class ProductDetailAdminComponent implements OnInit {
       error: (error) => {
         console.error('Error uploading image:', error);
         this.uploadingImage = false;
-        
+
         Swal.fire({
           title: 'Lỗi!',
           text: 'Không thể tải lên hình ảnh. Vui lòng thử lại sau.',
@@ -199,9 +199,9 @@ export class ProductDetailAdminComponent implements OnInit {
       this.uploadingImage = false;
       return;
     }
-    
+
     console.log('Updating product thumbnail to:', imageUrl);
-    
+
     // Tạo đối tượng cập nhật với các giá trị hiện tại từ form
     const updatedProduct: UpdateProductDTO = {
       name: this.productForm.value.name,
@@ -210,27 +210,27 @@ export class ProductDetailAdminComponent implements OnInit {
       categoryId: this.productForm.value.categoryId,
       thumbnail: imageUrl // Thêm trường thumbnail vào đối tượng cập nhật
     };
-    
+
     // Gọi API cập nhật sản phẩm
     this.productService.updateProduct(this.productId, updatedProduct).subscribe({
       next: (response) => {
         console.log('Product updated with new thumbnail:', response);
-        
+
         // Cập nhật thông tin sản phẩm từ response
         this.product = response.result;
-        
+
         // Cập nhật URL hình ảnh với timestamp để tránh cache
         if (this.product && this.product.thumbnail) {
           this.imageUrl = `${environment.apiBaseUrl}/products/images/${this.product.thumbnail}?t=${new Date().getTime()}`;
           this.imagePreviewUrl = this.imageUrl;
           console.log('Updated image URL to:', this.imageUrl);
         }
-        
+
         // Hoàn thành quá trình
         this.uploadingImage = false;
         this.isEditing = false;
         this.selectedFile = null;
-        
+
         Swal.fire({
           title: 'Thành công!',
           text: 'Cập nhật hình ảnh thành công',
@@ -241,7 +241,7 @@ export class ProductDetailAdminComponent implements OnInit {
       error: (error) => {
         console.error('Error updating product thumbnail:', error);
         this.uploadingImage = false;
-        
+
         Swal.fire({
           title: 'Lỗi!',
           text: 'Không thể cập nhật thumbnail sản phẩm. Vui lòng thử lại sau.',
@@ -302,7 +302,7 @@ export class ProductDetailAdminComponent implements OnInit {
       next: (response) => {
         this.product = response.result;
         this.submitting = false;
-        
+
         // If there's a selected file, upload it after saving product details
         if (this.selectedFile) {
           this.uploadImage();
@@ -319,7 +319,7 @@ export class ProductDetailAdminComponent implements OnInit {
       error: (error) => {
         console.error('Error updating product:', error);
         this.submitting = false;
-        
+
         Swal.fire({
           title: 'Lỗi!',
           text: 'Không thể cập nhật sản phẩm. Vui lòng thử lại sau.',

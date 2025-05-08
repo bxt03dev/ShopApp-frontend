@@ -12,17 +12,17 @@ import { AdminComponent } from "./component/admin/admin.component";
 import { AuthGuard } from "./guard/auth.guard";
 import { AdminGuard } from "./guard/admin.guard";
 import {OrderAdminComponent} from "./component/admin/order/order.admin.component";
-import {ProductAdminComponent} from "./component/admin/product/product.admin.component";
-import {ProductDetailAdminComponent} from "./component/admin/product/product-detail.admin.component";
-import {ProductCreateAdminComponent} from "./component/admin/product/product-create.admin.component";
+import {ProductAdminComponent} from "./component/admin/product/product-admin/product.admin.component";
+import {ProductDetailAdminComponent} from "./component/admin/product/product-detail-admin/product-detail.admin.component";
+import {ProductCreateAdminComponent} from "./component/admin/product/product-create-admin/product-create.admin.component";
 
 export const routes: Routes = [
   {path: '', component: StoreComponent},
   {path: 'home', component: HomeComponent},
   {path: 'login', component: LoginComponent},
   {
-    path: 'admin', 
-    component: AdminComponent, 
+    path: 'admin',
+    component: AdminComponent,
     canActivate: [AdminGuard],
     children: [
       {path: '', redirectTo: 'order', pathMatch: 'full'},

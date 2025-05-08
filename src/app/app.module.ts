@@ -22,9 +22,9 @@ import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AdminComponent } from './component/admin/admin.component';
 import { OrderAdminComponent } from './component/admin/order/order.admin.component';
-import { ProductAdminComponent } from './component/admin/product/product.admin.component';
-import { ProductDetailAdminComponent } from './component/admin/product/product-detail.admin.component';
-import { ProductCreateAdminComponent } from './component/admin/product/product-create.admin.component';
+import { ProductAdminComponent } from './component/admin/product/product-admin/product.admin.component';
+import { ProductDetailAdminComponent } from './component/admin/product/product-detail-admin/product-detail.admin.component';
+import { ProductCreateAdminComponent } from './component/admin/product/product-create-admin/product-create.admin.component';
 
 @NgModule({
   declarations: [
