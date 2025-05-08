@@ -63,7 +63,9 @@
   }
 }
 
-.product-detail-content {
+// Shared styles for view and edit modes
+.product-detail-content,
+.product-edit-content .edit-form-content {
   display: flex;
   flex-wrap: wrap;
   gap: 30px;
@@ -81,6 +83,7 @@
   }
 }
 
+// View mode styles
 .product-info-section {
   flex: 1;
   min-width: 300px;
@@ -117,6 +120,187 @@
     line-height: 1.6;
     color: #333;
     white-space: pre-line;
+  }
+}
+
+// Edit mode styles
+.product-edit-content {
+  form {
+    width: 100%;
+  }
+
+  .image-preview-container {
+    position: relative;
+    margin-bottom: 15px;
+    
+    .product-detail-image {
+      margin-bottom: 12px;
+    }
+    
+    .image-upload-controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      
+      .upload-btn {
+        background-color: #4CAF50;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        font-size: 14px;
+        
+        i {
+          margin-right: 8px;
+        }
+        
+        &:hover {
+          background-color: #3d8b40;
+        }
+      }
+      
+      .file-input {
+        display: none;
+      }
+      
+      .remove-image-btn {
+        background-color: #f44336;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        display: inline-flex;
+        align-items: center;
+        
+        i {
+          margin-right: 8px;
+        }
+        
+        &:hover {
+          background-color: #d32f2f;
+        }
+      }
+    }
+    
+    .file-info {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #666;
+      
+      .file-name {
+        margin: 0 0 5px 0;
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+      }
+      
+      .file-size {
+        margin: 0;
+        color: #888;
+      }
+    }
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .required {
+      color: #f44336;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+
+      &:focus {
+        outline: none;
+        border-color: #2196F3;
+        box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+      }
+
+      &.invalid {
+        border-color: #f44336;
+      }
+    }
+
+    .description-textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+
+    .error-message {
+      color: #f44336;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 12px;
+    padding-top: 20px;
+    border-top: 1px solid #eaeaea;
+    margin-top: 20px;
+
+    button {
+      padding: 10px 20px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      transition: background-color 0.2s;
+
+      i {
+        margin-right: 8px;
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+
+    .cancel-btn {
+      background-color: #f5f5f5;
+      color: #333;
+
+      &:hover:not(:disabled) {
+        background-color: #e0e0e0;
+      }
+    }
+
+    .save-btn {
+      background-color: #2196F3;
+      color: white;
+
+      &:hover:not(:disabled) {
+        background-color: #0d8aee;
+      }
+
+      .spinner-border {
+        width: 1rem;
+        height: 1rem;
+        margin-left: 8px;
+      }
+    }
   }
 }
 
@@ -167,6 +351,22 @@
   font-size: 16px;
 }
 
+.spinner-border {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spinner-border 0.75s linear infinite;
+}
+
+@keyframes spinner-border {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .product-image-section,
@@ -180,5 +380,13 @@
 
   .info-label {
     margin-bottom: 4px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    
+    button {
+      width: 100%;
+    }
   }
 } 

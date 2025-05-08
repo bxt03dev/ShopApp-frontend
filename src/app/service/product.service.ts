@@ -10,6 +10,13 @@ interface ProductListResponse {
   totalPages: number;
 }
 
+export interface UpdateProductDTO {
+  name: string;
+  price: number;
+  description: string;
+  categoryId: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -36,5 +43,27 @@ export class ProductService {
 
   deleteProduct(productId: number): Observable<ApiResponse<string>> {
     return this.http.delete<ApiResponse<string>>(`${environment.apiBaseUrl}/products/${productId}`);
+  }
+  
+  updateProduct(productId: number, updatedProduct: UpdateProductDTO): Observable<ApiResponse<Product>> {
+    return this.http.put<ApiResponse<Product>>(`${environment.apiBaseUrl}/products/${productId}`, updatedProduct);
+  }
+
+  uploadProductImage(productId: number, file: File): Observable<any> {
+    const formData = new FormData();
+    const fileList = [file];
+    for (let i = 0; i < fileList.length; i++) {
+      formData.append('files', fileList[i]);
+    }
+    
+    const headers = {
+      'Accept': 'application/json'
+    };
+    
+    return this.http.post<any>(
+      `${environment.apiBaseUrl}/products/uploads/${productId}`, 
+      formData,
+      { headers }
+    );
   }
 }

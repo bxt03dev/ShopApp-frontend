@@ -34,7 +34,7 @@ export class ProductAdminComponent implements OnInit {
         next: (response) => {
           const productListResponse = response.result;
           productListResponse.products.forEach((product: Product) => {
-            product.url = `${environment.apiBaseUrl}/products/images/${product.thumbnail}`;
+            product.url = `${environment.apiBaseUrl}/products/images/${product.thumbnail}?t=${new Date().getTime()}`;
           });
           this.products = productListResponse.products;
           this.totalPages = productListResponse.totalPages;
