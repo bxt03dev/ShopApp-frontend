@@ -41,12 +41,14 @@
 .admin-content {
   display: flex;
   flex: 1;
+  overflow-x: hidden; /* Prevent horizontal scroll */
 }
 
 .admin-sidebar {
   width: 250px;
   background-color: #000000;
   padding: 2rem 0;
+  flex-shrink: 0; /* Prevent sidebar from shrinking */
 }
 
 .admin-sidebar nav ul {
@@ -83,4 +85,24 @@
   flex: 1;
   padding: 2rem;
   background-color: #fff;
+  overflow-x: hidden; /* Prevent horizontal scroll */
+  max-width: calc(100vw - 250px); /* Ensure content doesn't exceed viewport minus sidebar width */
+  box-sizing: border-box; /* Include padding in width calculation */
+}
+
+/* Responsive styles for mobile */
+@media (max-width: 768px) {
+  .admin-content {
+    flex-direction: column;
+  }
+
+  .admin-sidebar {
+    width: 100%;
+    padding: 1rem 0;
+  }
+
+  .main-content {
+    max-width: 100%;
+    padding: 1rem;
+  }
 }

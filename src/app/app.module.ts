@@ -21,7 +21,8 @@ import { StoreComponent } from './component/store/store.component';
 import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AdminComponent } from './component/admin/admin.component';
-import {OrderAdminComponent} from "./component/admin/order/order.admin.component";
+import { OrderAdminComponent } from './component/admin/order/order.admin.component';
+import { ProductAdminComponent } from './component/admin/product/product.admin.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import {OrderAdminComponent} from "./component/admin/order/order.admin.component
     SearchComponent,
     StoreComponent,
     AdminComponent,
-    OrderAdminComponent
+    OrderAdminComponent,
+    ProductAdminComponent
   ],
   imports: [
     ReactiveFormsModule,

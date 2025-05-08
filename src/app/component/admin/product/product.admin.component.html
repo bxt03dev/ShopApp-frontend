@@ -1,0 +1,83 @@
+<div class="admin-product-container">
+  <div class="admin-product-header">
+    <h2>Quản lý sản phẩm</h2>
+    <button class="add-product-btn">
+      <i class="fas fa-plus"></i> Thêm sản phẩm mới
+    </button>
+  </div>
+
+  <!-- Loading spinner -->
+  <div class="loading-spinner" *ngIf="loading">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Products table -->
+  <div class="table-responsive" *ngIf="!loading">
+    <table class="products-table">
+      <thead>
+        <tr>
+          <th class="col-image">Hình ảnh</th>
+          <th class="col-name">Tên sản phẩm</th>
+          <th class="col-price">Giá (₫)</th>
+          <th class="col-desc">Mô tả</th>
+          <th class="col-category">Danh mục</th>
+          <th class="col-actions">Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of products">
+          <td class="product-image col-image">
+            <img [src]="product.url" alt="{{ product.name }}">
+          </td>
+          <td class="product-name col-name">{{ product.name }}</td>
+          <td class="product-price col-price">{{ product.price | number }}</td>
+          <td class="product-description col-desc">{{ product.description }}</td>
+          <td class="product-category col-category">{{ product.categoryId }}</td>
+          <td class="col-actions">
+            <div class="action-buttons">
+              <button class="action-btn view-btn" (click)="viewProductDetails(product.id)">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="action-btn edit-btn">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="action-btn delete-btn" (click)="deleteProduct(product.id)">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- No products message -->
+  <div class="no-products" *ngIf="!loading && products.length === 0">
+    <p>Không có sản phẩm nào.</p>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination" *ngIf="totalPages > 1 && !loading">
+    <button class="page-btn" (click)="changePage(1)" [disabled]="currentPage === 1">
+      <i class="fas fa-angle-double-left"></i>
+    </button>
+    <button class="page-btn" (click)="prevPage()" [disabled]="currentPage === 1">
+      <i class="fas fa-angle-left"></i>
+    </button>
+    
+    <button 
+      *ngFor="let page of visiblePages" 
+      class="page-btn" 
+      [class.active]="currentPage === page"
+      (click)="changePage(page)">
+      {{ page }}
+    </button>
+    
+    <button class="page-btn" (click)="nextPage()" [disabled]="currentPage === totalPages">
+      <i class="fas fa-angle-right"></i>
+    </button>
+    <button class="page-btn" (click)="changePage(totalPages)" [disabled]="currentPage === totalPages">
+      <i class="fas fa-angle-double-right"></i>
+    </button>
+  </div>
+</div>
