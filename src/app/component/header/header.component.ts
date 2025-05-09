@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { CartService } from '../../service/cart.service';
-import { Subscription } from 'rxjs';
+import { Subscription, interval } from 'rxjs';
 import { UserService } from '../../service/user.service';
 import { UserResponse } from '../../response/user/user.response';
 import { TokenService } from '../../service/token.service';
@@ -17,6 +17,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   cartItemCount: number = 0;
   private cartSubscription: Subscription;
   private routerSubscription: Subscription;
+  private tokenCheckSubscription: Subscription | undefined;
   userResponse: UserResponse | null = null;
   dropdownOpen: boolean = false;
 
@@ -40,6 +41,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadUserInfo();
+    // Kiểm tra token hết hạn mỗi phút
+    this.tokenCheckSubscription = interval(60000).subscribe(() => {
+      this.loadUserInfo();
+    });
   }
 
   ngOnDestroy(): void {
@@ -49,9 +54,18 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (this.routerSubscription) {
       this.routerSubscription.unsubscribe();
     }
+    if (this.tokenCheckSubscription) {
+      this.tokenCheckSubscription.unsubscribe();
+    }
   }
 
   loadUserInfo(): void {
+    if (this.tokenService.isTokenExpired()) {
+      this.tokenService.removeToken();
+      this.userService.removeUserFromLocalStorage();
+      this.userResponse = null;
+      return;
+    }
     this.userResponse = this.userService.getUserResponseFromLocalStorage();
   }
 
@@ -85,7 +99,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   navigateByCategory(categoryId: number): void {
     console.log(`Navigating to category ID: ${categoryId}`);
-    this.router.navigate(['/home'], { 
+    this.router.navigate(['/home'], {
       queryParams: { category_id: categoryId },
       queryParamsHandling: 'merge'
     });

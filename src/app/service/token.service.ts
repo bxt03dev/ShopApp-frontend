@@ -43,9 +43,15 @@ export class TokenService {
     return 'userId' in userObject ? parseInt(userObject['userId']) : 0
   }
   isTokenExpired(): boolean {
-    if (this.getToken() == null) {
-      return false
+    const token = this.getToken();
+    if (!token) {
+      return true; // Không có token được coi là đã hết hạn
     }
-    return this.jwtHelperService.isTokenExpired(this.getToken()!)
+    try {
+      return this.jwtHelperService.isTokenExpired(token);
+    } catch (error) {
+      console.error('Lỗi khi kiểm tra token:', error);
+      return true; // Nếu có lỗi, coi như token đã hết hạn
+    }
   }
 }
