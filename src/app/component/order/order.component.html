@@ -94,7 +94,9 @@
               <td>{{item.product.price | currency:'USD'}}</td>
               <td>{{item.product.price * item.quantity | currency:'USD'}}</td>
               <td>
-                <button type="button" (click)="confirmDelete(i)" class="btn btn-danger btn-sm">Delete</button>
+                <button type="button" (click)="confirmDelete(i)" class="btn btn-danger btn-sm delete-btn" title="Xóa sản phẩm">
+                  <i class="fas fa-trash"></i> Xóa
+                </button>
               </td>
             </tr>
           </tbody>

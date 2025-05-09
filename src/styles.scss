@@ -42,3 +42,16 @@
     background-color: #17a2b8;
   }
 }
+
+/* Định nghĩa vị trí toast-center ở giữa màn hình */
+.toast-center {
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+}
+
+/* Tăng kích thước toast xác nhận ở giữa màn hình */
+.toast-center .toast-confirmation {
+  max-width: 400px !important;
+  width: 400px !important;
+}

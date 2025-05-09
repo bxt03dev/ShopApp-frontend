@@ -103,4 +103,14 @@ export class CartService{
     this.saveCartToLocalStorage();
     this.updateCartItemCount();
   }
+
+  removeFromCart(productId: number): boolean {
+    if (this.cart.has(productId)) {
+      this.cart.delete(productId);
+      this.saveCartToLocalStorage();
+      this.updateCartItemCount();
+      return true;
+    }
+    return false;
+  }
 }

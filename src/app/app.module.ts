@@ -56,7 +56,7 @@ import { ProductCreateAdminComponent } from './component/admin/product/product-c
     BrowserAnimationsModule,
     ToastrModule.forRoot({
       timeOut: 3000,
-      positionClass: 'toast-bottom-right',
+      positionClass: 'toast-center',
       preventDuplicates: true,
       closeButton: true,
       progressBar: true,

@@ -14,6 +14,7 @@ import {Router} from "@angular/router";
 import {TokenService} from "../../service/token.service";
 import {CouponService} from "../../service/coupon.service";
 import { ToastrService } from 'ngx-toastr';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-order',
@@ -186,10 +187,35 @@ export class OrderComponent implements OnInit {
   }
 
   confirmDelete(index: number): void {
-    if (confirm('Are you sure you want to remove this item?')) {
-      this.cartItems.splice(index, 1);
-      this.updateCartFromCartItems();
-    }
+    const product = this.cartItems[index].product;
+    
+    Swal.fire({
+      title: 'Bạn có chắc chắn?',
+      text: `Bạn muốn xóa sản phẩm "${product.name}" khỏi giỏ hàng?`,
+      imageUrl: product.thumbnail,
+      imageWidth: 100,
+      imageHeight: 100,
+      imageAlt: product.name,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Xóa',
+      cancelButtonText: 'Hủy'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Xóa sản phẩm khỏi giỏ hàng
+        this.cartItems.splice(index, 1);
+        this.updateCartFromCartItems();
+        
+        // Hiển thị thông báo xóa thành công
+        Swal.fire(
+          'Đã xóa!',
+          `Sản phẩm "${product.name}" đã được xóa khỏi giỏ hàng.`,
+          'success'
+        );
+      }
+    });
   }
 
   private updateCartFromCartItems(): void {
