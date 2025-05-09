@@ -4,6 +4,7 @@ import { OrderService } from "../../../../service/order.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Location } from "@angular/common";
 import { OrderDTO } from "../../../../dto/user/order.dto";
+import { environment } from "../../../../common/environment";
 
 @Component({
   selector: 'app-order-detail-admin',
@@ -57,6 +58,20 @@ export class OrderDetailAdminComponent implements OnInit {
           
           // Cập nhật order mới
           this.order = response.result;
+          
+          // Format thumbnail URLs for products in order details
+          if (this.order && this.order.orderDetails && this.order.orderDetails.length > 0) {
+            this.order.orderDetails.forEach(detail => {
+              if (detail.product && detail.product.thumbnail) {
+                // Check if thumbnail already has the full URL
+                if (!detail.product.thumbnail.startsWith('http') && 
+                    !detail.product.thumbnail.startsWith(environment.apiBaseUrl)) {
+                  detail.product.thumbnail = `${environment.apiBaseUrl}/products/images/${detail.product.thumbnail}`;
+                }
+              }
+            });
+          }
+          
           console.log('Order data after update:', this.order); // Log để debug
           
           // So sánh xem có thay đổi thực sự không
@@ -136,6 +151,8 @@ export class OrderDetailAdminComponent implements OnInit {
 
     // Lưu trữ giá trị hiện tại để so sánh sau khi cập nhật
     const currentStatus = this.orderUpdate.status;
+    // Lưu trữ chi tiết đơn hàng để giữ lại dữ liệu sản phẩm
+    const currentOrderDetails = this.order?.orderDetails || [];
     
     this.orderService.updateOrder(this.orderId, orderUpdatePayload).subscribe({
       next: (response: any) => {
@@ -151,6 +168,25 @@ export class OrderDetailAdminComponent implements OnInit {
             console.log('Response result:', response.result);
             // Cập nhật order từ dữ liệu trả về từ server để đảm bảo có dữ liệu mới nhất
             this.order = response.result;
+            
+            // Giữ lại dữ liệu sản phẩm từ orderDetails trước đó nếu server không trả về
+            if (this.order && (!this.order.orderDetails || this.order.orderDetails.length === 0)) {
+              this.order.orderDetails = currentOrderDetails;
+            }
+            
+            // Format thumbnail URLs for products in order details
+            if (this.order && this.order.orderDetails && this.order.orderDetails.length > 0) {
+              this.order.orderDetails.forEach(detail => {
+                if (detail.product && detail.product.thumbnail) {
+                  // Check if thumbnail already has the full URL
+                  if (!detail.product.thumbnail.startsWith('http') && 
+                      !detail.product.thumbnail.startsWith(environment.apiBaseUrl)) {
+                    detail.product.thumbnail = `${environment.apiBaseUrl}/products/images/${detail.product.thumbnail}`;
+                  }
+                }
+              });
+            }
+            
             console.log('Order updated from server response:', this.order);
           } else {
             // Nếu không có dữ liệu từ server, cập nhật từ form
@@ -235,6 +271,20 @@ export class OrderDetailAdminComponent implements OnInit {
         if (response && response.result) {
           console.log('Refreshed order data:', response.result);
           this.order = response.result;
+          
+          // Format thumbnail URLs for products in order details
+          if (this.order && this.order.orderDetails && this.order.orderDetails.length > 0) {
+            this.order.orderDetails.forEach(detail => {
+              if (detail.product && detail.product.thumbnail) {
+                // Check if thumbnail already has the full URL
+                if (!detail.product.thumbnail.startsWith('http') && 
+                    !detail.product.thumbnail.startsWith(environment.apiBaseUrl)) {
+                  detail.product.thumbnail = `${environment.apiBaseUrl}/products/images/${detail.product.thumbnail}`;
+                }
+              }
+            });
+          }
+          
           this.initUpdateForm();
         } else {
           console.warn('Failed to refresh order data');
