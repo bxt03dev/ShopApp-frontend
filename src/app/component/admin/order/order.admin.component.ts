@@ -3,6 +3,7 @@ import {OrderResponse} from "../../../response/order/order.response";
 import {DOCUMENT} from "@angular/common";
 import {OrderService} from "../../../service/order.service";
 import {ActivatedRoute, Router} from "@angular/router";
+import {Location} from "@angular/common";
 
 @Component({
   selector: 'app-order-admin',
@@ -29,7 +30,6 @@ export class OrderAdminComponent implements OnInit{
     this.localStorage = document.defaultView?.localStorage
   }
   ngOnInit(): void {
-    // debugger
     this.currentPage = Number(this.localStorage?.getItem('currentOrderAdminPage')) || 0
     this.getAllOrders(this.keyword, this.currentPage, this.itemsPerPage)
   }
@@ -37,32 +37,25 @@ export class OrderAdminComponent implements OnInit{
   searchOrders() {
     this.currentPage = 0
     this.itemsPerPage = 12
-    //Mediocre Iron Wallet
-    // debugger
     this.getAllOrders(this.keyword.trim(), this.currentPage, this.itemsPerPage)
   }
 
   getAllOrders(keyword: string, page: number, limit: number) {
-    // debugger
     this.orderService.getAllOrders(keyword, page, limit).subscribe({
       next: (response: any) => {
-        // debugger
-        this.orders = response.orders
-        this.totalPages = response.totalPages
-        this.visiblePages = this.generateVisiblePageArray(this.currentPage, this.totalPages)
-      },
-      complete: () => {
-        // debugger;
+        if (response && response.result) {
+          this.orders = response.result.orders
+          this.totalPages = response.result.totalPages
+          this.visiblePages = this.generateVisiblePageArray(this.currentPage, this.totalPages)
+        }
       },
       error: (error: any) => {
-        // debugger;
-        console.error('Error fetching products:', error)
+        console.error('Error fetching orders:', error)
       }
     })
   }
 
   onPageChange(page: number) {
-    // debugger;
     this.currentPage = page < 0 ? 0 : page
     this.localStorage?.setItem('currentOrderAdminPage', String(this.currentPage))
     this.getAllOrders(this.keyword, this.currentPage, this.itemsPerPage)
@@ -72,41 +65,75 @@ export class OrderAdminComponent implements OnInit{
     const maxVisiblePages = 5
     const halfVisiblePages = Math.floor(maxVisiblePages / 2)
 
-    let startPage = Math.max(currentPage - halfVisiblePages, 1)
-    let endPage = Math.min(startPage + maxVisiblePages - 1, totalPages)
+    let startPage = Math.max(currentPage - halfVisiblePages, 0)
+    let endPage = Math.min(startPage + maxVisiblePages - 1, totalPages - 1)
 
     if (endPage - startPage + 1 < maxVisiblePages) {
-      startPage = Math.max(endPage - maxVisiblePages + 1, 1)
+      startPage = Math.max(endPage - maxVisiblePages + 1, 0)
     }
 
     return new Array(endPage - startPage + 1).fill(0)
       .map((_, index) => startPage + index)
   }
 
+  // Helper để hiển thị số trang người dùng thấy (bắt đầu từ 1)
+  getDisplayPageNumber(index: number): number {
+    return index + 1;
+  }
+
   deleteOrder(id: number) {
     const confirmation = window
       .confirm('Are you sure you want to delete this order?')
     if (confirmation) {
-      // debugger
       this.orderService.deleteOrder(id).subscribe({
         next: (response: any) => {
-          // debugger
           location.reload()
         },
-        complete: () => {
-          // debugger;
-        },
         error: (error: any) => {
-          // debugger;
-          console.error('Error fetching products:', error)
+          console.error('Error deleting order:', error)
         }
       })
     }
   }
 
   viewDetails(order: OrderResponse) {
-    // debugger
     this.router.navigate(['/admin/orders', order.id])
   }
 
+  formatDate(date: any): string {
+    if (!date) return 'N/A';
+    
+    // Nếu date là timestamp (number)
+    if (typeof date === 'number') {
+      return new Date(date).toLocaleString();
+    }
+    
+    // Nếu date là Date object
+    if (date instanceof Date) {
+      return date.toLocaleString();
+    }
+    
+    // Nếu date là string ISO format
+    if (typeof date === 'string') {
+      return new Date(date).toLocaleString();
+    }
+    
+    return 'N/A';
+  }
+
+  formatArrayDate(dateArray: any): string {
+    if (!dateArray) return 'N/A';
+    
+    // Nếu là mảng [năm, tháng, ngày]
+    if (Array.isArray(dateArray) && dateArray.length >= 3) {
+      // JavaScript months are 0-based, so we subtract 1 from the month
+      return new Date(dateArray[0], dateArray[1] - 1, dateArray[2]).toLocaleDateString();
+    }
+    
+    return 'N/A';
+  }
+  
+  isArray(obj: any): boolean {
+    return Array.isArray(obj);
+  }
 }

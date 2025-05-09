@@ -32,14 +32,13 @@ export class OrderService {
     return this.http.get(url)
   }
 
-  getAllOrders(keyword: string,
-               page: number, limit: number
-  ): Observable<OrderResponse[]> {
-    const params = new HttpParams()
-      .set('keyword', keyword)
-      .set('page', page.toString())
-      .set('limit', limit.toString())
-    return this.http.get<any>(this.apiGetAllOrders, {params})
+  getAllOrders(keyword: string, page: number, limit: number) {
+    const params = {
+      page: page.toString(),
+      limit: limit.toString(),
+      keyword: keyword
+    };
+    return this.http.get<any>(`${environment.apiBaseUrl}/orders/get-orders-by-keyword`, { params });
   }
 
   updateOrder(orderId: number, orderData: OrderDTO): Observable<Object> {

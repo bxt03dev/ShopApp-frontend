@@ -14,29 +14,39 @@
   <table>
     <thead>
       <tr>
-        <th>Order ID</th>
+        <th>ID</th>
         <th>User ID</th>
         <th>Full Name</th>
+        <th>Email</th>
         <th>Phone Number</th>
         <th>Address</th>
         <th>Note</th>
         <th>Order Date</th>
         <th>Status</th>
         <th>Total Money</th>
-        <th>Actions</th>
+        <th>Shipping Method</th>
+        <th>Shipping Address</th>
+        <th>Shipping Date</th>
+        <th>Payment Method</th>
+        <th>Action</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let order of orders">
         <td>{{order.id}}</td>
         <td>{{order.userId}}</td>
-        <td>{{order.fullName}}</td>
+        <td>{{order.fullName || 'N/A'}}</td>
+        <td>{{order.email}}</td>
         <td>{{order.phoneNumber}}</td>
         <td>{{order.address}}</td>
         <td>{{order.note}}</td>
-        <td>{{order.orderDate | date:'medium'}}</td>
-        <td>{{order.status}}</td>
-        <td>{{order.totalMoney | currency:'VND'}}</td>
+        <td>{{formatDate(order.orderDate)}}</td>
+        <td>{{order.status || 'N/A'}}</td>
+        <td>{{order.totalMoney ? (order.totalMoney | currency:'VND') : 'N/A'}}</td>
+        <td>{{order.shippingMethod}}</td>
+        <td>{{order.shippingAddress || 'N/A'}}</td>
+        <td>{{isArray(order.shippingDate) ? formatArrayDate(order.shippingDate) : formatDate(order.shippingDate)}}</td>
+        <td>{{order.paymentMethod}}</td>
         <td>
           <button (click)="viewDetails(order)">View</button>
           <button (click)="deleteOrder(order.id)">Delete</button>
@@ -60,7 +70,7 @@
     [class.active]="page === currentPage"
     (click)="onPageChange(page)"
   >
-    {{page}}
+    {{getDisplayPageNumber(page)}}
   </button>
 
   <button
