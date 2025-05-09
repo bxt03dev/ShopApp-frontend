@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Product } from '../../model/product';
 import { ProductService } from '../../service/product.service';
 import { environment } from '../../common/environment';
@@ -19,9 +20,18 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   products: Product[] = [];
   currentPage: number = 1;
-  itemsPerPage: number = 10;
+  itemsPerPage: number = 8;
   totalPages: number = 0;
   visiblePages: number[] = [];
+  currentCategoryId: number | null = null;
+  categoryNames: { [key: number]: string } = {
+    1: 'Mac',
+    2: 'iPad',
+    3: 'iPhone',
+    4: 'Watch',
+    5: 'AirPods',
+    6: 'Phụ kiện'
+  };
 
   // Slider properties
   sliderImages: SliderImage[] = [
@@ -45,15 +55,34 @@ export class HomeComponent implements OnInit, OnDestroy {
   currentSlideIndex: number = 0;
   sliderInterval: Subscription | undefined;
 
-  constructor(private productService: ProductService) { }
+  constructor(
+    private productService: ProductService,
+    private route: ActivatedRoute
+  ) { }
 
   ngOnInit(): void {
-    this.getProducts(this.currentPage, this.itemsPerPage);
+    this.route.queryParams.subscribe(params => {
+      if (params['category_id']) {
+        this.currentCategoryId = +params['category_id'];
+      } else {
+        this.currentCategoryId = null;
+      }
+      this.currentPage = 1;
+      this.loadProducts();
+    });
     this.startSliderAutoPlay();
   }
 
   ngOnDestroy(): void {
     this.stopSliderAutoPlay();
+  }
+
+  loadProducts(): void {
+    if (this.currentCategoryId) {
+      this.getProductsByCategory(this.currentPage, this.itemsPerPage, this.currentCategoryId);
+    } else {
+      this.getProducts(this.currentPage, this.itemsPerPage);
+    }
   }
 
   getProducts(page: number, size: number): void {
@@ -76,20 +105,57 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
+  getProductsByCategory(page: number, size: number, categoryId: number): void {
+    this.productService.getProductsByCategory(categoryId, page - 1, size).subscribe({
+      next: (response: any) => {
+        const productListResponse = response.result;
+        productListResponse.products.forEach((product: Product) => {
+          product.url = `${environment.apiBaseUrl}/products/images/${product.thumbnail}`;
+        });
+        this.products = productListResponse.products;
+        this.totalPages = productListResponse.totalPages;
+        this.visiblePages = this.generateVisiblePageArray(this.currentPage, this.totalPages);
+      },
+      complete: () => {
+        console.log(`Fetched products for category ${categoryId} successfully`);
+      },
+      error: (error: any) => {
+        console.error(`Error fetching products for category ${categoryId}:`, error);
+      }
+    });
+  }
+
   onPageChange(page: number): void {
     this.currentPage = page;
-    this.getProducts(this.currentPage, this.itemsPerPage);
+    this.loadProducts();
+    this.scrollToTop();
+  }
+
+  scrollToTop(): void {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   generateVisiblePageArray(currentPage: number, totalPages: number): number[] {
     const maxVisiblePages = 5;
     const halfMaxVisible = Math.floor(maxVisiblePages / 2);
-    let startPage = Math.max(currentPage - halfMaxVisible, 1);
-    let endPage = Math.min(startPage + maxVisiblePages - 1, totalPages);
-    if (endPage - startPage + 1 < maxVisiblePages) {
-      startPage = Math.max(endPage - maxVisiblePages + 1, 1);
+    
+    // Không đủ trang để hiển thị đầy đủ
+    if (totalPages <= maxVisiblePages) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
     }
-    return new Array(endPage - startPage + 1).fill(0).map((_, index) => startPage + index);
+    
+    // Đang ở gần trang đầu
+    if (currentPage <= halfMaxVisible + 1) {
+      return Array.from({ length: maxVisiblePages }, (_, i) => i + 1);
+    }
+    
+    // Đang ở gần trang cuối
+    if (currentPage >= totalPages - halfMaxVisible) {
+      return Array.from({ length: maxVisiblePages }, (_, i) => totalPages - maxVisiblePages + i + 1);
+    }
+    
+    // Đang ở giữa
+    return Array.from({ length: maxVisiblePages }, (_, i) => currentPage - halfMaxVisible + i);
   }
 
   prevPage(): void {

@@ -35,6 +35,14 @@ export class ProductService {
     return this.http.get<ApiResponse<ProductListResponse>>(this.apiGetProducts, { params });
   }
 
+  getProductsByCategory(categoryId: number, page: number, limit: number): Observable<ApiResponse<ProductListResponse>> {
+    const params = new HttpParams()
+      .append('page', page.toString())
+      .append('limit', limit.toString())
+      .append('category_id', categoryId.toString());
+    return this.http.get<ApiResponse<ProductListResponse>>(this.apiGetProducts, { params });
+  }
+
   getDetailProduct(productId: number): Observable<ApiResponse<Product>> {
     return this.http.get<ApiResponse<Product>>(`${environment.apiBaseUrl}/products/${productId}`);
   }

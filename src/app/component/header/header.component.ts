@@ -82,4 +82,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.router.navigate(['/search'], { queryParams: { q: this.searchQuery } });
     }
   }
+
+  navigateByCategory(categoryId: number): void {
+    console.log(`Navigating to category ID: ${categoryId}`);
+    this.router.navigate(['/home'], { 
+      queryParams: { category_id: categoryId },
+      queryParamsHandling: 'merge'
+    });
+  }
 }
