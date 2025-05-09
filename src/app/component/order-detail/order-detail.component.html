@@ -4,6 +4,12 @@
     <h1>Confirm your orders!</h1>
     <p>check your orders</p>
   </div>
+  
+  <!-- Hiển thị trạng thái đơn hàng để debug -->
+  <div class="alert alert-info mt-3" *ngIf="orderDetail">
+    <strong>Trạng thái đơn hàng:</strong> {{orderDetail.status}}
+  </div>
+  
   <div class="row">
     <table class="table-product-list">
       <thead>
@@ -36,6 +42,14 @@
     <div class="text-center mt-3 col-md-4 col-sm-12 mx-auto">
       <a routerLink="/orders" class="btn btn-order w-100" type="button">Continue shopping</a>
     </div>
+  </div>
+
+  <!-- Thêm nút thanh toán cho đơn hàng có trạng thái PENDING -->
+  <div class="mt-4 text-center" *ngIf="orderDetail && orderDetail.status === 'PENDING'">
+    <h4 class="mb-3">Đơn hàng này chưa được thanh toán</h4>
+    <a [routerLink]="['/checkout', orderDetail.id]" class="btn btn-primary btn-lg">
+      <i class="bi bi-credit-card me-2"></i>Thanh toán ngay với VNPay
+    </a>
   </div>
 </div>
 <app-footer></app-footer>

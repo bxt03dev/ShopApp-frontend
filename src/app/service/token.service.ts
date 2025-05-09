@@ -45,13 +45,13 @@ export class TokenService {
   isTokenExpired(): boolean {
     const token = this.getToken();
     if (!token) {
-      return true; // Không có token được coi là đã hết hạn
+      return true;
     }
     try {
       return this.jwtHelperService.isTokenExpired(token);
     } catch (error) {
       console.error('Lỗi khi kiểm tra token:', error);
-      return true; // Nếu có lỗi, coi như token đã hết hạn
+      return true;
     }
   }
 }

@@ -98,4 +98,9 @@ export class CustomToastService {
   showInfo(message: string, title: string = 'Thông tin') {
     this.toastr.info(message, title);
   }
+
+  // Xóa tất cả các thông báo hiện tại
+  clear() {
+    this.toastr.clear();
+  }
 } 

@@ -32,6 +32,10 @@ export class OrderService {
     return this.http.get(url)
   }
 
+  getOrderDetail(orderId: number): Observable<any> {
+    return this.getOrderById(orderId);
+  }
+
   getAllOrders(keyword: string, page: number, limit: number) {
     const params = {
       page: page.toString(),

@@ -29,6 +29,8 @@ import { ProductCreateAdminComponent } from './component/admin/product/product-c
 import { OrderDetailAdminComponent } from './component/admin/order/order-detail-admin/order.detail.admin.component';
 import { CustomToastService } from './service/custom-toast.service';
 import { ToastModule } from './service/toast.module';
+import { PaymentComponent } from './component/payment/payment.component';
+import { PaymentResultComponent } from './component/payment-result/payment-result.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +50,9 @@ import { ToastModule } from './service/toast.module';
     ProductAdminComponent,
     ProductDetailAdminComponent,
     ProductCreateAdminComponent,
-    OrderDetailAdminComponent
+    OrderDetailAdminComponent,
+    PaymentComponent,
+    PaymentResultComponent
   ],
   imports: [
     ReactiveFormsModule,
