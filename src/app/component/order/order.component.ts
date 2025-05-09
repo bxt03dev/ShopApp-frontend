@@ -81,6 +81,15 @@ export class OrderComponent implements OnInit {
               const product = products.result.find((p: Product) => p.id === productId);
               if (product) {
                 product.thumbnail = `${environment.apiBaseUrl}/products/images/${product.thumbnail}`;
+                
+                // Kiểm tra nếu số lượng trong giỏ hàng lớn hơn số lượng có sẵn
+                const cartQuantity = this.cart.get(productId) || 0;
+                if (product.quantity != null && cartQuantity > product.quantity) {
+                  // Điều chỉnh số lượng trong giỏ hàng không vượt quá số lượng có sẵn
+                  this.cart.set(productId, product.quantity);
+                  this.toastr.warning(`Số lượng sản phẩm "${product.name}" đã được điều chỉnh còn ${product.quantity} (số lượng tối đa có sẵn).`, 'Thông báo');
+                }
+                
                 return {
                   product: product,
                   quantity: this.cart.get(productId) || 0
@@ -90,6 +99,7 @@ export class OrderComponent implements OnInit {
             })
             .filter((item): item is { product: Product; quantity: number } => item !== null);
 
+          this.cartService.setCart(this.cart); // Lưu lại giỏ hàng sau khi điều chỉnh
           this.calculateTotal();
         }
       },
@@ -101,6 +111,19 @@ export class OrderComponent implements OnInit {
 
   placeOrder() {
     if (this.orderForm.valid) {
+      // Kiểm tra lại số lượng trước khi đặt hàng
+      let hasInsufficientStock = false;
+      this.cartItems.forEach(item => {
+        if (item.product.quantity != null && item.quantity > item.product.quantity) {
+          this.toastr.error(`Không đủ số lượng cho sản phẩm "${item.product.name}". Chỉ còn ${item.product.quantity} sản phẩm.`, 'Lỗi');
+          hasInsufficientStock = true;
+        }
+      });
+      
+      if (hasInsufficientStock) {
+        return;
+      }
+      
       const formValue = this.orderForm.value;
       this.orderData = {
         ...this.orderData,
@@ -113,14 +136,21 @@ export class OrderComponent implements OnInit {
       };
 
       this.orderService.placeOrder(this.orderData).subscribe({
-        next: () => {
+        next: (response) => {
           this.toastr.success('Đặt hàng thành công!', 'Thông báo');
           this.cartService.clearCart();
           this.loadCartItems();
           this.router.navigate(['/']);
         },
         error: (error: any) => {
-          this.toastr.error(`Lỗi khi đặt hàng: ${error.message || 'Lỗi không xác định'}`, 'Lỗi');
+          // Kiểm tra nếu lỗi do không đủ số lượng
+          if (error.error && error.error.result && Array.isArray(error.error.result)) {
+            error.error.result.forEach((errorMsg: string) => {
+              this.toastr.error(errorMsg, 'Lỗi số lượng');
+            });
+          } else {
+            this.toastr.error(`Lỗi khi đặt hàng: ${error.message || 'Lỗi không xác định'}`, 'Lỗi');
+          }
         }
       });
     } else {
@@ -136,7 +166,15 @@ export class OrderComponent implements OnInit {
   }
 
   increaseQuantity(index: number): void {
-    this.cartItems[index].quantity++;
+    const item = this.cartItems[index];
+    
+    // Kiểm tra nếu số lượng hiện tại đã đạt tối đa
+    if (item.product.quantity != null && item.quantity >= item.product.quantity) {
+      this.toastr.warning(`Không thể thêm. Sản phẩm "${item.product.name}" chỉ còn ${item.product.quantity} sản phẩm trong kho.`, 'Thông báo');
+      return;
+    }
+    
+    item.quantity++;
     this.updateCartFromCartItems();
   }
 

@@ -389,4 +389,23 @@
       width: 100%;
     }
   }
+}
+
+.warranty-code {
+  font-family: monospace;
+  letter-spacing: 0.05em;
+  background-color: #f5f5f5;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.warning-text {
+  color: #f44336;
+  font-weight: 600;
+}
+
+.warranty-note {
+  margin-top: 5px;
+  color: #666;
+  font-style: italic;
 } 

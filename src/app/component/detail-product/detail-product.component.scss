@@ -37,6 +37,13 @@
 }
 .product-actions button{
   margin-right: 10px;
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: #cccccc;
+    border-color: #bbbbbb;
+  }
 }
 .border-wrapper{
   border: 1px solid #e0e0e0;
@@ -64,4 +71,30 @@
 }
 .product-quantity input:focus{
   outline: none;
+}
+
+.product-inventory {
+  margin: 15px 0;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  
+  .inventory-label {
+    font-weight: 500;
+    color: #555;
+  }
+  
+  .inventory-value {
+    font-weight: 600;
+    color: #4CAF50;
+    background-color: rgba(76, 175, 80, 0.1);
+    padding: 4px 8px;
+    border-radius: 4px;
+    
+    &.low-stock {
+      color: #f44336;
+      background-color: rgba(244, 67, 54, 0.1);
+    }
+  }
 }

@@ -16,6 +16,8 @@ export interface ProductDTO {
   description: string;
   categoryId: string;
   thumbnail?: string;
+  quantity?: number;
+  warrantyCode?: string;
 }
 
 export interface UpdateProductDTO extends ProductDTO {}

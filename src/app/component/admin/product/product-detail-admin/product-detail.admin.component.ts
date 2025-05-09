@@ -48,7 +48,9 @@ export class ProductDetailAdminComponent implements OnInit {
       name: ['', [Validators.required, Validators.minLength(3)]],
       price: [0, [Validators.required, Validators.min(0)]],
       description: ['', Validators.required],
-      categoryId: ['', Validators.required]
+      categoryId: ['', Validators.required],
+      quantity: [0, [Validators.required, Validators.min(0)]],
+      warrantyCode: [{value: '', disabled: true}]
     });
   }
 
@@ -81,7 +83,9 @@ export class ProductDetailAdminComponent implements OnInit {
         name: this.product.name,
         price: this.product.price,
         description: this.product.description,
-        categoryId: this.product.categoryId
+        categoryId: this.product.categoryId,
+        quantity: this.product.quantity,
+        warrantyCode: this.product.warrantyCode
       });
     }
   }
@@ -208,6 +212,7 @@ export class ProductDetailAdminComponent implements OnInit {
       price: this.productForm.value.price,
       description: this.productForm.value.description,
       categoryId: this.productForm.value.categoryId,
+      quantity: this.productForm.value.quantity,
       thumbnail: imageUrl // Thêm trường thumbnail vào đối tượng cập nhật
     };
 
@@ -289,7 +294,8 @@ export class ProductDetailAdminComponent implements OnInit {
       name: this.productForm.value.name,
       price: this.productForm.value.price,
       description: this.productForm.value.description,
-      categoryId: this.productForm.value.categoryId
+      categoryId: this.productForm.value.categoryId,
+      quantity: this.productForm.value.quantity
     };
 
     // Nếu sản phẩm đã có thumbnail, giữ lại

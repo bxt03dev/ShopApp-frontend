@@ -19,7 +19,8 @@
           <th class="col-image">Hình ảnh</th>
           <th class="col-name">Tên sản phẩm</th>
           <th class="col-price">Giá (₫)</th>
-          <th class="col-desc">Mô tả</th>
+          <th class="col-quantity">Số lượng</th>
+          <th class="col-warranty">Mã bảo hành</th>
           <th class="col-category">Danh mục</th>
           <th class="col-actions">Thao tác</th>
         </tr>
@@ -31,7 +32,10 @@
           </td>
           <td class="product-name col-name">{{ product.name }}</td>
           <td class="product-price col-price">{{ product.price | number }}</td>
-          <td class="product-description col-desc">{{ product.description }}</td>
+          <td class="product-quantity col-quantity" [ngClass]="{'low-stock': product.quantity !== undefined && product.quantity < 10}">
+            {{ product.quantity || 0 }}
+          </td>
+          <td class="product-warranty col-warranty">{{ product.warrantyCode || 'N/A' }}</td>
           <td class="product-category col-category">{{ product.categoryId }}</td>
           <td class="col-actions">
             <div class="action-buttons">

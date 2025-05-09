@@ -195,6 +195,19 @@
       &.invalid {
         border-color: #f44336;
       }
+      
+      &[readonly] {
+        background-color: #f9f9f9;
+        border: 1px dashed #ccc;
+        cursor: not-allowed;
+        color: #666;
+      }
+    }
+
+    .warranty-note {
+      margin-top: 5px;
+      color: #666;
+      font-style: italic;
     }
 
     .description-textarea {

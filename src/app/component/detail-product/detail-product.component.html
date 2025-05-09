@@ -53,10 +53,24 @@
         <h2>{{ product.name }}</h2>
         <p class="product-description">{{ product.description }}</p>
         <p class="product-price">${{ product.price }}</p>
+        <p class="product-inventory">
+          <span class="inventory-label">Số lượng còn:</span> 
+          <span class="inventory-value" [ngClass]="{'low-stock': product.quantity !== undefined && product.quantity < 10}">
+            {{ product.quantity || 0 }}
+          </span>
+        </p>
       </div>
       <div class="product-actions">
-        <button class="btn btn-primary" (click)="addToCart()">Add to cart</button>
-        <button class="btn btn-success" (click)="buyNow()">Buy now</button>
+        <button class="btn btn-primary" 
+          (click)="addToCart()" 
+          [disabled]="product.quantity === undefined || product.quantity <= 0 || quantity > product.quantity">
+          Add to cart
+        </button>
+        <button class="btn btn-success" 
+          (click)="buyNow()" 
+          [disabled]="product.quantity === undefined || product.quantity <= 0 || quantity > product.quantity">
+          Buy now
+        </button>
       </div>
       <div class="product-quantity">
         <div class="border-wrapper">
