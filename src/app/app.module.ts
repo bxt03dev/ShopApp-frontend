@@ -12,6 +12,7 @@ import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { TokenInterceptor } from "./interceptor/token.interceptor";
+import { LogInterceptor } from "./interceptor/log.interceptor";
 import { ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { AppComponent } from './app/app.component';
@@ -25,6 +26,7 @@ import { OrderAdminComponent } from './component/admin/order/order.admin.compone
 import { ProductAdminComponent } from './component/admin/product/product-admin/product.admin.component';
 import { ProductDetailAdminComponent } from './component/admin/product/product-detail-admin/product-detail.admin.component';
 import { ProductCreateAdminComponent } from './component/admin/product/product-create-admin/product-create.admin.component';
+import { OrderDetailAdminComponent } from './component/admin/order/order-detail-admin/order.detail.admin.component';
 import { CustomToastService } from './service/custom-toast.service';
 import { ToastModule } from './service/toast.module';
 
@@ -45,7 +47,8 @@ import { ToastModule } from './service/toast.module';
     OrderAdminComponent,
     ProductAdminComponent,
     ProductDetailAdminComponent,
-    ProductCreateAdminComponent
+    ProductCreateAdminComponent,
+    OrderDetailAdminComponent
   ],
   imports: [
     ReactiveFormsModule,
@@ -75,6 +78,11 @@ import { ToastModule } from './service/toast.module';
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: LogInterceptor,
       multi: true
     },
     CustomToastService

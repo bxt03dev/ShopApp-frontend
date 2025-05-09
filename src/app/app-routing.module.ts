@@ -15,6 +15,7 @@ import {OrderAdminComponent} from "./component/admin/order/order.admin.component
 import {ProductAdminComponent} from "./component/admin/product/product-admin/product.admin.component";
 import {ProductDetailAdminComponent} from "./component/admin/product/product-detail-admin/product-detail.admin.component";
 import {ProductCreateAdminComponent} from "./component/admin/product/product-create-admin/product-create.admin.component";
+import {OrderDetailAdminComponent} from "./component/admin/order/order-detail-admin/order.detail.admin.component";
 
 export const routes: Routes = [
   {path: '', component: StoreComponent},
@@ -27,6 +28,7 @@ export const routes: Routes = [
     children: [
       {path: '', redirectTo: 'order', pathMatch: 'full'},
       {path: 'order', component: OrderAdminComponent},
+      {path: 'orders/:id', component: OrderDetailAdminComponent},
       {path: 'products', component: ProductAdminComponent},
       {path: 'products/create', component: ProductCreateAdminComponent},
       {path: 'products/:id', component: ProductDetailAdminComponent}

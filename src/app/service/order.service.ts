@@ -41,9 +41,22 @@ export class OrderService {
     return this.http.get<any>(`${environment.apiBaseUrl}/orders/get-orders-by-keyword`, { params });
   }
 
-  updateOrder(orderId: number, orderData: OrderDTO): Observable<Object> {
-    const url = `${environment.apiBaseUrl}/orders/${orderId}`
-    return this.http.put(url, orderData)
+  updateOrder(orderId: number, orderData: any): Observable<any> {
+    const url = `${environment.apiBaseUrl}/orders/${orderId}`;
+    console.log('Update URL:', url);
+    console.log('Update data:', orderData);
+    
+    // Chuyển đổi sang plain object nếu là OrderDTO
+    const payload = orderData instanceof OrderDTO ? { ...orderData } : orderData;
+    
+    // Đảm bảo trường status được đưa vào payload
+    if (payload.status) {
+      console.log('Status in payload:', payload.status);
+    } else {
+      console.warn('Status not found in payload!');
+    }
+    
+    return this.http.put(url, payload);
   }
 
   deleteOrder(orderId: number): Observable<any> {

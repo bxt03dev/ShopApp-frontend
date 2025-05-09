@@ -1,0 +1,258 @@
+.status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 14px;
+  text-transform: capitalize;
+}
+
+.status-pending {
+  background-color: #ffeaa7;
+  color: #d68910;
+}
+
+.status-processing {
+  background-color: #a9dfbf;
+  color: #196f3d;
+}
+
+.status-shipped {
+  background-color: #aed6f1;
+  color: #2e86c1;
+}
+
+.status-delivered {
+  background-color: #abebc6;
+  color: #196f3d;
+}
+
+.status-cancelled {
+  background-color: #f5b7b1;
+  color: #b03a2e;
+}
+
+.order-detail-container {
+  padding: 20px;
+  background-color: #fff;
+  color: #000;
+  max-width: 100%;
+  margin: 0 auto;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e0e0e0;
+
+    h2 {
+      font-size: 24px;
+      color: #333;
+      margin: 0;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+    }
+  }
+
+  button {
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    border: none;
+    transition: background-color 0.2s;
+
+    &.back-button {
+      background-color: #f0f0f0;
+      color: #333;
+
+      &:hover {
+        background-color: #e0e0e0;
+      }
+    }
+
+    &.edit-button {
+      background-color: #007bff;
+      color: white;
+
+      &:hover {
+        background-color: #0069d9;
+      }
+    }
+
+    &.refresh-button {
+      background-color: #17a2b8;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+
+      .fas.fa-sync-alt {
+        font-size: 14px;
+      }
+
+      &:hover {
+        background-color: #138496;
+      }
+    }
+
+    &.cancel-button {
+      background-color: #f0f0f0;
+      color: #333;
+
+      &:hover {
+        background-color: #e0e0e0;
+      }
+    }
+
+    &.save-button {
+      background-color: #28a745;
+      color: white;
+
+      &:hover {
+        background-color: #218838;
+      }
+    }
+  }
+
+  .section {
+    background-color: #fff;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+
+    h3 {
+      font-size: 18px;
+      color: #333;
+      margin-top: 0;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+  }
+
+  .info-row {
+    display: flex;
+    margin-bottom: 12px;
+    font-size: 15px;
+    line-height: 1.4;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .info-label {
+      flex: 0 0 180px;
+      font-weight: 600;
+      color: #555;
+    }
+
+    .info-value {
+      flex: 1;
+      color: #333;
+    }
+  }
+
+  .order-details-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    th {
+      background-color: #f9f9f9;
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .product-info {
+      display: flex;
+      align-items: center;
+      
+      .product-thumbnail {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 4px;
+        margin-right: 15px;
+      }
+      
+      .product-name {
+        font-weight: 500;
+        color: #333;
+        margin-bottom: 4px;
+      }
+      
+      .product-category {
+        font-size: 13px;
+        color: #777;
+      }
+    }
+  }
+  
+  .no-items {
+    color: #666;
+    font-style: italic;
+    text-align: center;
+    padding: 15px 0;
+  }
+  
+  // Edit form styles
+  .edit-form {
+    .form-group {
+      margin-bottom: 15px;
+      
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+        color: #555;
+      }
+      
+      input, select, textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        color: #333;
+        
+        &:focus {
+          border-color: #007bff;
+          outline: none;
+        }
+      }
+      
+      textarea {
+        min-height: 80px;
+        resize: vertical;
+      }
+    }
+    
+    .form-actions {
+      margin-top: 25px;
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+  }
+  
+  .loading {
+    text-align: center;
+    padding: 50px 0;
+    color: #666;
+    font-size: 16px;
+  }
+} 
