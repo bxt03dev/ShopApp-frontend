@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { TokenService } from '../../service/token.service';
 import { UserService } from '../../service/user.service';
-import { ToastrService } from 'ngx-toastr';
+import {CustomToastService} from "../../service/custom-toast.service";
+
 
 @Component({
   selector: 'app-admin',
@@ -14,7 +15,7 @@ export class AdminComponent {
     private router: Router,
     private tokenService: TokenService,
     private userService: UserService,
-    private toastr: ToastrService
+    private toastService: CustomToastService
   ) {}
 
   logout() {
@@ -23,7 +24,7 @@ export class AdminComponent {
     // Xóa thông tin người dùng
     this.userService.removeUserFromLocalStorage();
     // Thông báo
-    this.toastr.success('Đăng xuất thành công!', 'Thông báo');
+    this.toastService.showAuthSuccess('Đăng xuất thành công!', 'Thông báo');
     // Chuyển hướng về trang chính
     this.router.navigate(['/']);
   }

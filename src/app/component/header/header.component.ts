@@ -5,7 +5,7 @@ import { Subscription, interval } from 'rxjs';
 import { UserService } from '../../service/user.service';
 import { UserResponse } from '../../response/user/user.response';
 import { TokenService } from '../../service/token.service';
-import { ToastrService } from 'ngx-toastr';
+import { CustomToastService } from '../../service/custom-toast.service';
 
 @Component({
   selector: 'app-header',
@@ -26,7 +26,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private cartService: CartService,
     private userService: UserService,
     private tokenService: TokenService,
-    private toastr: ToastrService
+    private customToast: CustomToastService
   ) {
     this.cartSubscription = this.cartService.getCartItemCount().subscribe(
       count => this.cartItemCount = count
@@ -87,7 +87,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.cartService.clearCart();
     this.userResponse = null;
     this.dropdownOpen = false;
-    this.toastr.success('Đăng xuất thành công!', 'Thông báo');
+    this.customToast.showAuthSuccess('Đăng xuất thành công!', 'Thông báo');
     this.router.navigate(['/']);
   }
 

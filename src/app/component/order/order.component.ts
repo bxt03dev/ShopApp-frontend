@@ -13,7 +13,7 @@ import {environment} from "../../common/environment";
 import {Router} from "@angular/router";
 import {TokenService} from "../../service/token.service";
 import {CouponService} from "../../service/coupon.service";
-import { ToastrService } from 'ngx-toastr';
+import {CustomToastService} from "../../service/custom-toast.service";
 import Swal from 'sweetalert2';
 
 @Component({
@@ -48,7 +48,7 @@ export class OrderComponent implements OnInit {
     private orderService: OrderService,
     private router: Router,
     private fb: FormBuilder,
-    private toastr: ToastrService
+    private customToast: CustomToastService
   ) {
     this.orderForm = this.fb.group({
       fullName: ['', Validators.required],
@@ -88,7 +88,7 @@ export class OrderComponent implements OnInit {
                 if (product.quantity != null && cartQuantity > product.quantity) {
                   // Điều chỉnh số lượng trong giỏ hàng không vượt quá số lượng có sẵn
                   this.cart.set(productId, product.quantity);
-                  this.toastr.warning(`Số lượng sản phẩm "${product.name}" đã được điều chỉnh còn ${product.quantity} (số lượng tối đa có sẵn).`, 'Thông báo');
+                  this.customToast.showWarning(`Số lượng sản phẩm "${product.name}" đã được điều chỉnh còn ${product.quantity} (số lượng tối đa có sẵn).`, 'Thông báo');
                 }
                 
                 return {
@@ -116,7 +116,7 @@ export class OrderComponent implements OnInit {
       let hasInsufficientStock = false;
       this.cartItems.forEach(item => {
         if (item.product.quantity != null && item.quantity > item.product.quantity) {
-          this.toastr.error(`Không đủ số lượng cho sản phẩm "${item.product.name}". Chỉ còn ${item.product.quantity} sản phẩm.`, 'Lỗi');
+          this.customToast.showError(`Không đủ số lượng cho sản phẩm "${item.product.name}". Chỉ còn ${item.product.quantity} sản phẩm.`, 'Lỗi');
           hasInsufficientStock = true;
         }
       });
@@ -138,7 +138,7 @@ export class OrderComponent implements OnInit {
 
       this.orderService.placeOrder(this.orderData).subscribe({
         next: (response) => {
-          this.toastr.success('Đặt hàng thành công!', 'Thông báo');
+          this.customToast.showSuccess('Đặt hàng thành công!', 'Thông báo');
           this.cartService.clearCart();
           this.loadCartItems();
           this.router.navigate(['/']);
@@ -147,15 +147,15 @@ export class OrderComponent implements OnInit {
           // Kiểm tra nếu lỗi do không đủ số lượng
           if (error.error && error.error.result && Array.isArray(error.error.result)) {
             error.error.result.forEach((errorMsg: string) => {
-              this.toastr.error(errorMsg, 'Lỗi số lượng');
+              this.customToast.showError(errorMsg, 'Lỗi số lượng');
             });
           } else {
-            this.toastr.error(`Lỗi khi đặt hàng: ${error.message || 'Lỗi không xác định'}`, 'Lỗi');
+            this.customToast.showError(`Lỗi khi đặt hàng: ${error.message || 'Lỗi không xác định'}`, 'Lỗi');
           }
         }
       });
     } else {
-      this.toastr.warning('Vui lòng điền đầy đủ thông tin bắt buộc.', 'Cảnh báo');
+      this.customToast.showWarning('Vui lòng điền đầy đủ thông tin bắt buộc.', 'Cảnh báo');
     }
   }
 
@@ -171,7 +171,7 @@ export class OrderComponent implements OnInit {
     
     // Kiểm tra nếu số lượng hiện tại đã đạt tối đa
     if (item.product.quantity != null && item.quantity >= item.product.quantity) {
-      this.toastr.warning(`Không thể thêm. Sản phẩm "${item.product.name}" chỉ còn ${item.product.quantity} sản phẩm trong kho.`, 'Thông báo');
+      this.customToast.showWarning(`Không thể thêm. Sản phẩm "${item.product.name}" chỉ còn ${item.product.quantity} sản phẩm trong kho.`, 'Thông báo');
       return;
     }
     

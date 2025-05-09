@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { LoginResponse } from '../../response/user/login.response';
 import { TokenService } from '../../service/token.service';
 import { UserResponse } from '../../response/user/user.response';
-import { ToastrService } from 'ngx-toastr';
+import { CustomToastService } from '../../service/custom-toast.service';
 import { CartService } from '../../service/cart.service';
 
 @Component({
@@ -25,7 +25,7 @@ export class LoginComponent implements OnInit {
     private userService: UserService,
     private tokenService: TokenService,
     private cartService: CartService,
-    private toastr: ToastrService
+    private customToast: CustomToastService
   ) {}
 
   ngOnInit(): void {}
@@ -36,7 +36,7 @@ export class LoginComponent implements OnInit {
 
   onLogin() {
     if (!this.loginForm.valid) {
-      this.toastr.warning('Vui lòng điền đầy đủ thông tin.', 'Cảnh báo');
+      this.customToast.showAuthWarning('Vui lòng điền đầy đủ thông tin.', 'Cảnh báo');
       return;
     }
 
@@ -57,7 +57,7 @@ export class LoginComponent implements OnInit {
               const userResponse = response.result;
               this.userService.saveUserResponseToLocalStorage(userResponse);
               this.cartService.loadCart(); // Load cart after successful login
-              this.toastr.success('Đăng nhập thành công!', 'Thông báo');
+              this.customToast.showAuthSuccess('Đăng nhập thành công!', 'Thông báo');
               
               // Điều hướng dựa trên role
               if (userResponse.role.name === 'ADMIN') {
@@ -67,11 +67,11 @@ export class LoginComponent implements OnInit {
               }
             },
             error: (error) => {
-              this.toastr.error('Lỗi khi lấy thông tin người dùng', 'Lỗi');
+              this.customToast.showAuthError('Lỗi khi lấy thông tin người dùng', 'Lỗi');
             }
           });
         } else {
-          this.toastr.error('Đăng nhập thất bại: Không tìm thấy token', 'Lỗi');
+          this.customToast.showAuthError('Đăng nhập thất bại: Không tìm thấy token', 'Lỗi');
         }
       },
       error: (error: any) => {
@@ -79,9 +79,9 @@ export class LoginComponent implements OnInit {
         const errorMessage = errorResponse?.message || 'Lỗi server';
         const errorCode = errorResponse?.code || 0;
         if (errorCode === 1001) {
-          this.toastr.error('Số điện thoại hoặc mật khẩu không đúng', 'Lỗi');
+          this.customToast.showAuthError('Số điện thoại hoặc mật khẩu không đúng', 'Lỗi');
         } else {
-          this.toastr.error(`Đăng nhập thất bại: ${errorMessage}`, 'Lỗi');
+          this.customToast.showAuthError(`Đăng nhập thất bại: ${errorMessage}`, 'Lỗi');
         }
       }
     });

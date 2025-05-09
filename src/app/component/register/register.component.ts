@@ -4,6 +4,7 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Router} from "@angular/router";
 import {UserService} from "../../service/user.service";
 import {RegisterDTO} from "../../dto/user/register.dto";
+import {CustomToastService} from "../../service/custom-toast.service";
 
 @Component({
   selector: 'app-register',
@@ -20,7 +21,11 @@ export class RegisterComponent implements OnInit {
   isAccepted: boolean;
   dateOfBirth: Date;
 
-  constructor(private router: Router, private userService: UserService) {
+  constructor(
+    private router: Router, 
+    private userService: UserService,
+    private customToast: CustomToastService
+  ) {
     this.phoneNumber = '';
     this.password = '';
     this.retypePassword = '';
@@ -39,8 +44,11 @@ export class RegisterComponent implements OnInit {
   }
 
   onRegister() {
-    //alert("Register success");
-    debugger
+    if (!this.registerForm.valid) {
+      this.customToast.showAuthWarning('Vui lòng điền đầy đủ thông tin và sửa các lỗi.', 'Cảnh báo');
+      return;
+    }
+    
     const RegisterDTO: RegisterDTO = {
       "fullName": this.fullName,
       "phoneNumber": this.phoneNumber,
@@ -54,11 +62,12 @@ export class RegisterComponent implements OnInit {
     }
     this.userService.register(RegisterDTO).subscribe({
       next: (response: any) => {
+        this.customToast.showAuthSuccess('Đăng ký tài khoản thành công!', 'Thông báo');
         this.router.navigate(['/login']);
       },
       error: (error: any) => {
-        const errorMessage = error.error?.message || 'server error';
-        alert(`Register failed: ${errorMessage}`);
+        const errorMessage = error.error?.message || 'Lỗi server';
+        this.customToast.showAuthError(`Đăng ký thất bại: ${errorMessage}`, 'Lỗi');
       }
     })
   }

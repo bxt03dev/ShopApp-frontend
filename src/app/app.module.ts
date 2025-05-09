@@ -25,6 +25,8 @@ import { OrderAdminComponent } from './component/admin/order/order.admin.compone
 import { ProductAdminComponent } from './component/admin/product/product-admin/product.admin.component';
 import { ProductDetailAdminComponent } from './component/admin/product/product-detail-admin/product-detail.admin.component';
 import { ProductCreateAdminComponent } from './component/admin/product/product-create-admin/product-create.admin.component';
+import { CustomToastService } from './service/custom-toast.service';
+import { ToastModule } from './service/toast.module';
 
 @NgModule({
   declarations: [
@@ -54,9 +56,10 @@ import { ProductCreateAdminComponent } from './component/admin/product/product-c
     CommonModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    ToastModule,
     ToastrModule.forRoot({
       timeOut: 3000,
-      positionClass: 'toast-center',
+      positionClass: 'toast-bottom-right',
       preventDuplicates: true,
       closeButton: true,
       progressBar: true,
@@ -73,7 +76,8 @@ import { ProductCreateAdminComponent } from './component/admin/product/product-c
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,
       multi: true
-    }
+    },
+    CustomToastService
   ],
   bootstrap: [
     // DetailProductComponent

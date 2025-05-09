@@ -6,7 +6,7 @@ import {environment} from "../../common/environment";
 import {ProductImage} from "../../model/product.image";
 import {ApiResponse} from "../../dto/response/api.response";
 import {CartService} from "../../service/cart.service";
-import { ToastrService } from 'ngx-toastr';
+import { CustomToastService } from '../../service/custom-toast.service';
 
 @Component({
   selector: 'app-detail-product',
@@ -26,7 +26,7 @@ export class DetailProductComponent implements OnInit {
     private cartService: CartService,
     private route: ActivatedRoute,
     private router: Router,
-    private toastr: ToastrService
+    private customToast: CustomToastService
   ) { }
 
   ngOnInit(): void {
@@ -95,28 +95,28 @@ export class DetailProductComponent implements OnInit {
     if(this.product) {
       this.cartService.addToCart(this.product.id, this.quantity).then(success => {
         if (success) {
-          this.toastr.success(`Đã thêm ${this.quantity} ${this.product!.name} vào giỏ hàng!`, 'Thông báo');
+          this.customToast.showSuccess(`Đã thêm ${this.quantity} ${this.product!.name} vào giỏ hàng!`, 'Thông báo');
         } else {
           if (this.product!.quantity !== undefined && this.product!.quantity <= 0) {
-            this.toastr.error('Sản phẩm đã hết hàng!', 'Lỗi');
+            this.customToast.showError('Sản phẩm đã hết hàng!', 'Lỗi');
           } else if (this.product!.quantity !== undefined && this.quantity > this.product!.quantity) {
-            this.toastr.error(`Không đủ số lượng, chỉ còn ${this.product!.quantity} sản phẩm!`, 'Lỗi');
+            this.customToast.showError(`Không đủ số lượng, chỉ còn ${this.product!.quantity} sản phẩm!`, 'Lỗi');
           } else if (!this.cartService.isLoggedIn()) {
-            this.toastr.warning('Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng', 'Thông báo');
+            this.customToast.showAuthWarning('Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng', 'Thông báo');
             this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
           } else {
-            this.toastr.error('Không thể thêm sản phẩm vào giỏ hàng', 'Lỗi');
+            this.customToast.showError('Không thể thêm sản phẩm vào giỏ hàng', 'Lỗi');
           }
         }
       });
     } else {
-      this.toastr.error('Không thể thêm sản phẩm vào giỏ hàng', 'Lỗi');
+      this.customToast.showError('Không thể thêm sản phẩm vào giỏ hàng', 'Lỗi');
     }
   }
 
   increaseQuantity(): void {
     if (this.product?.quantity !== undefined && this.quantity >= this.product.quantity) {
-      this.toastr.warning(`Không thể thêm. Chỉ còn ${this.product.quantity} sản phẩm trong kho.`, 'Thông báo');
+      this.customToast.showWarning(`Không thể thêm. Chỉ còn ${this.product.quantity} sản phẩm trong kho.`, 'Thông báo');
       return;
     }
     this.quantity++;
@@ -135,11 +135,11 @@ export class DetailProductComponent implements OnInit {
           this.router.navigate(['/orders']);
         } else {
           if (this.product!.quantity !== undefined && this.product!.quantity <= 0) {
-            this.toastr.error('Sản phẩm đã hết hàng!', 'Lỗi');
+            this.customToast.showError('Sản phẩm đã hết hàng!', 'Lỗi');
           } else if (this.product!.quantity !== undefined && this.quantity > this.product!.quantity) {
-            this.toastr.error(`Không đủ số lượng, chỉ còn ${this.product!.quantity} sản phẩm!`, 'Lỗi');
+            this.customToast.showError(`Không đủ số lượng, chỉ còn ${this.product!.quantity} sản phẩm!`, 'Lỗi');
           } else {
-            this.toastr.warning('Vui lòng đăng nhập để mua sản phẩm', 'Thông báo');
+            this.customToast.showAuthWarning('Vui lòng đăng nhập để mua sản phẩm', 'Thông báo');
             this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
           }
         }

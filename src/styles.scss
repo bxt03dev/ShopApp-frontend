@@ -50,6 +50,12 @@
   transform: translate(-50%, -50%) !important;
 }
 
+/* Định nghĩa vị trí toast-bottom-right ở góc phải dưới màn hình */
+.toast-bottom-right {
+  bottom: 12px !important;
+  right: 12px !important;
+}
+
 /* Tăng kích thước toast xác nhận ở giữa màn hình */
 .toast-center .toast-confirmation {
   max-width: 400px !important;
