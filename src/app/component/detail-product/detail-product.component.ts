@@ -93,8 +93,13 @@ export class DetailProductComponent implements OnInit {
 
   addToCart(): void {
     if(this.product) {
-      this.cartService.addToCart(this.product.id, this.quantity);
-      this.toastr.success(`Đã thêm ${this.quantity} ${this.product.name} vào giỏ hàng!`, 'Thông báo');
+      const success = this.cartService.addToCart(this.product.id, this.quantity);
+      if (success) {
+        this.toastr.success(`Đã thêm ${this.quantity} ${this.product.name} vào giỏ hàng!`, 'Thông báo');
+      } else {
+        this.toastr.warning('Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng', 'Thông báo');
+        this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
+      }
     } else {
       this.toastr.error('Không thể thêm sản phẩm vào giỏ hàng', 'Lỗi');
     }
@@ -112,8 +117,13 @@ export class DetailProductComponent implements OnInit {
 
   buyNow(): void {
     if(this.product) {
-      this.cartService.addToCart(this.product.id, this.quantity);
-      this.router.navigate(['/orders']);
+      const success = this.cartService.addToCart(this.product.id, this.quantity);
+      if (success) {
+        this.router.navigate(['/orders']);
+      } else {
+        this.toastr.warning('Vui lòng đăng nhập để mua sản phẩm', 'Thông báo');
+        this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
+      }
     }
   }
 }

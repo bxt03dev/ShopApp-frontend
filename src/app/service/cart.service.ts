@@ -22,7 +22,11 @@ export class CartService{
     return userId ? `cart_${userId}` : 'cart_guest';
   }
 
-  addToCart(productId: number, quantity: number = 1) {
+  addToCart(productId: number, quantity: number = 1): boolean {
+    if (!this.tokenService.getToken() || this.tokenService.isTokenExpired() || this.tokenService.getUserId() <= 0) {
+      return false;
+    }
+
     if(this.cart.has(productId)){
       this.cart.set(productId, this.cart.get(productId)! + quantity);
     } else{
@@ -30,6 +34,7 @@ export class CartService{
     }
     this.saveCartToLocalStorage();
     this.updateCartItemCount();
+    return true;
   }
 
   getCart(): Map<number, number> {
