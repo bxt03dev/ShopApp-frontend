@@ -1,17 +1,49 @@
 <app-header></app-header>
 <div class="container">
   <div class="row">
-    <div class="col-lg-3 col-md-6" *ngFor="let product of products">
-      <div class="product-item product-detail-card">
-        <img [src]="product.url" alt="{{ product.name }}" class="product-image" loading="lazy">
-        <h3 class="product-name">{{ product.name }}</h3>
-        <p class="product-description">{{ product.description }}</p>
-        <p class="product-price">${{ product.price }}</p>
-        <div class="product-actions">
-          <a [routerLink]="['/products', product.id]" class="btn btn-primary">View Details</a>
+    <div class="slider-container">
+      <div class="slider">
+        <div class="slides" #slides>
+          <div class="slide" *ngFor="let image of sliderImages; let i = index" [class.active]="currentSlideIndex === i">
+            <img [src]="image.url" [alt]="image.alt" class="slide-image">
+          </div>
+        </div>
+        <button class="nav-button prev-button" (click)="prevSlide()">
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <button class="nav-button next-button" (click)="nextSlide()">
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+        <div class="dot-nav">
+          <span class="dot" *ngFor="let image of sliderImages; let i = index" 
+                [class.active]="currentSlideIndex === i"
+                (click)="goToSlide(i)"></span>
         </div>
       </div>
     </div>
+
+    <div class="product-reference-title">
+      <h2 class="product-reference-titleLeft">Thế hệ mới nhất. </h2>
+      <h2 class="product-reference-titleRight">Xem ngay có gì mới.</h2>
+    </div>
+
+    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12 card-product-container">
+      <div class="card-product-header">
+        <h3 class="card-product-title">
+          iPhone 16 Pro
+        </h3>
+      </div>
+      <div class="card-product-image-wrap">
+        <img src="https://store.storeimages.cdn-apple.com/1/as-images.apple.com/is/iphone-card-40-iphone16prohero-202409?wid=680&hei=528&fmt=p-jpg&qlt=95&.v=MjUrdW9rK0I3Y0hBcFdUR2pNVTRtUFpIU2c1QXYxN1o5THJsVFdubi8vdWo1ZjMweU1kRzVLbG1rVXpHeUhrekM5eTNXTVZyTHIwdUZhZkhwMUhFcDF6UEJkKzg5UTZqNmZVWkpNeWtMWmwzTnQ3S2NXcklFcHlIS3FvK1FqcEU" alt="" class="card-product-image">
+      </div>
+      <div class="card-product-content">
+        <div class="card-product-price">
+          <span class="product-price">28.999.000 đ</span>
+        </div>
+        <a href="" class="btn card-product-view-detail">Xem Ngay</a>
+      </div>
+    </div>
+    
   </div>
   <div class="pagination" *ngIf="totalPages > 1">
     <button (click)="onPageChange(1)" [disabled]="currentPage === 1">First</button>
