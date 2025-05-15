@@ -78,10 +78,34 @@ export class OrderDetailComponent implements OnInit {
   loadOrderDetails(): void {
     console.log('Loading order details for order ID:', this.orderId);
     this.orderService.getOrderById(this.orderId).subscribe({
-      next: (data: OrderDetail) => {
-        this.orderDetail = data;
-        console.log('Order details loaded:', this.orderDetail);
+      next: (response: any) => {
+        console.log('Raw order details response:', response);
+        
+        // Xử lý dữ liệu trả về từ API
+        let orderData = response;
+        
+        // Kiểm tra xem response có phải là ApiResponse format không
+        if (response && response.result) {
+          console.log('Response contains result property, extracting data');
+          orderData = response.result;
+        }
+        
+        this.orderDetail = orderData;
+        console.log('Parsed order details:', this.orderDetail);
         console.log('Order status:', this.orderDetail?.status);
+        
+        if (this.orderDetail && this.orderDetail.orderDetails) {
+          console.log('Order items:', this.orderDetail.orderDetails.length);
+          
+          // Xử lý hình ảnh sản phẩm nếu có
+          this.orderDetail.orderDetails.forEach(item => {
+            if (item.product && item.product.thumbnail) {
+              item.product.thumbnail = this.getProductImageUrl(item.product.thumbnail);
+            }
+          });
+        } else {
+          console.log('No order items found in the response');
+        }
         
         // Debug: Kiểm tra xem trạng thái đơn hàng có phải là PENDING không
         if (this.orderDetail?.status === 'PENDING') {
@@ -92,6 +116,7 @@ export class OrderDetailComponent implements OnInit {
       },
       error: (error: any) => {
         console.error('Error loading order details:', error);
+        this.toastService.showError('Không thể tải thông tin đơn hàng', 'Lỗi');
       }
     });
   }

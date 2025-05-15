@@ -7,7 +7,7 @@ import {
   HttpErrorResponse
 } from '@angular/common/http'
 import { Observable, throwError } from 'rxjs'
-import { catchError, tap } from 'rxjs/operators'
+import { catchError, tap, map } from 'rxjs/operators'
 
 import {environment} from "../common/environment";
 import {OrderDTO} from "../dto/user/order.dto";
@@ -92,10 +92,42 @@ export class OrderService {
   }
 
   getOrderById(orderId: number): Observable<any> {
-    const url = `${environment.apiBaseUrl}/orders/${orderId}`
-    return this.http.get(url).pipe(
+    const url = `${environment.apiBaseUrl}/orders/${orderId}`;
+    console.log(`Fetching order details from: ${url}`);
+    
+    // Thêm token vào header để đảm bảo xác thực
+    const token = this.tokenService.getToken();
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+    
+    return this.http.get(url, { headers }).pipe(
+      tap((response: any) => {
+        console.log('API Response from order details endpoint:', response);
+        
+        // Kiểm tra cấu trúc phản hồi
+        if (response && typeof response === 'object' && 'result' in response) {
+          console.log('Order details in response:', response.result);
+        }
+      }),
+      // Biến đổi dữ liệu để lấy kết quả thực tế từ cấu trúc API Response
+      map((response: any) => {
+        // Nếu phản hồi có định dạng ApiResponse, lấy giá trị từ result
+        if (response && typeof response === 'object' && 'result' in response) {
+          return response.result;
+        }
+        // Nếu không, trả về toàn bộ phản hồi
+        return response;
+      }),
       catchError((error: HttpErrorResponse) => {
         console.error(`Error fetching order details for ID ${orderId}:`, error);
+        console.error('Error details:', {
+          status: error.status,
+          statusText: error.statusText,
+          error: error.error,
+          message: error.message
+        });
         return throwError(() => new Error('Không thể tải thông tin đơn hàng. Vui lòng thử lại sau.'));
       })
     );
@@ -133,8 +165,8 @@ export class OrderService {
   }
 
   deleteOrder(orderId: number): Observable<any> {
-    const url = `${environment.apiBaseUrl}/orders/${orderId}`
-    return this.http.delete(url, {responseType: 'text'})
+    const url = `${environment.apiBaseUrl}/orders/${orderId}`;
+    return this.http.delete(url, {responseType: 'text'});
   }
   
   // Cancel an order
@@ -187,26 +219,46 @@ export class OrderService {
       'Authorization': `Bearer ${token}`
     });
     
-    return this.http.get<any>(url, { headers }).pipe(
-      tap(response => {
+    return this.http.get(url, { headers }).pipe(
+      tap((response: any) => {
         console.log('API Response from orders/user endpoint:', response);
-        
-        // Check if response is in expected format
-        if (response && response.result) {
-          console.log('Orders in response:', response.result);
-        } else {
-          console.log('Response does not contain expected "result" property');
+      }),
+      map((response: any) => {
+        // Nếu phản hồi có định dạng ApiResponse, lấy giá trị từ result
+        if (response && typeof response === 'object') {
+          if ('result' in response) {
+            // Kiểm tra nếu result là mảng rỗng hoặc null
+            if (Array.isArray(response.result) && response.result.length === 0) {
+              console.log('No orders found for user');
+              // Trả về mảng rỗng nhưng với flag để component biết đây là trường hợp "không có đơn hàng"
+              return { orders: [], isEmpty: true };
+            }
+            return response.result;
+          }
         }
+        // Nếu response là null hoặc undefined
+        if (!response) {
+          console.log('Response is null or undefined');
+          return { orders: [], isEmpty: true };
+        }
+        // Nếu không, trả về toàn bộ phản hồi
+        return response;
       }),
       catchError((error: HttpErrorResponse) => {
-        console.error(`Error fetching orders for user ${userId}:`, error);
+        console.error(`Error fetching orders for user ID ${userId}:`, error);
         console.error('Error details:', {
           status: error.status,
           statusText: error.statusText,
           error: error.error,
           message: error.message
         });
-        return throwError(() => new Error('Không thể tải lịch sử đơn hàng. Vui lòng thử lại sau.'));
+        
+        // Trả về đối tượng với flag error và thông báo lỗi
+        return throwError(() => ({
+          isEmpty: true,
+          error: true,
+          message: 'Không thể tải đơn hàng của người dùng. Vui lòng thử lại sau.'
+        }));
       })
     );
   }

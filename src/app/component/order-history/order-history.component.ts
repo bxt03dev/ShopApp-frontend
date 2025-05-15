@@ -60,6 +60,26 @@ export class OrderHistoryComponent implements OnInit {
         console.log('Order response raw:', response); // Debugging
         
         try {
+          // Kiểm tra nếu response có flag isEmpty
+          if (response && response.isEmpty === true) {
+            console.log('Empty orders response');
+            this.orders = [];
+            this.errorMessage = 'Không tìm thấy dữ liệu đơn hàng';
+            this.totalPages = 0;
+            this.totalElements = 0;
+            return;
+          }
+          
+          // Xử lý nếu response là mảng
+          if (Array.isArray(response)) {
+            console.log('Response is an array of orders');
+            this.orders = response;
+            this.totalPages = 1;
+            this.totalElements = this.orders.length;
+            this.processOrderImages();
+            return;
+          }
+          
           // Xử lý theo định dạng ApiResponse từ backend
           if (response && response.result) {
             console.log('Response contains result property', response.result);
@@ -79,6 +99,11 @@ export class OrderHistoryComponent implements OnInit {
           } else if (response && response.code === 200 && response.result) {
             // Định dạng API khác với code
             this.orders = Array.isArray(response.result) ? response.result : [];
+            this.totalPages = 1;
+            this.totalElements = this.orders.length;
+          } else if (response && response.orders) {
+            // Nếu response có thuộc tính orders (từ service mới)
+            this.orders = response.orders;
             this.totalPages = 1;
             this.totalElements = this.orders.length;
           } else {
@@ -102,6 +127,13 @@ export class OrderHistoryComponent implements OnInit {
       error: (error) => {
         this.loading = false;
         console.error('Error loading orders:', error);
+        
+        // Kiểm tra nếu error có các thuộc tính từ service mới
+        if (error && error.isEmpty === true) {
+          this.errorMessage = error.message || 'Không tìm thấy dữ liệu đơn hàng';
+          return;
+        }
+        
         if (error.status === 401 || error.status === 403) {
           this.errorMessage = 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.';
           // Redirect to login after a delay
@@ -153,6 +185,12 @@ export class OrderHistoryComponent implements OnInit {
   }
 
   viewOrderDetail(orderId: number): void {
+    console.log('Navigating to order detail for ID:', orderId);
+    if (!orderId) {
+      console.error('Invalid order ID');
+      this.errorMessage = 'Không thể xem chi tiết đơn hàng với ID không hợp lệ';
+      return;
+    }
     this.router.navigate(['/orders', orderId]);
   }
 
