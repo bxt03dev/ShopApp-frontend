@@ -103,6 +103,17 @@ export class OrderDetailComponent implements OnInit {
               item.product.thumbnail = this.getProductImageUrl(item.product.thumbnail);
             }
           });
+          
+          // Đảm bảo totalAmount có giá trị
+          if (!this.orderDetail.totalAmount || this.orderDetail.totalAmount === 0) {
+            console.log('totalAmount is missing or zero, calculating it');
+            // Đợi một tick để đảm bảo các thành phần đã được khởi tạo
+            setTimeout(() => {
+              // Tính tổng tiền từ subtotal và phí vận chuyển
+              this.orderDetail!.totalAmount = this.calculateTotalAmount();
+              console.log('Calculated totalAmount:', this.orderDetail!.totalAmount);
+            }, 0);
+          }
         } else {
           console.log('No order items found in the response');
         }
@@ -374,8 +385,15 @@ export class OrderDetailComponent implements OnInit {
     return shippingCosts[shippingMethod] || 0;
   }
   
+  // Thêm phương thức tính tổng tiền
+  calculateTotalAmount(): number {
+    const subtotal = this.calculateSubtotal();
+    const shippingCost = this.getShippingCost();
+    return subtotal + shippingCost;
+  }
+  
   navigateBack(): void {
-    this.router.navigate(['/orders']);
+    this.router.navigate(['/order-history']);
   }
   
   cancelOrder(): void {
