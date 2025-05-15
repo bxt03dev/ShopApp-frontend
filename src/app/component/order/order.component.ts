@@ -74,7 +74,21 @@ export class OrderComponent implements OnInit {
   }
 
   loadCartItems(): void {
-    this.cart = this.cartService.getCart();
+    // Check if we have a checkout cart in sessionStorage
+    const checkoutCartJson = sessionStorage.getItem('checkout_cart');
+    if (checkoutCartJson) {
+      // Use the checkout cart from sessionStorage
+      this.cart = new Map(JSON.parse(checkoutCartJson));
+      console.log('Using checkout cart from sessionStorage');
+      
+      // Keep the checkout cart in sessionStorage until the order is placed
+      // Do NOT remove it here
+    } else {
+      // Use the regular cart if no checkout cart is available
+      this.cart = this.cartService.getCart();
+      console.log('Using regular cart from CartService');
+    }
+    
     const productIds = Array.from(this.cart.keys());
 
     if (productIds.length === 0) {
@@ -263,7 +277,35 @@ export class OrderComponent implements OnInit {
         this.createdOrderId = orderId;
         console.log('ĐÃ XÁC ĐỊNH ĐƯỢC ID ĐƠN HÀNG:', this.createdOrderId);
         
-        this.cartService.clearCart();
+        // Check if we're using a temporary cart
+        const usingTempCart = sessionStorage.getItem('using_temp_cart') === 'true';
+        
+        if (usingTempCart) {
+          console.log('Using temporary cart - only removing checked out items');
+          // Get the current full cart
+          const fullCart = this.cartService.getCart();
+          
+          // Get the items that were checked out
+          const checkoutItems = new Set(Array.from(this.cart.keys()));
+          
+          // Remove only the checked out items from the full cart
+          checkoutItems.forEach(productId => {
+            fullCart.delete(productId);
+          });
+          
+          // Update the cart with the remaining items
+          this.cartService.setCart(fullCart);
+          
+          // Clear the temporary cart flags
+          sessionStorage.removeItem('checkout_cart');
+          sessionStorage.removeItem('using_temp_cart');
+        } else {
+          console.log('Using full cart - clearing entire cart');
+          // Clear the entire cart if we're not using a temporary cart
+          this.cartService.clearCart();
+        }
+        
+        // Reload cart items to reflect changes
         this.loadCartItems();
         
         // Kiểm tra phương thức thanh toán

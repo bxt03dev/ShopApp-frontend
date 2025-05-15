@@ -68,14 +68,23 @@ export class OrderDetailComponent implements OnInit {
       if (params['id']) {
         this.orderId = +params['id'];
         console.log('Order ID from route:', this.orderId);
-        this.loadOrderDetails();
+        // Only load order details if we have a valid order ID
+        if (this.orderId > 0) {
+          this.loadOrderDetails();
+        }
       }
     });
     
+    // Always load cart items
     this.loadCartItems();
   }
 
   loadOrderDetails(): void {
+    if (!this.orderId || this.orderId <= 0) {
+      console.log('Invalid or missing order ID, skipping order details load');
+      return;
+    }
+    
     console.log('Loading order details for order ID:', this.orderId);
     this.orderService.getOrderById(this.orderId).subscribe({
       next: (response: any) => {
@@ -127,7 +136,11 @@ export class OrderDetailComponent implements OnInit {
       },
       error: (error: any) => {
         console.error('Error loading order details:', error);
-        this.toastService.showError('Không thể tải thông tin đơn hàng', 'Lỗi');
+        
+        // Only show the error toast if we're on an order detail page (with orderId)
+        if (this.orderId > 0) {
+          this.toastService.showError('Không thể tải thông tin đơn hàng', 'Lỗi');
+        }
       }
     });
   }
@@ -274,15 +287,21 @@ export class OrderDetailComponent implements OnInit {
       return;
     }
 
-    // Update cart to include only selected items
-    const updatedCart = new Map<number, number>();
+    // Create a temporary cart for checkout with only selected items
+    // But don't modify the original cart
+    const checkoutCart = new Map<number, number>();
     this.cartItems.forEach(item => {
       if (item.selected) {
-        updatedCart.set(item.product.id, item.quantity);
+        checkoutCart.set(item.product.id, item.quantity);
       }
     });
-    this.cartService.setCart(updatedCart);
-
+    
+    // Store the checkout cart in sessionStorage for the checkout process
+    sessionStorage.setItem('checkout_cart', JSON.stringify(Array.from(checkoutCart.entries())));
+    
+    // Create a flag in sessionStorage to indicate we're using a temporary cart
+    sessionStorage.setItem('using_temp_cart', 'true');
+    
     // Navigate to order page
     this.router.navigate(['/orders']);
   }
