@@ -52,15 +52,29 @@ export class OrderDetailAdminComponent implements OnInit {
     this.orderService.getOrderById(orderId).subscribe({
       next: (response: any) => {
         console.log('API Response:', response); // Log để debug
+        
+        // Xác định dữ liệu đơn hàng từ response
+        let orderData = response;
+        
+        // Kiểm tra các định dạng response có thể có
         if (response && response.result) {
-          // Lưu trữ order cũ để so sánh
-          const oldOrder = this.order ? JSON.stringify(this.order) : null;
-          
-          // Cập nhật order mới
-          this.order = response.result;
+          console.log('Response contains result property, extracting data');
+          orderData = response.result;
+        }
+        
+        // Lưu trữ order cũ để so sánh
+        const oldOrder = this.order ? JSON.stringify(this.order) : null;
+        
+        // Cập nhật order mới
+        this.order = orderData;
+        
+        if (this.order) {
+          console.log('Order status:', this.order.status);
+          console.log('Order totalMoney:', this.order.totalMoney);
           
           // Format thumbnail URLs for products in order details
-          if (this.order && this.order.orderDetails && this.order.orderDetails.length > 0) {
+          if (this.order.orderDetails && this.order.orderDetails.length > 0) {
+            console.log('Order details count:', this.order.orderDetails.length);
             this.order.orderDetails.forEach(detail => {
               if (detail.product && detail.product.thumbnail) {
                 // Check if thumbnail already has the full URL
@@ -68,8 +82,12 @@ export class OrderDetailAdminComponent implements OnInit {
                     !detail.product.thumbnail.startsWith(environment.apiBaseUrl)) {
                   detail.product.thumbnail = `${environment.apiBaseUrl}/products/images/${detail.product.thumbnail}`;
                 }
+              } else {
+                console.warn('Product or thumbnail missing in order detail:', detail);
               }
             });
+          } else {
+            console.warn('No order details found in order');
           }
           
           console.log('Order data after update:', this.order); // Log để debug
@@ -85,13 +103,8 @@ export class OrderDetailAdminComponent implements OnInit {
           // Khởi tạo dữ liệu form update từ order
           this.initUpdateForm();
         } else {
-          console.warn('No result data in response');
-          // Nếu không có kết quả, thử lại sau 1 giây
-          // (có thể server chưa cập nhật xong dữ liệu)
-          setTimeout(() => {
-            console.log('Retrying to fetch order data...');
-            this.refreshOrderData();
-          }, 1000);
+          console.error('Order data is null or undefined after processing');
+          alert('Failed to load order data. Please try again.');
         }
       },
       error: (error: any) => {
@@ -99,6 +112,7 @@ export class OrderDetailAdminComponent implements OnInit {
         if (error.error) {
           console.error('Error details:', error.error);
         }
+        alert('Error loading order details. Please try again.');
       }
     });
   }
@@ -158,65 +172,65 @@ export class OrderDetailAdminComponent implements OnInit {
       next: (response: any) => {
         console.log('Update response:', response); // Log phản hồi từ server
         
-        // Hiển thị chi tiết response để debug
-        if (response) {
-          console.log('Response type:', typeof response);
-          console.log('Response keys:', Object.keys(response));
+        // Xác định dữ liệu đơn hàng từ response
+        let updatedOrderData = response;
+        
+        // Kiểm tra các định dạng response có thể có
+        if (response && response.result) {
+          console.log('Response contains result property, extracting data');
+          updatedOrderData = response.result;
+        }
+        
+        // Cập nhật dữ liệu đơn hàng
+        if (updatedOrderData && typeof updatedOrderData === 'object') {
+          // Cập nhật order từ dữ liệu trả về từ server
+          this.order = updatedOrderData;
           
-          // Nếu response có dữ liệu result, sử dụng dữ liệu từ response để cập nhật
-          if (response.result) {
-            console.log('Response result:', response.result);
-            // Cập nhật order từ dữ liệu trả về từ server để đảm bảo có dữ liệu mới nhất
-            this.order = response.result;
-            
-            // Giữ lại dữ liệu sản phẩm từ orderDetails trước đó nếu server không trả về
-            if (this.order && (!this.order.orderDetails || this.order.orderDetails.length === 0)) {
-              this.order.orderDetails = currentOrderDetails;
-            }
-            
-            // Format thumbnail URLs for products in order details
-            if (this.order && this.order.orderDetails && this.order.orderDetails.length > 0) {
-              this.order.orderDetails.forEach(detail => {
-                if (detail.product && detail.product.thumbnail) {
-                  // Check if thumbnail already has the full URL
-                  if (!detail.product.thumbnail.startsWith('http') && 
-                      !detail.product.thumbnail.startsWith(environment.apiBaseUrl)) {
-                    detail.product.thumbnail = `${environment.apiBaseUrl}/products/images/${detail.product.thumbnail}`;
-                  }
+          // Nếu không có orderDetails, sử dụng dữ liệu cũ
+          if (this.order && (!this.order.orderDetails || this.order.orderDetails.length === 0)) {
+            this.order.orderDetails = currentOrderDetails;
+            console.log('Restored order details from previous data');
+          }
+          
+          // Format thumbnail URLs for products
+          if (this.order && this.order.orderDetails && this.order.orderDetails.length > 0) {
+            this.order.orderDetails.forEach(detail => {
+              if (detail.product && detail.product.thumbnail) {
+                // Check if thumbnail already has the full URL
+                if (!detail.product.thumbnail.startsWith('http') && 
+                    !detail.product.thumbnail.startsWith(environment.apiBaseUrl)) {
+                  detail.product.thumbnail = `${environment.apiBaseUrl}/products/images/${detail.product.thumbnail}`;
                 }
-              });
-            }
+              }
+            });
+          }
+          
+          console.log('Order updated successfully:', this.order);
+          alert('Order updated successfully!');
+        } else {
+          console.warn('No valid data in response, updating from form data');
+          
+          // Nếu không có dữ liệu từ server, cập nhật từ form
+          if (this.order) {
+            this.order.fullName = this.orderUpdate.fullName;
+            this.order.email = this.orderUpdate.email;
+            this.order.phoneNumber = this.orderUpdate.phoneNumber;
+            this.order.address = this.orderUpdate.address;
+            this.order.note = this.orderUpdate.note;
+            this.order.status = currentStatus;
+            this.order.totalMoney = this.orderUpdate.totalMoney;
+            this.order.shippingMethod = this.orderUpdate.shippingMethod;
+            this.order.paymentMethod = this.orderUpdate.paymentMethod;
             
-            console.log('Order updated from server response:', this.order);
+            console.log('Order updated from form data:', this.order);
+            alert('Order updated with form data!');
           } else {
-            // Nếu không có dữ liệu từ server, cập nhật từ form
-            if (this.order) {
-              this.order.fullName = this.orderUpdate.fullName;
-              this.order.email = this.orderUpdate.email;
-              this.order.phoneNumber = this.orderUpdate.phoneNumber;
-              this.order.address = this.orderUpdate.address;
-              this.order.note = this.orderUpdate.note;
-              this.order.status = this.orderUpdate.status;
-              this.order.totalMoney = this.orderUpdate.totalMoney;
-              this.order.shippingMethod = this.orderUpdate.shippingMethod;
-              this.order.paymentMethod = this.orderUpdate.paymentMethod;
-              
-              console.log('Order updated from form data:', this.order);
-            }
+            console.error('Cannot update order: order object is null');
+            alert('Update failed: Could not update order data');
           }
         }
         
-        alert('Order updated successfully!');
         this.isEditing = false;
-        
-        // Kiểm tra xem order.status đã được cập nhật chưa
-        if (this.order && this.order.status !== currentStatus) {
-          console.log(`Status updated successfully: ${currentStatus} -> ${this.order.status}`);
-        } else if (this.order) {
-          console.warn('Status may not have been updated correctly:', this.order.status);
-          // Force cập nhật status
-          this.order.status = currentStatus;
-        }
       },
       error: (error: any) => {
         console.error('Error updating order:', error);
@@ -266,14 +280,30 @@ export class OrderDetailAdminComponent implements OnInit {
 
   // Thêm hàm mới để làm mới dữ liệu đơn hàng khi cần
   refreshOrderData(): void {
+    console.log('Refreshing order data for ID:', this.orderId);
     this.orderService.getOrderById(this.orderId).subscribe({
       next: (response: any) => {
+        console.log('Refresh API Response:', response);
+        
+        // Xác định dữ liệu đơn hàng từ response
+        let orderData = response;
+        
+        // Kiểm tra các định dạng response có thể có
         if (response && response.result) {
-          console.log('Refreshed order data:', response.result);
-          this.order = response.result;
+          console.log('Response contains result property, extracting data');
+          orderData = response.result;
+        }
+        
+        // Cập nhật order mới
+        this.order = orderData;
+        
+        if (this.order) {
+          console.log('Refreshed order status:', this.order.status);
+          console.log('Refreshed order totalMoney:', this.order.totalMoney);
           
           // Format thumbnail URLs for products in order details
-          if (this.order && this.order.orderDetails && this.order.orderDetails.length > 0) {
+          if (this.order.orderDetails && this.order.orderDetails.length > 0) {
+            console.log('Refreshed order details count:', this.order.orderDetails.length);
             this.order.orderDetails.forEach(detail => {
               if (detail.product && detail.product.thumbnail) {
                 // Check if thumbnail already has the full URL
@@ -281,17 +311,31 @@ export class OrderDetailAdminComponent implements OnInit {
                     !detail.product.thumbnail.startsWith(environment.apiBaseUrl)) {
                   detail.product.thumbnail = `${environment.apiBaseUrl}/products/images/${detail.product.thumbnail}`;
                 }
+              } else {
+                console.warn('Product or thumbnail missing in order detail:', detail);
               }
             });
+          } else {
+            console.warn('No order details found in refreshed order');
           }
           
+          console.log('Order data after refresh:', this.order);
+          
+          // Khởi tạo dữ liệu form update từ order
           this.initUpdateForm();
+          
+          alert('Order data refreshed successfully');
         } else {
-          console.warn('Failed to refresh order data');
+          console.error('Order data is null or undefined after refresh');
+          alert('Failed to refresh order data. Please try again.');
         }
       },
       error: (error: any) => {
         console.error('Error refreshing order data:', error);
+        if (error.error) {
+          console.error('Error details:', error.error);
+        }
+        alert('Error refreshing order details. Please try again.');
       }
     });
   }

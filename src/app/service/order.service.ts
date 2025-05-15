@@ -161,7 +161,28 @@ export class OrderService {
       console.warn('Status not found in payload!');
     }
     
-    return this.http.put(url, payload);
+    // Thêm token vào header để đảm bảo xác thực
+    const token = this.tokenService.getToken();
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+    
+    return this.http.put(url, payload, { headers }).pipe(
+      tap(response => {
+        console.log('Update order response:', response);
+      }),
+      catchError((error: HttpErrorResponse) => {
+        console.error(`Error updating order ${orderId}:`, error);
+        console.error('Error details:', {
+          status: error.status,
+          statusText: error.statusText,
+          error: error.error,
+          message: error.message
+        });
+        return throwError(() => new Error('Không thể cập nhật đơn hàng. Vui lòng thử lại sau.'));
+      })
+    );
   }
 
   deleteOrder(orderId: number): Observable<any> {
