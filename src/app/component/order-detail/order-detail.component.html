@@ -1,55 +1,286 @@
 <app-header></app-header>
-<div class="container">
-  <div class="intro-section">
-    <h1>Confirm your orders!</h1>
-    <p>check your orders</p>
-  </div>
-  
-  <!-- Hiển thị trạng thái đơn hàng để debug -->
-  <div class="alert alert-info mt-3" *ngIf="orderDetail">
-    <strong>Trạng thái đơn hàng:</strong> {{orderDetail.status}}
-  </div>
-  
-  <div class="row">
-    <table class="table-product-list">
-      <thead>
-      <tr class="table-product-content">
-        <th scope="col" class="text-start">Product</th>
-        <th scope="col">Quantity</th>
-        <th scope="col">Price</th>
-        <th scope="col">Total price</th>
-      </tr>
-      </thead>
-      <tbody>
-        <ng-container *ngFor="let item of cartItems">
-          <tr class="table-product-content">
-            <td>
-              <div class="product-info">
-                <img
-                  [src]="item.product.thumbnail"
-                  alt="Product Image"
-                  class="product-image">
-                <span class="product-name">{{item.product.name}}</span>
-              </div>
-            </td>
-            <td>{{ item.quantity }}</td>
-            <td>{{item.product.price}}</td>
-            <td>{{item.product.price * item.quantity}}</td>
-          </tr>
-        </ng-container>
-      </tbody>
-    </table>
-    <div class="text-center mt-3 col-md-4 col-sm-12 mx-auto">
-      <a routerLink="/orders" class="btn btn-order w-100" type="button">Continue shopping</a>
+
+<!-- Order Detail View -->
+<div class="order-detail-container" *ngIf="orderDetail">
+  <div class="order-header">
+    <h2>Chi tiết đơn hàng #{{orderDetail.id}}</h2>
+    <div class="order-status" [ngClass]="orderDetail.status ? orderDetail.status.toLowerCase() : ''">
+      <span class="status-badge">{{getStatusText(orderDetail.status)}}</span>
     </div>
   </div>
-
-  <!-- Thêm nút thanh toán cho đơn hàng có trạng thái PENDING -->
-  <div class="mt-4 text-center" *ngIf="orderDetail && orderDetail.status === 'PENDING'">
-    <h4 class="mb-3">Đơn hàng này chưa được thanh toán</h4>
-    <a [routerLink]="['/checkout', orderDetail.id]" class="btn btn-primary btn-lg">
-      <i class="bi bi-credit-card me-2"></i>Thanh toán ngay với VNPay
-    </a>
+  
+  <!-- Warranty Information Section -->
+  <div class="warranty-section" *ngIf="orderDetail.warrantyCode">
+    <div class="warranty-card">
+      <div class="warranty-header">
+        <i class="fas fa-shield-alt"></i>
+        <h3>Thông tin bảo hành</h3>
+      </div>
+      <div class="warranty-content">
+        <div class="warranty-code">
+          <span class="label">Mã bảo hành:</span>
+          <span class="code">{{orderDetail.warrantyCode}}</span>
+          <button class="btn-copy" (click)="copyWarrantyCode()">
+            <i class="fas fa-copy"></i>
+          </button>
+        </div>
+        <div class="warranty-note">
+          <p>Quý khách vui lòng giữ lại mã bảo hành này để được hỗ trợ khi cần thiết.</p>
+          <p>Thời hạn bảo hành: 12 tháng kể từ ngày mua hàng.</p>
+        </div>
+        <div class="warranty-contact">
+          <p><i class="fas fa-phone"></i> Hotline bảo hành: <strong>1800-1234</strong></p>
+          <p><i class="fas fa-envelope"></i> Email: <strong>warranty@appleshop.com</strong></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Order Information Section -->
+  <div class="order-info-section">
+    <div class="order-info-card">
+      <div class="order-info-header">
+        <h3>Thông tin đơn hàng</h3>
+      </div>
+      <div class="order-info-content">
+        <div class="info-row">
+          <span class="label">Ngày đặt hàng:</span>
+          <span class="value">{{formatDate(orderDetail.orderDate)}}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Trạng thái:</span>
+          <span class="value status" [ngClass]="orderDetail.status ? orderDetail.status.toLowerCase() : ''">
+            {{getStatusText(orderDetail.status)}}
+          </span>
+        </div>
+        <div class="info-row">
+          <span class="label">Phương thức thanh toán:</span>
+          <span class="value">{{getPaymentMethodText(orderDetail.paymentMethod)}}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Phương thức vận chuyển:</span>
+          <span class="value">{{getShippingMethodText(orderDetail.shippingMethod)}}</span>
+        </div>
+        <div class="info-row" *ngIf="orderDetail.shippingDate">
+          <span class="label">Ngày giao hàng:</span>
+          <span class="value">{{formatDate(orderDetail.shippingDate)}}</span>
+        </div>
+        <div class="info-row" *ngIf="orderDetail.note">
+          <span class="label">Ghi chú:</span>
+          <span class="value">{{orderDetail.note}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Shipping Information Section -->
+  <div class="shipping-info-section">
+    <div class="shipping-info-card">
+      <div class="shipping-info-header">
+        <h3>Thông tin giao hàng</h3>
+      </div>
+      <div class="shipping-info-content">
+        <div class="info-row">
+          <span class="label">Người nhận:</span>
+          <span class="value">{{orderDetail.fullName}}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Số điện thoại:</span>
+          <span class="value">{{orderDetail.phoneNumber}}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Email:</span>
+          <span class="value">{{orderDetail.email}}</span>
+        </div>
+        <div class="info-row">
+          <span class="label">Địa chỉ nhận hàng:</span>
+          <span class="value">{{orderDetail.address}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Order Items Section -->
+  <div class="order-items-section">
+    <div class="order-items-card">
+      <div class="order-items-header">
+        <h3>Sản phẩm</h3>
+      </div>
+      <div class="order-items-content">
+        <table class="items-table">
+          <thead>
+            <tr>
+              <th>Sản phẩm</th>
+              <th>Giá</th>
+              <th>Số lượng</th>
+              <th>Thành tiền</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of orderDetail.orderDetails">
+              <td class="product-cell">
+                <div class="product-info">
+                  <div class="product-image">
+                    <img [src]="getProductImageUrl(item.product.thumbnail)" [alt]="item.product.name">
+                  </div>
+                  <div class="product-name">{{item.product.name}}</div>
+                </div>
+              </td>
+              <td class="price-cell">{{formatCurrency(item.price)}}</td>
+              <td class="quantity-cell">{{item.numberOfProducts}}</td>
+              <td class="total-cell">{{formatCurrency(item.totalMoney)}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Order Summary Section -->
+  <div class="order-summary-section">
+    <div class="order-summary-card">
+      <div class="summary-row subtotal">
+        <span class="label">Tạm tính:</span>
+        <span class="value">{{calculateSubtotal() | currency:'VND':'symbol':'1.0-0'}}</span>
+      </div>
+      <div class="summary-row shipping">
+        <span class="label">Phí vận chuyển:</span>
+        <span class="value">{{getShippingCost() | currency:'VND':'symbol':'1.0-0'}}</span>
+      </div>
+      <div class="summary-row total">
+        <span class="label">Tổng cộng:</span>
+        <span class="value">{{formatCurrency(orderDetail.totalAmount || 0)}}</span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Actions Section -->
+  <div class="order-actions-section">
+    <button class="btn-primary" *ngIf="orderDetail.status === 'PENDING'" (click)="cancelOrder()">
+      <i class="fas fa-times"></i> Hủy đơn hàng
+    </button>
+    <button class="btn-outline" (click)="navigateBack()">
+      <i class="fas fa-arrow-left"></i> Quay lại
+    </button>
+    <button class="btn-primary" *ngIf="!orderDetail.warrantyCode && orderDetail.status === 'COMPLETED'" (click)="generateWarrantyCode()">
+      <i class="fas fa-shield-alt"></i> Tạo mã bảo hành
+    </button>
   </div>
 </div>
+
+<!-- Cart View (Only shown when no orderDetail) -->
+<div class="cart-container" *ngIf="!orderDetail && cartItems.length > 0">
+  <div class="cart-header">
+    <h1>Giỏ hàng của bạn</h1>
+  </div>
+  
+  <div class="cart-content">
+    <div class="cart-main">
+      <div class="cart-select-all">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" 
+                 [checked]="areAllItemsSelected()" 
+                 (change)="toggleSelectAll()" 
+                 id="selectAll">
+          <label class="form-check-label" for="selectAll">
+            Chọn tất cả (<span>{{cartItems.length}}</span> sản phẩm)
+          </label>
+        </div>
+      </div>
+
+      <div class="cart-items">
+        <div class="cart-item" *ngFor="let item of cartItems; let i = index">
+          <div class="item-select">
+            <input class="form-check-input" type="checkbox" 
+                   [(ngModel)]="item.selected" 
+                   (change)="updateSelection()">
+          </div>
+          <div class="item-image">
+            <img [src]="item.product.thumbnail" [alt]="item.product.name">
+          </div>
+          <div class="item-details">
+            <div class="item-name">{{item.product.name}}</div>
+            <div class="item-actions">
+              <button type="button" class="btn-remove" (click)="removeItem(item.product.id)">
+                <i class="fas fa-trash"></i> Xóa
+              </button>
+            </div>
+          </div>
+          <div class="item-price">{{formatCurrency(item.product.price)}}</div>
+          <div class="item-quantity">
+            <div class="quantity-control">
+              <button (click)="decreaseQuantity(i)" [disabled]="item.quantity <= 1">
+                <i class="fas fa-minus"></i>
+              </button>
+              <input type="number" [(ngModel)]="item.quantity" min="1" 
+                     [max]="item.product.quantity || 1000" (change)="updateQuantity(i)">
+              <button (click)="increaseQuantity(i)" [disabled]="item.product.quantity !== undefined && item.quantity >= item.product.quantity">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+            <div class="quantity-limit" *ngIf="item.product.quantity && item.product.quantity <= 10">
+              <span>Chỉ còn {{item.product.quantity}} sản phẩm</span>
+            </div>
+          </div>
+          <div class="item-subtotal">{{formatCurrency(item.product.price * item.quantity)}}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cart-summary">
+      <div class="summary-header">
+        <h3>Tổng tiền giỏ hàng</h3>
+      </div>
+      <div class="summary-content">
+        <div class="summary-row">
+          <span>Tổng sản phẩm:</span>
+          <span>{{getSelectedItemsCount()}} sản phẩm</span>
+        </div>
+        <div class="summary-row">
+          <span>Tạm tính:</span>
+          <span>{{formatCurrency(getSelectedTotal())}}</span>
+        </div>
+        <div class="summary-discount" *ngIf="discountAmount > 0">
+          <span>Giảm giá:</span>
+          <span>-{{formatCurrency(discountAmount)}}</span>
+        </div>
+        <div class="summary-row total">
+          <span>Thành tiền:</span>
+          <span>{{formatCurrency(getFinalTotal())}}</span>
+        </div>
+        
+        <div class="coupon-section">
+          <div class="coupon-input">
+            <input type="text" [(ngModel)]="couponCode" placeholder="Nhập mã giảm giá">
+            <button class="btn-apply" (click)="applyCoupon()">Áp dụng</button>
+          </div>
+          <div class="coupon-message" *ngIf="couponMessage">
+            {{couponMessage}}
+          </div>
+        </div>
+        
+        <div class="checkout-actions">
+          <button class="btn-checkout" 
+                  [disabled]="getSelectedItemsCount() === 0"
+                  (click)="checkout()">
+            Mua hàng ({{getSelectedItemsCount()}})
+          </button>
+          <a routerLink="/" class="btn-continue-shopping">
+            Tiếp tục mua sắm
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="cart-empty" *ngIf="!orderDetail && cartItems.length === 0">
+  <div class="empty-icon">
+    <i class="fas fa-shopping-cart"></i>
+  </div>
+  <h3>Giỏ hàng trống</h3>
+  <p>Bạn chưa có sản phẩm nào trong giỏ hàng</p>
+  <a routerLink="/" class="btn btn-primary">Tiếp tục mua sắm</a>
+</div>
+
 <app-footer></app-footer>

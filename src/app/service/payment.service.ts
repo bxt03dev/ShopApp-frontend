@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
-import { StorageService } from './storage.service';
+import { TokenService } from './token.service';
 
 export interface PaymentDTO {
   order_id: number;
@@ -28,8 +28,10 @@ export class PaymentService {
 
   constructor(
     private http: HttpClient,
-    private storageService: StorageService
-  ) { }
+    private tokenService: TokenService
+  ) {
+    console.log('Payment Service initialized with base URL:', this.baseUrl);
+  }
 
   createPayment(paymentData: PaymentDTO): Observable<PaymentResponse> {
     const url = `${this.baseUrl}/create`;
@@ -53,9 +55,12 @@ export class PaymentService {
     });
     
     // Thêm token nếu có
-    const token = this.storageService.getToken();
+    const token = this.tokenService.getToken();
     if (token) {
       headers = headers.set('Authorization', `Bearer ${token}`);
+      console.log('Đã thêm token vào header');
+    } else {
+      console.warn('Không tìm thấy token xác thực khi tạo thanh toán');
     }
     
     // Chuyển đổi dữ liệu để đảm bảo đúng định dạng JSON
@@ -82,7 +87,7 @@ export class PaymentService {
     let headers = new HttpHeaders();
     
     // Thêm token nếu có
-    const token = this.storageService.getToken();
+    const token = this.tokenService.getToken();
     if (token) {
       headers = headers.set('Authorization', `Bearer ${token}`);
     }
@@ -105,6 +110,13 @@ export class PaymentService {
       errorMessage = `Mã lỗi: ${error.status}, Thông báo: ${error.message}`;
       if (error.error && error.error.message) {
         errorMessage = error.error.message;
+      }
+      
+      // Handle specific error codes
+      if (error.status === 403) {
+        errorMessage = 'Phiên đăng nhập đã hết hạn hoặc không có quyền truy cập. Vui lòng đăng nhập lại.';
+      } else if (error.status === 401) {
+        errorMessage = 'Bạn không được phép thực hiện thao tác này. Vui lòng đăng nhập.';
       }
     }
     

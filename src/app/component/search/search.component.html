@@ -1,7 +1,7 @@
 <app-header></app-header>
 <div class="container">
   <div class="search-results">
-    <h2 class="search-title">Search Results for "{{ searchQuery }}"</h2>
+    <h2 class="search-title">Kết quả tìm kiếm cho "{{ searchQuery }}"</h2>
     
     <div *ngIf="loading" class="loading">
       <div class="spinner-border text-primary" role="status">
@@ -15,22 +15,39 @@
 
     <div *ngIf="!loading && !error">
       <div *ngIf="searchResults.length === 0" class="no-results">
-        <p>No products found matching your search.</p>
+        <p>Không tìm thấy sản phẩm nào khớp với tìm kiếm của bạn.</p>
       </div>
 
-      <div class="row" *ngIf="searchResults.length > 0">
-        <div class="col-lg-3 col-md-6" *ngFor="let product of searchResults">
-          <div class="product-item product-detail-card">
-            <img [src]="product.url" alt="{{ product.name }}" class="product-image" loading="lazy">
-            <h3 class="product-name">{{ product.name }}</h3>
-            <p class="product-description">{{ product.description }}</p>
-            <p class="product-price">${{ product.price }}</p>
-            <div class="product-actions">
-              <button class="btn btn-primary">Add to Cart</button>
+      <div class="row product-grid" *ngIf="searchResults.length > 0">
+        <div *ngFor="let product of searchResults.slice((currentPage-1)*pageSize, currentPage*pageSize)" class="card-product-container">
+          <div class="card-product-inner">
+            <div class="card-product-header">
+              <h3 class="card-product-title">
+                {{ product.name }}
+              </h3>
+            </div>
+            <div class="card-product-image-wrap">
+              <img [src]="product.url" [alt]="product.name" class="card-product-image">
+            </div>
+            <div class="card-product-content">
+              <div class="card-product-price">
+                <span class="product-price">{{ product.price.toLocaleString() }} đ</span>
+              </div>
+              <a [routerLink]="['/products', product.id]" class="btn card-product-view-detail">Xem Ngay</a>
             </div>
           </div>
         </div>
       </div>
+    </div>
+    
+    <div class="pagination" *ngIf="totalPages > 1">
+      <button (click)="onPageChange(1)" [disabled]="currentPage === 1">Đầu</button>
+      <button (click)="prevPage()" [disabled]="currentPage === 1">&lt;</button>
+      <button (click)="onPageChange(page)" *ngFor="let page of visiblePages" [class.active]="page === currentPage">
+        {{ page }}
+      </button>
+      <button (click)="nextPage()" [disabled]="currentPage === totalPages">&gt;</button>
+      <button (click)="onPageChange(totalPages)" [disabled]="currentPage === totalPages">Cuối</button>
     </div>
   </div>
 </div>

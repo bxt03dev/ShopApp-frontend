@@ -31,6 +31,12 @@ import { CustomToastService } from './service/custom-toast.service';
 import { ToastModule } from './service/toast.module';
 import { PaymentComponent } from './component/payment/payment.component';
 import { PaymentResultComponent } from './component/payment-result/payment-result.component';
+import { registerLocaleData } from '@angular/common';
+import localeVi from '@angular/common/locales/vi';
+import { LOCALE_ID } from '@angular/core';
+
+// Register Vietnamese locale
+registerLocaleData(localeVi);
 
 @NgModule({
   declarations: [
@@ -79,6 +85,7 @@ import { PaymentResultComponent } from './component/payment-result/payment-resul
     })
   ],
   providers: [
+    { provide: LOCALE_ID, useValue: 'vi-VN' },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,

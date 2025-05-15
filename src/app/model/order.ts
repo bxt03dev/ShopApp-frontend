@@ -17,5 +17,6 @@ export interface Order {
   trackingNumber: string;
   paymentMethod: string;
   active: boolean;
+  warrantyCode?: string;
   orderDetails: OrderDetail[];
 }

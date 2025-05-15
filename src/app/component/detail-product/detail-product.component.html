@@ -1,83 +1,143 @@
 <app-header></app-header>
-<div class="container">
-  <div class="intro-section">
-    <h1>Product Detail</h1>
-  </div>
-
-  <div *ngIf="loading" class="text-center my-5">
-    <div class="spinner-border text-primary" role="status">
-      <span class="visually-hidden">Loading...</span>
+<div class="product-detail-container">
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner-container">
+      <div class="spinner"></div>
     </div>
   </div>
 
-  <div *ngIf="error" class="alert alert-danger my-5">
-    {{ error }}
+  <div *ngIf="error" class="error-container">
+    <div class="error-message">
+      <i class="fas fa-exclamation-circle"></i>
+      <p>{{ error }}</p>
+    </div>
   </div>
 
-  <div *ngIf="!loading && !error && product" class="row">
-    <div class="col-md-6">
-      <!-- Carousel -->
-      <div class="carousel slide" id="carouselExample" data-bs-ride="carousel">
-        <div class="carousel-inner">
+  <div *ngIf="!loading && !error && product" class="product-content">
+    <div class="breadcrumb">
+      <a [routerLink]="['/']">Trang chủ</a> / 
+      <a [routerLink]="['/products']">Sản phẩm</a> / 
+      <span>{{ product.name }}</span>
+    </div>
+
+    <div class="product-grid">
+      <!-- Product Images Section -->
+      <div class="product-images">
+        <div class="main-image-container">
+          <div *ngIf="product.productImages && product.productImages.length > 0" class="main-image">
+            <img [src]="product.productImages[currentImageIndex].imageUrl" [alt]="product.name">
+          </div>
+          
+          <div class="image-controls" *ngIf="product.productImages && product.productImages.length > 1">
+            <button class="control-btn prev-btn" (click)="previousImage()">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="control-btn next-btn" (click)="nextImage()">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="thumbnails" *ngIf="product.productImages && product.productImages.length > 1">
           <div *ngFor="let image of product.productImages; let i = index"
-               class="carousel-item" [ngClass]="{ 'active': i === currentImageIndex }">
-            <div class="square-image">
-              <img [src]="image.imageUrl" alt="Product image" class="product-image">
+               class="thumbnail" 
+               [ngClass]="{ 'active': i === currentImageIndex }"
+               (click)="thumbnailClick(i)">
+            <img [src]="image.imageUrl" [alt]="product.name + ' thumbnail ' + i">
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Info Section -->
+      <div class="product-info">
+        <h1 class="product-name">{{ product.name }}</h1>
+        
+        <div class="product-meta">
+          <div class="meta-item" *ngIf="product.dateRelease">
+            <span class="meta-label">Ngày phát hành:</span>
+            <span class="meta-value">{{ product.dateRelease | date:'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="meta-item" *ngIf="product.warrantyCode">
+            <span class="meta-label">Mã bảo hành:</span>
+            <span class="meta-value">{{ product.warrantyCode }}</span>
+          </div>
+        </div>
+        
+        <div class="product-price-container">
+          <div class="product-price" [ngClass]="{'sale-price': product.isOnSale}">
+            {{ product.price.toLocaleString() }} đ
+          </div>
+          <div class="sale-badge" *ngIf="product.isOnSale">
+            Giảm giá
+          </div>
+        </div>
+        
+        <div class="product-availability">
+          <div class="availability-label">Tình trạng:</div>
+          <div class="availability-status" [ngClass]="{'in-stock': product.quantity && product.quantity > 10, 'low-stock': product.quantity && product.quantity <= 10 && product.quantity > 0, 'out-of-stock': !product.quantity || product.quantity <= 0}">
+            <i class="fas" [ngClass]="{'fa-check-circle': product.quantity && product.quantity > 0, 'fa-times-circle': !product.quantity || product.quantity <= 0}"></i>
+            <span *ngIf="product.quantity && product.quantity > 10">Còn hàng</span>
+            <span *ngIf="product.quantity && product.quantity <= 10 && product.quantity > 0">Còn {{ product.quantity }} sản phẩm</span>
+            <span *ngIf="!product.quantity || product.quantity <= 0">Hết hàng</span>
+          </div>
+        </div>
+        
+        <div class="order-controls">
+          <div class="quantity-control">
+            <button class="quantity-btn" (click)="decreaseQuantity()">
+              <i class="fas fa-minus"></i>
+            </button>
+            <input type="number" [(ngModel)]="quantity" min="1" [max]="product.quantity || 1">
+            <button class="quantity-btn" (click)="increaseQuantity()">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+          
+          <div class="product-buttons">
+            <button class="cart-btn" 
+                    (click)="addToCart()" 
+                    [disabled]="product.quantity === undefined || product.quantity <= 0 || quantity > product.quantity">
+              <i class="fas fa-shopping-cart"></i> Thêm vào giỏ
+            </button>
+            <button class="buy-btn" 
+                    (click)="buyNow()" 
+                    [disabled]="product.quantity === undefined || product.quantity <= 0 || quantity > product.quantity">
+              <i class="fas fa-bolt"></i> Mua ngay
+            </button>
+          </div>
+        </div>
+        
+        <div class="product-features">
+          <div class="feature">
+            <i class="fas fa-truck"></i>
+            <div class="feature-text">
+              <h4>Giao hàng miễn phí</h4>
+              <p>Cho đơn hàng trên 1.000.000đ</p>
+            </div>
+          </div>
+          <div class="feature">
+            <i class="fas fa-undo"></i>
+            <div class="feature-text">
+              <h4>Đổi trả dễ dàng</h4>
+              <p>Trong vòng 7 ngày</p>
+            </div>
+          </div>
+          <div class="feature">
+            <i class="fas fa-shield-alt"></i>
+            <div class="feature-text">
+              <h4>Bảo hành chính hãng</h4>
+              <p>12 tháng bảo hành</p>
             </div>
           </div>
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev"
-                (click)="previousImage()">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next"
-                (click)="nextImage()">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Next</span>
-        </button>
-      </div>
-      <!-- Thumbnails -->
-      <div class="row">
-        <div class="thumbnail-container">
-          <div *ngFor="let image of product.productImages; let i = index"
-               class="thumbnail-item" [ngClass]="{ 'active': i === currentImageIndex }"
-               (click)="thumbnailClick(i)">
-            <img [src]="image.imageUrl" alt="Thumbnail" class="thumbnail-image">
-          </div>
-        </div>
       </div>
     </div>
-    <div class="col-md-6">
-      <div class="product-detail">
-        <h2>{{ product.name }}</h2>
-        <p class="product-description">{{ product.description }}</p>
-        <p class="product-price">${{ product.price }}</p>
-        <p class="product-inventory">
-          <span class="inventory-label">Số lượng còn:</span> 
-          <span class="inventory-value" [ngClass]="{'low-stock': product.quantity !== undefined && product.quantity < 10}">
-            {{ product.quantity || 0 }}
-          </span>
-        </p>
-      </div>
-      <div class="product-actions">
-        <button class="btn btn-primary" 
-          (click)="addToCart()" 
-          [disabled]="product.quantity === undefined || product.quantity <= 0 || quantity > product.quantity">
-          Add to cart
-        </button>
-        <button class="btn btn-success" 
-          (click)="buyNow()" 
-          [disabled]="product.quantity === undefined || product.quantity <= 0 || quantity > product.quantity">
-          Buy now
-        </button>
-      </div>
-      <div class="product-quantity">
-        <div class="border-wrapper">
-          <button (click)="decreaseQuantity()">-</button>
-          <input type="number" [(ngModel)]="quantity" min="1" />
-          <button (click)="increaseQuantity()">+</button>
-        </div>
+    
+    <!-- Product Description Section (Moved to bottom) -->
+    <div class="product-description-section">
+      <h2>Mô tả sản phẩm</h2>
+      <div class="description-content">
+        {{ product.description }}
       </div>
     </div>
   </div>

@@ -18,6 +18,8 @@ export interface ProductDTO {
   thumbnail?: string;
   quantity?: number;
   warrantyCode?: string;
+  dateRelease?: Date;
+  isOnSale?: boolean;
 }
 
 export interface UpdateProductDTO extends ProductDTO {}

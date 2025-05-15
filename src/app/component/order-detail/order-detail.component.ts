@@ -4,8 +4,11 @@ import {CartService} from "../../service/cart.service";
 import {ProductService} from "../../service/product.service";
 import {ApiResponse} from "../../dto/response/api.response";
 import {environment} from "../../common/environment";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {OrderService} from "../../service/order.service";
+import {CustomToastService} from '../../service/custom-toast.service';
+import {Order} from "../../model/order";
+import {OrderDetail as OrderDetailModel} from "../../model/order.detail";
 
 // Định nghĩa interface cho Order Detail
 interface OrderDetail {
@@ -25,25 +28,37 @@ interface OrderDetail {
   paymentMethod?: string;
   orderDetails?: any[];
   active?: boolean;
+  warrantyCode?: string;
+}
+
+interface CartItem {
+  product: Product;
+  quantity: number;
+  selected: boolean;
 }
 
 @Component({
-  selector: 'app-order-confirm',
+  selector: 'app-order-detail',
   templateUrl: './order-detail.component.html',
   styleUrls: ['./order-detail.component.scss']
 })
 export class OrderDetailComponent implements OnInit {
-  cartItems: {product: Product, quantity: number}[] = [];
+  cartItems: CartItem[] = [];
   totalPrice: number = 0;
   couponCode: string = '';
+  couponMessage: string = '';
+  discountAmount: number = 0;
   orderDetail: OrderDetail | null = null;
   orderId: number = 0;
+  isGeneratingWarranty: boolean = false;
   
   constructor(
     private productService: ProductService,
     private cartService: CartService,
     private route: ActivatedRoute,
-    private orderService: OrderService
+    private router: Router,
+    private orderService: OrderService,
+    private toastService: CustomToastService
   ) { }
 
   ngOnInit(): void {
@@ -57,34 +72,7 @@ export class OrderDetailComponent implements OnInit {
       }
     });
     
-    const cart = this.cartService.getCart();
-    const productIds = Array.from(cart.keys());
-    console.log('Cart product IDs:', productIds);
-
-    this.productService.getProductsByIds(productIds).subscribe({
-      next: (products: ApiResponse<Product[]>) => {
-        console.log('Products loaded:', products);
-        this.cartItems = productIds.map((productId: number) => {
-          const product = products.result.find((p) => p.id === productId);
-          if (product) {
-            product.thumbnail = `${environment.apiBaseUrl}/products/images/${product.thumbnail}`;
-            return {
-              product: product,
-              quantity: cart.get(productId)!
-            };
-          }
-          return null; // Hoặc xử lý khi không tìm thấy sản phẩm
-        }).filter(item => item !== null) as { product: Product; quantity: number }[];
-        console.log('Cart items mapped:', this.cartItems);
-      },
-      complete: () => {
-        this.calculateTotalPrice();
-        console.log('Total price calculated:', this.totalPrice);
-      },
-      error: (error: any) => {
-        console.error('Error fetching product details:', error);
-      }
-    });
+    this.loadCartItems();
   }
 
   loadOrderDetails(): void {
@@ -108,13 +96,325 @@ export class OrderDetailComponent implements OnInit {
     });
   }
 
-  calculateTotalPrice(): void {
-    this.totalPrice = this.cartItems.reduce((total, item) => total + item.product.price * item.quantity, 0);
+  loadCartItems(): void {
+    const cart = this.cartService.getCart();
+    const productIds = Array.from(cart.keys());
+
+    if (productIds.length === 0) {
+      return;
+    }
+
+    this.productService.getProductsByIds(productIds).subscribe({
+      next: (products: ApiResponse<Product[]>) => {
+        this.cartItems = productIds.map((productId: number) => {
+          const product = products.result.find((p) => p.id === productId);
+          if (product) {
+            product.thumbnail = `${environment.apiBaseUrl}/products/images/${product.thumbnail}`;
+            return {
+              product: product,
+              quantity: cart.get(productId)!,
+              selected: true // Default all items selected
+            };
+          }
+          return null; // Handle if product not found
+        }).filter(item => item !== null) as CartItem[];
+      },
+      error: (error: any) => {
+        console.error('Error fetching product details:', error);
+        this.toastService.showError('Không thể tải thông tin sản phẩm', 'Lỗi');
+      }
+    });
+  }
+
+  // Selection methods
+  areAllItemsSelected(): boolean {
+    return this.cartItems.length > 0 && this.cartItems.every(item => item.selected);
+  }
+
+  toggleSelectAll(): void {
+    const newValue = !this.areAllItemsSelected();
+    this.cartItems.forEach(item => item.selected = newValue);
+  }
+
+  updateSelection(): void {
+    // This is called when individual items are selected/deselected
+    // You can add additional logic here if needed
+  }
+
+  // Quantity adjustment methods
+  increaseQuantity(index: number): void {
+    const item = this.cartItems[index];
+    if (item.product.quantity && item.quantity >= item.product.quantity) {
+      this.toastService.showWarning(`Chỉ còn ${item.product.quantity} sản phẩm trong kho`, 'Thông báo');
+      return;
+    }
+    item.quantity++;
+    this.updateCartQuantity(item.product.id, item.quantity);
+  }
+
+  decreaseQuantity(index: number): void {
+    const item = this.cartItems[index];
+    if (item.quantity > 1) {
+      item.quantity--;
+      this.updateCartQuantity(item.product.id, item.quantity);
+    }
+  }
+
+  updateQuantity(index: number): void {
+    const item = this.cartItems[index];
+    // Ensure quantity is at least 1
+    if (item.quantity < 1) {
+      item.quantity = 1;
+    }
+    // Ensure quantity doesn't exceed available stock
+    if (item.product.quantity && item.quantity > item.product.quantity) {
+      item.quantity = item.product.quantity;
+      this.toastService.showWarning(`Chỉ còn ${item.product.quantity} sản phẩm trong kho`, 'Thông báo');
+    }
+    this.updateCartQuantity(item.product.id, item.quantity);
+  }
+
+  private updateCartQuantity(productId: number, quantity: number): void {
+    const cart = this.cartService.getCart();
+    cart.set(productId, quantity);
+    this.cartService.setCart(cart);
+  }
+
+  // Remove item method
+  removeItem(productId: number): void {
+    if (confirm('Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?')) {
+      const success = this.cartService.removeFromCart(productId);
+      if (success) {
+        this.cartItems = this.cartItems.filter(item => item.product.id !== productId);
+        this.toastService.showSuccess('Đã xóa sản phẩm khỏi giỏ hàng', 'Thành công');
+      } else {
+        this.toastService.showError('Không thể xóa sản phẩm', 'Lỗi');
+      }
+    }
+  }
+
+  // Calculation methods
+  getSelectedItemsCount(): number {
+    return this.cartItems.filter(item => item.selected).length;
+  }
+
+  getSelectedTotal(): number {
+    return this.cartItems
+      .filter(item => item.selected)
+      .reduce((total, item) => total + (item.product.price * item.quantity), 0);
+  }
+
+  getFinalTotal(): number {
+    return Math.max(0, this.getSelectedTotal() - this.discountAmount);
+  }
+
+  // Coupon handling
+  applyCoupon(): void {
+    if (!this.couponCode) {
+      this.couponMessage = 'Vui lòng nhập mã giảm giá';
+      return;
+    }
+
+    // This is a demo implementation - in a real app, you would validate with backend
+    if (this.couponCode.toUpperCase() === 'SALE10') {
+      this.discountAmount = this.getSelectedTotal() * 0.1; // 10% discount
+      this.couponMessage = 'Đã áp dụng mã giảm giá: Giảm 10%';
+      this.toastService.showSuccess('Đã áp dụng mã giảm giá', 'Thành công');
+    } else if (this.couponCode.toUpperCase() === 'SALE20') {
+      this.discountAmount = this.getSelectedTotal() * 0.2; // 20% discount
+      this.couponMessage = 'Đã áp dụng mã giảm giá: Giảm 20%';
+      this.toastService.showSuccess('Đã áp dụng mã giảm giá', 'Thành công');
+    } else {
+      this.discountAmount = 0;
+      this.couponMessage = 'Mã giảm giá không hợp lệ';
+      this.toastService.showError('Mã giảm giá không hợp lệ', 'Lỗi');
+    }
+  }
+
+  // Checkout method
+  checkout(): void {
+    if (this.getSelectedItemsCount() === 0) {
+      this.toastService.showWarning('Vui lòng chọn ít nhất một sản phẩm để thanh toán', 'Thông báo');
+      return;
+    }
+
+    // Update cart to include only selected items
+    const updatedCart = new Map<number, number>();
+    this.cartItems.forEach(item => {
+      if (item.selected) {
+        updatedCart.set(item.product.id, item.quantity);
+      }
+    });
+    this.cartService.setCart(updatedCart);
+
+    // Navigate to order page
+    this.router.navigate(['/orders']);
+  }
+
+  // Add currency formatting method
+  formatCurrency(amount: number): string {
+    return new Intl.NumberFormat('vi-VN', { 
+      style: 'currency', 
+      currency: 'VND',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(amount);
   }
   
-  // Thêm phương thức để gỡ lỗi
-  goToPayment(): void {
-    console.log('Navigating to payment for order ID:', this.orderId);
-    // Navigation handled by routerLink in template
+  // Order detail specific methods
+  getStatusText(status: string | undefined): string {
+    if (!status) return 'Không xác định';
+    
+    const statusMap: {[key: string]: string} = {
+      'PENDING': 'Chờ xác nhận',
+      'PROCESSING': 'Đang xử lý',
+      'SHIPPING': 'Đang giao hàng',
+      'COMPLETED': 'Đã hoàn thành',
+      'CANCELLED': 'Đã hủy'
+    };
+    
+    return statusMap[status] || status;
+  }
+  
+  getPaymentMethodText(method: string | undefined): string {
+    if (!method) return 'Không xác định';
+    
+    const methodMap: {[key: string]: string} = {
+      'cod': 'Thanh toán khi nhận hàng (COD)',
+      'vnpay': 'Thanh toán qua VNPay',
+      'momo': 'Thanh toán qua MoMo',
+      'bank_transfer': 'Chuyển khoản ngân hàng'
+    };
+    
+    return methodMap[method] || method;
+  }
+  
+  getShippingMethodText(method: string | undefined): string {
+    if (!method) return 'Không xác định';
+    
+    const methodMap: {[key: string]: string} = {
+      'standard': 'Giao hàng tiêu chuẩn',
+      'express': 'Giao hàng nhanh',
+      'same_day': 'Giao hàng trong ngày'
+    };
+    
+    return methodMap[method] || method;
+  }
+  
+  formatDate(date: string | undefined): string {
+    if (!date) return 'Không xác định';
+    
+    const dateObj = new Date(date);
+    return new Intl.DateTimeFormat('vi-VN', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(dateObj);
+  }
+  
+  getProductImageUrl(thumbnail: string): string {
+    if (!thumbnail) return 'assets/images/placeholder.jpg';
+    
+    // Check if it's already a full URL
+    if (thumbnail.startsWith('http')) {
+      return thumbnail;
+    }
+    
+    return `${environment.apiBaseUrl}/products/images/${thumbnail}`;
+  }
+  
+  calculateSubtotal(): number {
+    if (!this.orderDetail || !this.orderDetail.orderDetails) return 0;
+    
+    return this.orderDetail.orderDetails.reduce((total, item) => {
+      return total + ((item.price || 0) * (item.numberOfProducts || 0));
+    }, 0);
+  }
+  
+  getShippingCost(): number {
+    // In a real app, this would come from the order data
+    // For demo purposes, we'll use fixed values based on shipping method
+    if (!this.orderDetail) return 0;
+    
+    const shippingMethod = this.orderDetail.shippingMethod || '';
+    
+    const shippingCosts: {[key: string]: number} = {
+      'standard': 15000,
+      'express': 30000,
+      'same_day': 50000
+    };
+    
+    return shippingCosts[shippingMethod] || 0;
+  }
+  
+  navigateBack(): void {
+    this.router.navigate(['/orders']);
+  }
+  
+  cancelOrder(): void {
+    if (!this.orderDetail || !this.orderDetail.id) return;
+    
+    if (confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?')) {
+      this.orderService.cancelOrder(this.orderDetail.id).subscribe({
+        next: () => {
+          this.toastService.showSuccess('Đã hủy đơn hàng thành công', 'Thành công');
+          this.loadOrderDetails(); // Reload order details
+        },
+        error: (error) => {
+          console.error('Error cancelling order:', error);
+          this.toastService.showError('Không thể hủy đơn hàng', 'Lỗi');
+        }
+      });
+    }
+  }
+  
+  // Warranty code methods
+  generateWarrantyCode(): void {
+    if (!this.orderDetail || !this.orderDetail.id) return;
+    
+    this.isGeneratingWarranty = true;
+    this.orderService.generateWarrantyCode(this.orderDetail.id).subscribe({
+      next: (response) => {
+        this.isGeneratingWarranty = false;
+        if (response && response.warrantyCode) {
+          this.orderDetail!.warrantyCode = response.warrantyCode;
+          this.toastService.showSuccess('Đã tạo mã bảo hành thành công', 'Thành công');
+        } else {
+          this.toastService.showError('Không thể tạo mã bảo hành', 'Lỗi');
+        }
+      },
+      error: (error) => {
+        this.isGeneratingWarranty = false;
+        console.error('Error generating warranty code:', error);
+        this.toastService.showError('Không thể tạo mã bảo hành', 'Lỗi');
+      }
+    });
+  }
+  
+  copyWarrantyCode(): void {
+    if (!this.orderDetail || !this.orderDetail.warrantyCode) return;
+    
+    // Simple fallback method using DOM clipboard API
+    try {
+      const textArea = document.createElement('textarea');
+      textArea.value = this.orderDetail.warrantyCode;
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
+      
+      if (successful) {
+        this.toastService.showSuccess('Đã sao chép mã bảo hành', 'Thành công');
+      } else {
+        this.toastService.showError('Không thể sao chép mã bảo hành', 'Lỗi');
+      }
+    } catch (err) {
+      console.error('Could not copy text: ', err);
+      this.toastService.showError('Không thể sao chép mã bảo hành', 'Lỗi');
+    }
   }
 }

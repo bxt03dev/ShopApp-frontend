@@ -1,5 +1,6 @@
 .search-results {
   padding: 40px 0;
+  background-color: var(--page-background);
 }
 
 .container {
@@ -7,12 +8,14 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  background-color: var(--page-background);
 }
 
 .search-title {
   margin-bottom: 30px;
   font-size: 24px;
   font-weight: 500;
+  background-color: var(--page-background);
 }
 
 .loading {
@@ -28,63 +31,186 @@
   color: #666;
 }
 
-.product-item {
-  margin-bottom: 30px;
-  padding: 15px;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  transition: all 0.3s ease;
+.product-grid {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 20px -12.5px;
+  justify-content: flex-start;
+  background-color: var(--page-background);
+}
 
-  &:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
+.card-product-container {
+  width: 100%;
+  padding: 0 12.5px;
+  margin-bottom: 25px;
+  transition: none;
+  animation: fadeIn 0.5s ease-in-out;
+  background-color: var(--page-background);
+
+  @media (min-width: 576px) {
+    width: 100%;
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  @media (min-width: 768px) {
+    width: 33.333333%;
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+  }
+
+  @media (min-width: 992px) {
+    width: 25%;
+    flex: 0 0 25%;
+    max-width: 25%;
   }
 }
 
-.product-image {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 4px;
-  margin-bottom: 15px;
+.card-product-inner {
+  background-color: var(--product-background);
+  border-radius: 18px;
+  overflow: hidden;
+  height: 100%;
+  box-shadow: var(--card-shadow);
+  transition: all .3s cubic-bezier(0,0,.5,1);
+
+  &:hover {
+    box-shadow: 2px 4px 16px #00000029;
+    transform: scale3d(1.01, 1.01, 1.01);
+  }
 }
 
-.product-name {
+.card-product-header {
+  padding: 15px 15px 5px;
+  background-color: var(--product-background);
+}
+
+.card-product-title {
   font-size: 16px;
-  font-weight: 500;
-  margin-bottom: 10px;
-}
-
-.product-description {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 10px;
+  font-weight: 600;
+  margin-bottom: 8px;
   height: 40px;
   overflow: hidden;
-  text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
 
-.product-price {
-  font-size: 18px;
-  font-weight: 600;
-  color: #000;
-  margin-bottom: 15px;
+.card-product-image-wrap {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
+  border-radius: 0;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.product-actions {
-  .btn-primary {
-    width: 100%;
-    background-color: #000;
-    border: none;
-    padding: 8px 0;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
+.card-product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: none;
+  padding: 5px;
 
-    &:hover {
-      background-color: #333;
+  &:hover {
+    transform: none;
+  }
+}
+
+.card-product-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px 15px;
+  background-color: var(--product-background);
+}
+
+.card-product-price {
+  font-weight: bold;
+  font-size: 16px;
+  color: #333;
+}
+
+.card-product-view-detail {
+  padding: 8px 15px;
+  background-color: #0071e3;
+  color: #fff;
+  border-radius: 20px;
+  font-size: 14px;
+  transition: all 0.3s;
+  border: none;
+
+  &:hover {
+    background-color: #0058a0;
+    text-decoration: none;
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+.pagination {
+  margin: 30px 0;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+
+  button {
+    padding: 8px 15px;
+    margin: 5px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+
+    &:hover:not([disabled]) {
+      background-color: #f5f5f5;
+    }
+
+    &[disabled] {
+      background-color: #f0f0f0;
+      color: #666;
+      cursor: not-allowed;
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(0, 113, 227, 0.3);
+    }
+    
+    &.active {
+      background-color: #0071e3;
+      color: white;
+      border-color: #0071e3;
     }
   }
+
+  @media (max-width: 576px) {
+    button {
+      padding: 6px 10px;
+      font-size: 14px;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Thêm biến màu nền trang web để dễ dàng sử dụng và thay đổi */
+:host {
+  --page-background: #f5f5f7;
+  --product-background: #ffffff;
+  --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --card-hover-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  display: block;
 } 

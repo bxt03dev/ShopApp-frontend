@@ -1,131 +1,204 @@
 <app-header></app-header>
-<div class="container">
-  <div class="intro-section">
-    <h1>Your orders</h1>
-    <p>Pay for your orders!</p>
+<div class="order-container">
+  <div class="order-header">
+    <h1>Thanh toán đơn hàng</h1>
+    <p>Hoàn tất thông tin để đặt hàng</p>
   </div>
-  <form [formGroup]="orderForm" (ngSubmit)="placeOrder()">
-    <div class="row">
-      <!-- Consignee Information -->
-      <div class="col-md-6">
-        <h2 class="product-header">Consignee Information</h2>
-        <div class="mb-3">
-          <label for="fullName" class="form-label">Full Name</label>
-          <input type="text" formControlName="fullName" id="fullName" class="form-control"
-                 [class.is-invalid]="orderForm.get('fullName')?.invalid && orderForm.get('fullName')?.touched">
-          <div *ngIf="orderForm.get('fullName')?.invalid && orderForm.get('fullName')?.touched" class="invalid-feedback">
-            Full name is required
-          </div>
-        </div>
-        <div class="mb-3">
-          <label for="email" class="form-label">Email Address</label>
-          <input type="email" formControlName="email" id="email" class="form-control"
-                 [class.is-invalid]="orderForm.get('email')?.invalid && orderForm.get('email')?.touched">
-          <div *ngIf="orderForm.get('email')?.invalid && orderForm.get('email')?.touched" class="invalid-feedback">
-            Please enter a valid email address
-          </div>
-        </div>
-        <div class="mb-3">
-          <label for="phoneNumber" class="form-label">Phone Number</label>
-          <input type="text" formControlName="phoneNumber" id="phoneNumber" class="form-control"
-                 [class.is-invalid]="orderForm.get('phoneNumber')?.invalid && orderForm.get('phoneNumber')?.touched">
-          <div *ngIf="orderForm.get('phoneNumber')?.invalid && orderForm.get('phoneNumber')?.touched" class="invalid-feedback">
-            Phone number must be at least 8 characters
-          </div>
-        </div>
-        <div class="mb-3">
-          <label for="address" class="form-label">Address</label>
-          <input type="text" formControlName="address" id="address" class="form-control"
-                 [class.is-invalid]="orderForm.get('address')?.invalid && orderForm.get('address')?.touched">
-          <div *ngIf="orderForm.get('address')?.invalid && orderForm.get('address')?.touched" class="invalid-feedback">
-            Address is required
-          </div>
-        </div>
-        <div class="mb-3">
-          <label for="note" class="form-label">Note</label>
-          <input type="text" formControlName="note" id="note" class="form-control" placeholder="Note">
-        </div>
-        <div class="mb-3">
-          <label for="shippingMethod" class="form-label">Shipping Method</label>
-          <select formControlName="shippingMethod" id="shippingMethod" class="form-control">
-            <option value="express">Express</option>
-            <option value="normal">Normal</option>
-          </select>
-        </div>
-        <div class="mb-3">
-          <label for="paymentMethod" class="form-label">Payment Method</label>
-          <select formControlName="paymentMethod" id="paymentMethod" class="form-control">
-            <option value="cod">COD</option>
-            <option value="vnpay">VNPay</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-      </div>
 
-      <!-- Products -->
-      <div class="col-md-6">
-        <h2 class="product-header">Products</h2>
-        <table class="table-product-list" *ngIf="cartItems.length > 0">
-          <thead>
-            <tr class="table-product-content">
-              <th scope="col">Products</th>
-              <th scope="col">Quantity</th>
-              <th scope="col">Price</th>
-              <th scope="col">Total Price</th>
-              <th scope="col">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of cartItems; let i = index" class="table-product-content">
-              <td>
-                <div class="product-info">
-                  <img [src]="item.product.thumbnail" [alt]="item.product.name" class="product-image">
-                  <span class="product-name">{{item.product.name}}</span>
-                </div>
-              </td>
-              <td>
-                <div class="product-quantity">
-                  <div class="border-wrapper">
-                    <button type="button" (click)="decreaseQuantity(i)" class="btn btn-sm btn-outline-secondary">-</button>
-                    <span class="quantity-display">{{item.quantity}}</span>
-                    <button type="button" (click)="increaseQuantity(i)" class="btn btn-sm btn-outline-secondary">+</button>
-                  </div>
-                </div>
-              </td>
-              <td>{{item.product.price | currency:'USD'}}</td>
-              <td>{{item.product.price * item.quantity | currency:'USD'}}</td>
-              <td>
-                <button type="button" (click)="confirmDelete(i)" class="btn btn-danger btn-sm delete-btn" title="Xóa sản phẩm">
-                  <i class="fas fa-trash"></i> Xóa
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        
-        <div *ngIf="cartItems.length === 0" class="alert alert-info">
-          Your cart is empty
-        </div>
-
-        <div class="text-end mt-3" *ngIf="cartItems.length > 0">
-          <h4>Total: {{totalMoney | currency:'USD'}}</h4>
-        </div>
-
-        <div class="mt-3" *ngIf="cartItems.length > 0">
-          <div class="product-header">Coupon</div>
-          <div class="input-group mb-3">
-            <input type="text" formControlName="couponCode" class="form-control" placeholder="Enter coupon...">
-            <button type="button" class="btn btn-order">Apply</button>
-          </div>
-        </div>
-
-        <div class="text-start mt-3">
-          <button type="submit" class="btn btn-order col-sm-12 col-md-3" [disabled]="orderForm.invalid || cartItems.length === 0">
-            Place Order
-          </button>
-        </div>
-      </div>
+  <!-- Error Message Alert -->
+  <div class="error-alert" *ngIf="errorMessage">
+    <div class="alert-content">
+      <i class="fas fa-exclamation-circle"></i>
+      <span>{{errorMessage}}</span>
+      <button type="button" class="btn-close" (click)="clearError()">
+        <i class="fas fa-times"></i>
+      </button>
     </div>
-  </form>
+  </div>
+
+  <div class="order-content">
+    <form [formGroup]="orderForm" (ngSubmit)="placeOrder()">
+      <div class="order-grid">
+        <!-- Thông tin đặt hàng -->
+        <div class="customer-info-section">
+          <div class="section-header">
+            <div class="section-icon">
+              <i class="fas fa-user"></i>
+            </div>
+            <h2>Thông tin người nhận</h2>
+          </div>
+
+          <div class="form-group">
+            <label for="fullName">Họ và tên <span class="required">*</span></label>
+            <input type="text" formControlName="fullName" id="fullName" class="form-control"
+                  [class.is-invalid]="orderForm.get('fullName')?.invalid && orderForm.get('fullName')?.touched">
+            <div *ngIf="orderForm.get('fullName')?.invalid && orderForm.get('fullName')?.touched" class="invalid-feedback">
+              Vui lòng nhập họ tên
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email <span class="required">*</span></label>
+            <input type="email" formControlName="email" id="email" class="form-control"
+                  [class.is-invalid]="orderForm.get('email')?.invalid && orderForm.get('email')?.touched">
+            <div *ngIf="orderForm.get('email')?.invalid && orderForm.get('email')?.touched" class="invalid-feedback">
+              Email không hợp lệ
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="phoneNumber">Số điện thoại <span class="required">*</span></label>
+            <input type="text" formControlName="phoneNumber" id="phoneNumber" class="form-control"
+                  [class.is-invalid]="orderForm.get('phoneNumber')?.invalid && orderForm.get('phoneNumber')?.touched">
+            <div *ngIf="orderForm.get('phoneNumber')?.invalid && orderForm.get('phoneNumber')?.touched" class="invalid-feedback">
+              Vui lòng nhập số điện thoại hợp lệ
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="address">Địa chỉ <span class="required">*</span></label>
+            <input type="text" formControlName="address" id="address" class="form-control"
+                  [class.is-invalid]="orderForm.get('address')?.invalid && orderForm.get('address')?.touched">
+            <div *ngIf="orderForm.get('address')?.invalid && orderForm.get('address')?.touched" class="invalid-feedback">
+              Vui lòng nhập địa chỉ
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="note">Ghi chú</label>
+            <textarea formControlName="note" id="note" class="form-control" rows="3" placeholder="Ghi chú về đơn hàng, ví dụ: thời gian hay chỉ dẫn địa điểm giao hàng chi tiết hơn."></textarea>
+          </div>
+        </div>
+
+        <!-- Thông tin vận chuyển và thanh toán -->
+        <div class="shipping-payment-section">
+          <div class="section-header">
+            <div class="section-icon">
+              <i class="fas fa-truck"></i>
+            </div>
+            <h2>Vận chuyển & Thanh toán</h2>
+          </div>
+
+          <div class="shipping-options">
+            <h3>Phương thức vận chuyển</h3>
+            <div class="options-list">
+              <div class="option-item">
+                <input type="radio" id="express" value="express" formControlName="shippingMethod">
+                <label for="express">
+                  <span class="option-icon"><i class="fas fa-shipping-fast"></i></span>
+                  <span class="option-name">Giao hàng nhanh</span>
+                  <span class="option-price">30.000 ₫</span>
+                </label>
+              </div>
+              <div class="option-item">
+                <input type="radio" id="normal" value="normal" formControlName="shippingMethod">
+                <label for="normal">
+                  <span class="option-icon"><i class="fas fa-truck"></i></span>
+                  <span class="option-name">Giao hàng tiêu chuẩn</span>
+                  <span class="option-price">15.000 ₫</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="payment-options">
+            <h3>Phương thức thanh toán</h3>
+            <div class="options-list">
+              <div class="option-item">
+                <input type="radio" id="cod" value="cod" formControlName="paymentMethod">
+                <label for="cod">
+                  <span class="option-icon"><i class="fas fa-money-bill-wave"></i></span>
+                  <span class="option-name">Thanh toán khi nhận hàng</span>
+                </label>
+              </div>
+              <div class="option-item">
+                <input type="radio" id="vnpay" value="vnpay" formControlName="paymentMethod">
+                <label for="vnpay">
+                  <span class="option-icon"><i class="fas fa-credit-card"></i></span>
+                  <span class="option-name">Thanh toán VNPay</span>
+                </label>
+              </div>
+              <div class="option-item">
+                <input type="radio" id="other" value="other" formControlName="paymentMethod">
+                <label for="other">
+                  <span class="option-icon"><i class="fas fa-wallet"></i></span>
+                  <span class="option-name">Phương thức khác</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Thông tin đơn hàng -->
+        <div class="order-summary-section">
+          <div class="section-header">
+            <div class="section-icon">
+              <i class="fas fa-shopping-bag"></i>
+            </div>
+            <h2>Thông tin đơn hàng</h2>
+          </div>
+
+          <div class="cart-empty-message" *ngIf="cartItems.length === 0">
+            <div class="empty-icon">
+              <i class="fas fa-shopping-cart"></i>
+            </div>
+            <p>Giỏ hàng trống</p>
+            <a routerLink="/" class="btn-continue-shopping">Tiếp tục mua sắm</a>
+          </div>
+
+          <div class="order-items" *ngIf="cartItems.length > 0">
+            <div class="item" *ngFor="let item of cartItems; let i = index">
+              <div class="item-image">
+                <img [src]="item.product.thumbnail" [alt]="item.product.name">
+                <span class="item-quantity">{{item.quantity}}</span>
+              </div>
+              <div class="item-info">
+                <div class="item-name">{{item.product.name}}</div>
+                <div class="item-price">{{formatCurrency(item.product.price)}}</div>
+              </div>
+              <div class="item-total">
+                {{formatCurrency(item.product.price * item.quantity)}}
+              </div>
+              <button type="button" class="btn-remove" (click)="confirmDelete(i)" title="Xóa sản phẩm">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="coupon-section" *ngIf="cartItems.length > 0">
+            <div class="coupon-input">
+              <input type="text" formControlName="couponCode" placeholder="Nhập mã giảm giá">
+              <button type="button" class="btn-apply" (click)="applyCoupon()">Áp dụng</button>
+            </div>
+          </div>
+
+          <div class="order-totals" *ngIf="cartItems.length > 0">
+            <div class="total-row">
+              <span>Tạm tính:</span>
+              <span>{{formatCurrency(totalMoney)}}</span>
+            </div>
+            <div class="total-row">
+              <span>Phí vận chuyển:</span>
+              <span>{{formatCurrency(getShippingCost())}}</span>
+            </div>
+            <div class="total-row discount" *ngIf="discountAmount > 0">
+              <span>Giảm giá:</span>
+              <span>-{{formatCurrency(discountAmount)}}</span>
+            </div>
+            <div class="total-row final">
+              <span>Tổng cộng:</span>
+              <span>{{formatCurrency(getFinalTotal())}}</span>
+            </div>
+          </div>
+
+          <div class="checkout-button">
+            <button type="submit" [disabled]="orderForm.invalid || cartItems.length === 0" class="btn-place-order">
+              <i class="fas fa-check-circle"></i> Đặt hàng
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
 </div>
 <app-footer></app-footer>

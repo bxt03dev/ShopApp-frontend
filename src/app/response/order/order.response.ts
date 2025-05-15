@@ -15,6 +15,7 @@ export interface OrderResponse {
   shippingAddress: string;
   shippingDate: Date;
   paymentMethod: string;
+  warrantyCode?: string;
   orderDetails: OrderDetail[];
 }
 

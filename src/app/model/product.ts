@@ -9,6 +9,8 @@ export interface Product {
   categoryId: string;
   quantity?: number;
   warrantyCode?: string;
+  dateRelease?: Date;
+  isOnSale?: boolean;
   url?: string; // Optional, used for image URL
   productImages?: ProductImage[];
 }
