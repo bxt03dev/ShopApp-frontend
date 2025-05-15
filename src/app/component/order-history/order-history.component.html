@@ -1,0 +1,113 @@
+<app-header></app-header>
+
+<div class="order-history-container">
+  <div class="order-history-header">
+    <h1>Lịch sử mua hàng</h1>
+    <p>Xem tất cả đơn đặt hàng của bạn</p>
+    <button class="btn-reload" (click)="loadOrders()">
+      <i class="fas fa-sync-alt"></i> Tải lại dữ liệu
+    </button>
+  </div>
+
+  <!-- Error Message Alert -->
+  <div class="error-alert" *ngIf="errorMessage">
+    <div class="alert-content">
+      <i class="fas fa-exclamation-circle"></i>
+      <span>{{errorMessage}}</span>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div class="loading-spinner" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Đang tải đơn hàng...</p>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="!loading && orders.length === 0 && !errorMessage">
+    <div class="empty-icon">
+      <i class="fas fa-shopping-bag"></i>
+    </div>
+    <h2>Bạn chưa có đơn hàng nào</h2>
+    <p>Hãy mua sắm và quay lại đây để xem lịch sử đơn hàng của bạn</p>
+    <a routerLink="/" class="btn-continue-shopping">Tiếp tục mua sắm</a>
+  </div>
+
+  <!-- Orders List -->
+  <div class="orders-list" *ngIf="!loading && orders.length > 0">
+    <div class="order-card" *ngFor="let order of orders">
+      <div class="order-header">
+        <div class="order-id">
+          <span class="label">Mã đơn hàng:</span>
+          <span class="value">#{{order.id}}</span>
+        </div>
+        <div class="order-date">
+          <span class="label">Ngày đặt:</span>
+          <span class="value">{{formatDate(order.orderDate || order.createdAt)}}</span>
+        </div>
+        <div class="order-status">
+          <span class="status-badge" [ngClass]="getStatusClass(order.status)">
+            {{order.status}}
+          </span>
+        </div>
+      </div>
+
+      <div class="order-items">
+        <div class="item" *ngFor="let item of (order.orderItems || order.orderDetails || [])?.slice(0, 2)">
+          <div class="item-image" *ngIf="item.product?.thumbnail">
+            <img [src]="item.product.thumbnail" [alt]="item.product?.name">
+          </div>
+          <div class="item-info">
+            <div class="item-name">{{item.product?.name || item.productName}}</div>
+            <div class="item-quantity">x{{item.numberOfProducts || item.quantity || 1}}</div>
+          </div>
+          <div class="item-price">
+            {{formatCurrency(item.price || item.totalPrice)}}
+          </div>
+        </div>
+
+        <div class="more-items" *ngIf="(order.orderItems || order.orderDetails || [])?.length > 2">
+          <span>+{{(order.orderItems || order.orderDetails || []).length - 2}} sản phẩm khác</span>
+        </div>
+        
+        <div *ngIf="!(order.orderItems || order.orderDetails || [])?.length" class="no-items">
+          <p>Không có thông tin chi tiết đơn hàng</p>
+        </div>
+      </div>
+
+      <div class="order-footer">
+        <div class="order-total">
+          <span class="label">Tổng tiền:</span>
+          <span class="value">{{formatCurrency(order.totalMoney)}}</span>
+        </div>
+        <button class="btn-view-detail" (click)="viewOrderDetail(order.id)">
+          Xem chi tiết
+        </button>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="totalPages > 1">
+      <button 
+        class="btn-page" 
+        [disabled]="page === 0" 
+        (click)="changePage(page - 1)">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      
+      <span class="page-info">
+        Trang {{page + 1}} / {{totalPages}}
+      </span>
+      
+      <button 
+        class="btn-page" 
+        [disabled]="page >= totalPages - 1" 
+        (click)="changePage(page + 1)">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>
+

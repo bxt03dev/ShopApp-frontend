@@ -34,6 +34,7 @@ import { PaymentResultComponent } from './component/payment-result/payment-resul
 import { registerLocaleData } from '@angular/common';
 import localeVi from '@angular/common/locales/vi';
 import { LOCALE_ID } from '@angular/core';
+import { OrderHistoryComponent } from './component/order-history/order-history.component';
 
 // Register Vietnamese locale
 registerLocaleData(localeVi);
@@ -58,7 +59,8 @@ registerLocaleData(localeVi);
     ProductCreateAdminComponent,
     OrderDetailAdminComponent,
     PaymentComponent,
-    PaymentResultComponent
+    PaymentResultComponent,
+    OrderHistoryComponent
   ],
   imports: [
     ReactiveFormsModule,

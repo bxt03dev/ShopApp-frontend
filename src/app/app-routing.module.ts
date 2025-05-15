@@ -18,6 +18,7 @@ import {ProductCreateAdminComponent} from "./component/admin/product/product-cre
 import {OrderDetailAdminComponent} from "./component/admin/order/order-detail-admin/order.detail.admin.component";
 import { PaymentComponent } from './component/payment/payment.component';
 import { PaymentResultComponent } from './component/payment-result/payment-result.component';
+import { OrderHistoryComponent } from './component/order-history/order-history.component';
 
 export const routes: Routes = [
   {path: '', component: StoreComponent},
@@ -43,6 +44,7 @@ export const routes: Routes = [
   {path: 'search', component: SearchComponent},
   { path: 'checkout/:id', component: PaymentComponent, canActivate: [AuthGuard] },
   { path: 'payment-result', component: PaymentResultComponent, canActivate: [AuthGuard] },
+  { path: 'order-history', component: OrderHistoryComponent, canActivate: [AuthGuard] },
 ];
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

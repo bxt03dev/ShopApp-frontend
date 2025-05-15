@@ -218,6 +218,7 @@
             <span class="nav-link user-name">{{ userResponse.fullName }}</span>
             <div class="dropdown-menu-user" *ngIf="dropdownOpen">
               <a class="dropdown-item" routerLink="/profile">Tài khoản</a>
+              <a class="dropdown-item" routerLink="/order-history">Lịch sử mua hàng</a>
               <a class="dropdown-item" (click)="logout()">Đăng xuất</a>
             </div>
           </div>

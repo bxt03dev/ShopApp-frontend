@@ -7,7 +7,7 @@ import {
   HttpErrorResponse
 } from '@angular/common/http'
 import { Observable, throwError } from 'rxjs'
-import { catchError } from 'rxjs/operators'
+import { catchError, tap } from 'rxjs/operators'
 
 import {environment} from "../common/environment";
 import {OrderDTO} from "../dto/user/order.dto";
@@ -171,5 +171,43 @@ export class OrderService {
     const randomPart2 = Math.floor(1000 + Math.random() * 9000);
     
     return `AP-${year}-${randomPart1}-${randomPart2}`;
+  }
+  
+  // Get orders by user ID
+  getOrdersByUserId(userId: number, page: number = 0, limit: number = 10): Observable<any> {
+    // Sử dụng endpoint chính xác từ backend: /orders/user/{user_id}
+    const url = `${environment.apiBaseUrl}/orders/user/${userId}`;
+    
+    console.log(`Calling API: ${url} for user ID: ${userId}`);
+    
+    // Thêm token vào header để đảm bảo xác thực
+    const token = this.tokenService.getToken();
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+    
+    return this.http.get<any>(url, { headers }).pipe(
+      tap(response => {
+        console.log('API Response from orders/user endpoint:', response);
+        
+        // Check if response is in expected format
+        if (response && response.result) {
+          console.log('Orders in response:', response.result);
+        } else {
+          console.log('Response does not contain expected "result" property');
+        }
+      }),
+      catchError((error: HttpErrorResponse) => {
+        console.error(`Error fetching orders for user ${userId}:`, error);
+        console.error('Error details:', {
+          status: error.status,
+          statusText: error.statusText,
+          error: error.error,
+          message: error.message
+        });
+        return throwError(() => new Error('Không thể tải lịch sử đơn hàng. Vui lòng thử lại sau.'));
+      })
+    );
   }
 }
