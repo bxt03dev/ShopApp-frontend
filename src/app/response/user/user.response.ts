@@ -3,10 +3,20 @@ import {Role} from "../../model/role";
 export interface UserResponse {
   id: number;
   fullName: string;
+  phoneNumber: string;
+  email: string;
   address: string;
   isActive: boolean;
   dateOfBirth: Date;
-  facebookAccountId: number;
-  googleAccountId: number;
+  avatarUrl: string;
+  socialAccounts?: SocialAccountResponse[];
   role: Role;
+}
+
+export interface SocialAccountResponse {
+  provider: string;
+  providerId: string;
+  email: string;
+  name: string;
+  pictureUrl: string;
 }
