@@ -1,0 +1,164 @@
+<div class="profile-container">
+  <div class="container py-5">
+    <h2 class="mb-4">Thông tin tài khoản</h2>
+    
+    <div class="row">
+      <!-- User Info Section -->
+      <div class="col-md-6 mb-4">
+        <div class="card">
+          <div class="card-header">
+            <h3>Thông tin cá nhân</h3>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="userForm" (ngSubmit)="updateProfile()">
+              <div class="form-group mb-3">
+                <label for="fullName">Họ tên</label>
+                <input 
+                  type="text" 
+                  id="fullName" 
+                  formControlName="fullName" 
+                  class="form-control" 
+                  [ngClass]="{'is-invalid': userForm.get('fullName')?.invalid && userForm.get('fullName')?.touched}"
+                >
+                <div class="invalid-feedback" *ngIf="userForm.get('fullName')?.errors?.['required'] && userForm.get('fullName')?.touched">
+                  Họ tên không được để trống
+                </div>
+              </div>
+              
+              <div class="form-group mb-3">
+                <label for="phoneNumber">Số điện thoại</label>
+                <input 
+                  type="tel" 
+                  id="phoneNumber" 
+                  formControlName="phoneNumber" 
+                  class="form-control"
+                  [ngClass]="{'is-invalid': userForm.get('phoneNumber')?.invalid && userForm.get('phoneNumber')?.touched}"
+                >
+                <div class="invalid-feedback" *ngIf="userForm.get('phoneNumber')?.errors?.['required'] && userForm.get('phoneNumber')?.touched">
+                  Số điện thoại không được để trống
+                </div>
+                <div class="invalid-feedback" *ngIf="userForm.get('phoneNumber')?.errors?.['pattern'] && userForm.get('phoneNumber')?.touched">
+                  Số điện thoại phải có 10 chữ số
+                </div>
+              </div>
+              
+              <div class="form-group mb-3">
+                <label for="email">Email</label>
+                <input 
+                  type="email" 
+                  id="email" 
+                  formControlName="email" 
+                  class="form-control"
+                  [ngClass]="{'is-invalid': userForm.get('email')?.invalid && userForm.get('email')?.touched}"
+                >
+                <div class="invalid-feedback" *ngIf="userForm.get('email')?.errors?.['email'] && userForm.get('email')?.touched">
+                  Email không đúng định dạng
+                </div>
+              </div>
+              
+              <div class="form-group mb-3">
+                <label for="address">Địa chỉ</label>
+                <textarea 
+                  id="address" 
+                  formControlName="address" 
+                  class="form-control" 
+                  rows="3"
+                ></textarea>
+              </div>
+              
+              <div class="form-group mb-3">
+                <label for="dateOfBirth">Ngày sinh</label>
+                <input 
+                  type="date" 
+                  id="dateOfBirth" 
+                  formControlName="dateOfBirth" 
+                  class="form-control"
+                >
+              </div>
+              
+              <button type="submit" class="btn btn-primary mt-3" [disabled]="userForm.invalid || isLoading">
+                <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Cập nhật thông tin
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Password Update Section -->
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            <h3>Đổi mật khẩu</h3>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="passwordForm" (ngSubmit)="updatePassword()">
+              <div class="form-group mb-3">
+                <label for="password">Mật khẩu hiện tại</label>
+                <div class="input-group">
+                  <input 
+                    [type]="showPassword ? 'text' : 'password'" 
+                    id="password" 
+                    formControlName="password" 
+                    class="form-control"
+                    [ngClass]="{'is-invalid': passwordForm.get('password')?.invalid && passwordForm.get('password')?.touched}"
+                  >
+                  <button type="button" class="btn btn-outline-secondary" (click)="toggleShowPassword()">
+                    <i class="fa" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+                  </button>
+                </div>
+                <div class="invalid-feedback" *ngIf="passwordForm.get('password')?.errors?.['required'] && passwordForm.get('password')?.touched">
+                  Mật khẩu hiện tại không được để trống
+                </div>
+              </div>
+              
+              <div class="form-group mb-3">
+                <label for="newPassword">Mật khẩu mới</label>
+                <div class="input-group">
+                  <input 
+                    [type]="showNewPassword ? 'text' : 'password'" 
+                    id="newPassword" 
+                    formControlName="newPassword" 
+                    class="form-control"
+                    [ngClass]="{'is-invalid': passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched}"
+                  >
+                  <button type="button" class="btn btn-outline-secondary" (click)="toggleShowNewPassword()">
+                    <i class="fa" [ngClass]="showNewPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+                  </button>
+                </div>
+                <div class="invalid-feedback" *ngIf="passwordForm.get('newPassword')?.errors?.['required'] && passwordForm.get('newPassword')?.touched">
+                  Mật khẩu mới không được để trống
+                </div>
+                <div class="invalid-feedback" *ngIf="passwordForm.get('newPassword')?.errors?.['minlength'] && passwordForm.get('newPassword')?.touched">
+                  Mật khẩu mới phải có ít nhất 6 ký tự
+                </div>
+              </div>
+              
+              <div class="form-group mb-3">
+                <label for="retypePassword">Xác nhận mật khẩu mới</label>
+                <input 
+                  type="password" 
+                  id="retypePassword" 
+                  formControlName="retypePassword" 
+                  class="form-control"
+                  [ngClass]="{'is-invalid': (passwordForm.get('retypePassword')?.invalid && passwordForm.get('retypePassword')?.touched) || passwordForm.hasError('notMatching')}"
+                >
+                <div class="invalid-feedback" *ngIf="passwordForm.get('retypePassword')?.errors?.['required'] && passwordForm.get('retypePassword')?.touched">
+                  Vui lòng xác nhận mật khẩu mới
+                </div>
+                <div class="invalid-feedback" *ngIf="passwordForm.hasError('notMatching')">
+                  Mật khẩu xác nhận không khớp
+                </div>
+              </div>
+              
+              <button type="submit" class="btn btn-primary mt-3" [disabled]="passwordForm.invalid || isPasswordLoading">
+                <span *ngIf="isPasswordLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Đổi mật khẩu
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

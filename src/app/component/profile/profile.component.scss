@@ -1,0 +1,78 @@
+.profile-container {
+  background-color: #f8f9fa;
+  min-height: calc(100vh - 100px);
+
+  .card {
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: none;
+    transition: transform 0.3s;
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-header {
+      background-color: white;
+      border-bottom: 1px solid #eaeaea;
+      padding: 20px;
+      border-radius: 10px 10px 0 0;
+
+      h3 {
+        margin: 0;
+        color: #333;
+        font-size: 20px;
+      }
+    }
+
+    .card-body {
+      padding: 25px;
+    }
+  }
+
+  h2 {
+    color: #333;
+    font-weight: 600;
+  }
+
+  .form-control {
+    padding: 10px 15px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    transition: border-color 0.3s;
+
+    &:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+  }
+
+  label {
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #555;
+  }
+
+  .btn-primary {
+    padding: 10px 25px;
+    background-color: #007bff;
+    border: none;
+    font-weight: 500;
+    transition: all 0.3s;
+
+    &:hover:not([disabled]) {
+      background-color: #0069d9;
+      transform: translateY(-2px);
+    }
+
+    &:disabled {
+      background-color: #80bdff;
+      cursor: not-allowed;
+    }
+  }
+
+  .input-group .btn {
+    z-index: 0;
+  }
+}
