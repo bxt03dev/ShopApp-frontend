@@ -305,4 +305,31 @@
       width: 100%;
     }
   }
+}
+
+// Add styles for the checkbox group
+.checkbox-group {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  
+  .custom-control {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    
+    .custom-control-input {
+      margin-right: 8px;
+    }
+    
+    .custom-control-label {
+      cursor: pointer;
+      font-weight: normal;
+    }
+  }
+  
+  small {
+    color: #6c757d;
+    display: block;
+    margin-top: 5px;
+  }
 } 

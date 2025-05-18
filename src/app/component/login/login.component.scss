@@ -95,6 +95,88 @@
   background-color: #333;
 }
 
+.divider {
+  position: relative;
+  text-align: center;
+  margin: 20px 0;
+  
+  &:before, &:after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 45%;
+    height: 1px;
+    background-color: #e0e0e0;
+  }
+  
+  &:before {
+    left: 0;
+  }
+  
+  &:after {
+    right: 0;
+  }
+  
+  span {
+    display: inline-block;
+    padding: 0 10px;
+    background-color: white;
+    position: relative;
+    color: #999;
+    font-size: 14px;
+  }
+}
+
+.social-login {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.google-login-button, .facebook-login-button {
+  width: 100%;
+  border-radius: 50px;
+  padding: 12px 0;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+  border: 1px solid #ddd;
+  
+  i {
+    margin-right: 10px;
+    font-size: 18px;
+  }
+}
+
+.google-login-button {
+  background-color: white;
+  color: #444;
+  
+  &:hover {
+    background-color: #f7f7f7;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  i {
+    color: #ea4335;
+  }
+}
+
+.facebook-login-button {
+  background-color: #3b5998;
+  color: white;
+  border-color: #3b5998;
+  
+  &:hover {
+    background-color: #344e86;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
 .text-center {
   text-align: center;
   margin: 15px 0;

@@ -86,4 +86,22 @@ export class LoginComponent implements OnInit {
       }
     });
   }
+
+  onGoogleLogin() {
+    // This is just a UI implementation. The actual authentication logic would be implemented later.
+    this.customToast.showInfo('Google login will be implemented in the backend', 'Coming Soon');
+    console.log('Google login clicked');
+    
+    // The real implementation would typically redirect to Google OAuth URL
+    // window.location.href = 'your-backend-url/oauth2/authorization/google';
+  }
+
+  onFacebookLogin() {
+    // This is just a UI implementation. The actual authentication logic would be implemented later.
+    this.customToast.showInfo('Facebook login will be implemented in the backend', 'Coming Soon');
+    console.log('Facebook login clicked');
+    
+    // The real implementation would typically redirect to Facebook OAuth URL
+    // window.location.href = 'your-backend-url/oauth2/authorization/facebook';
+  }
 }

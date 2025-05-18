@@ -8,23 +8,23 @@
       </div>
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="navbar-brand nav-link" routerLink>
+          <a class="navbar-brand nav-link" routerLink="/">
             <i style="font-size: 18px;" class="fa-brands fa-apple"></i>
           </a>
         </li>
         <li class="nav-item mega-dropdown">
-          <a class="nav-link" routerLink="/">Cửa Hàng</a>
+          <a class="nav-link" routerLink="/store">Cửa Hàng</a>
           <div class="dropdown-menu">
             <div class="dropdown-content">
               <div class="dropdown-column">
                 <h3>Mua Sắm</h3>
                 <ul class="dropdown-links">
                   <li><a href="#">Mua Sản Phẩm Mới Nhất</a></li>
-                  <li><a href="#">Mac</a></li>
-                  <li><a href="#">iPad</a></li>
-                  <li><a href="#">iPhone</a></li>
-                  <li><a href="#">Apple Watch</a></li>
-                  <li><a href="#">Phụ Kiện</a></li>
+                  <li><a href="javascript:void(0)" (click)="navigateByCategory(1)">Mac</a></li>
+                  <li><a href="javascript:void(0)" (click)="navigateByCategory(2)">iPad</a></li>
+                  <li><a href="javascript:void(0)" (click)="navigateByCategory(3)">iPhone</a></li>
+                  <li><a href="javascript:void(0)" (click)="navigateByCategory(4)">Apple Watch</a></li>
+                  <li><a href="javascript:void(0)" (click)="navigateByCategory(6)">Phụ Kiện</a></li>
                 </ul>
               </div>
               <div class="dropdown-column">

@@ -8,7 +8,7 @@
       <span class="status-badge">{{getStatusText(orderDetail.status)}}</span>
     </div>
   </div>
-  
+
   <!-- Warranty Information Section -->
   <div class="warranty-section" *ngIf="orderDetail.warrantyCode">
     <div class="warranty-card">
@@ -35,7 +35,7 @@
       </div>
     </div>
   </div>
-  
+
   <!-- Order Information Section -->
   <div class="order-info-section">
     <div class="order-info-card">
@@ -72,7 +72,7 @@
       </div>
     </div>
   </div>
-  
+
   <!-- Shipping Information Section -->
   <div class="shipping-info-section">
     <div class="shipping-info-card">
@@ -99,7 +99,7 @@
       </div>
     </div>
   </div>
-  
+
   <!-- Order Items Section -->
   <div class="order-items-section">
     <div class="order-items-card">
@@ -135,7 +135,7 @@
       </div>
     </div>
   </div>
-  
+
   <!-- Order Summary Section -->
   <div class="order-summary-section">
     <div class="order-summary-card">
@@ -153,7 +153,7 @@
       </div>
     </div>
   </div>
-  
+
   <!-- Actions Section -->
   <div class="order-actions-section">
     <button class="btn-primary" *ngIf="orderDetail.status === 'PENDING'" (click)="cancelOrder()">
@@ -173,14 +173,14 @@
   <div class="cart-header">
     <h1>Giỏ hàng của bạn</h1>
   </div>
-  
+
   <div class="cart-content">
     <div class="cart-main">
       <div class="cart-select-all">
         <div class="form-check">
-          <input class="form-check-input" type="checkbox" 
-                 [checked]="areAllItemsSelected()" 
-                 (change)="toggleSelectAll()" 
+          <input class="form-check-input" type="checkbox"
+                 [checked]="areAllItemsSelected()"
+                 (change)="toggleSelectAll()"
                  id="selectAll">
           <label class="form-check-label" for="selectAll">
             Chọn tất cả (<span>{{cartItems.length}}</span> sản phẩm)
@@ -191,8 +191,8 @@
       <div class="cart-items">
         <div class="cart-item" *ngFor="let item of cartItems; let i = index">
           <div class="item-select">
-            <input class="form-check-input" type="checkbox" 
-                   [(ngModel)]="item.selected" 
+            <input class="form-check-input" type="checkbox"
+                   [(ngModel)]="item.selected"
                    (change)="updateSelection()">
           </div>
           <div class="item-image">
@@ -212,7 +212,7 @@
               <button (click)="decreaseQuantity(i)" [disabled]="item.quantity <= 1">
                 <i class="fas fa-minus"></i>
               </button>
-              <input type="number" [(ngModel)]="item.quantity" min="1" 
+              <input type="number" [(ngModel)]="item.quantity" min="1"
                      [max]="item.product.quantity || 1000" (change)="updateQuantity(i)">
               <button (click)="increaseQuantity(i)" [disabled]="item.product.quantity !== undefined && item.quantity >= item.product.quantity">
                 <i class="fas fa-plus"></i>
@@ -248,7 +248,7 @@
           <span>Thành tiền:</span>
           <span>{{formatCurrency(getFinalTotal())}}</span>
         </div>
-        
+
         <div class="coupon-section">
           <div class="coupon-input">
             <input type="text" [(ngModel)]="couponCode" placeholder="Nhập mã giảm giá">
@@ -258,9 +258,9 @@
             {{couponMessage}}
           </div>
         </div>
-        
+
         <div class="checkout-actions">
-          <button class="btn-checkout" 
+          <button class="btn-checkout"
                   [disabled]="getSelectedItemsCount() === 0"
                   (click)="checkout()">
             Mua hàng ({{getSelectedItemsCount()}})
@@ -283,4 +283,4 @@
   <a routerLink="/" class="btn btn-primary">Tiếp tục mua sắm</a>
 </div>
 
-<app-footer></app-footer>
+<!--<app-footer></app-footer>-->

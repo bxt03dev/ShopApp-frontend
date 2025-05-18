@@ -21,7 +21,8 @@ import { PaymentResultComponent } from './component/payment-result/payment-resul
 import { OrderHistoryComponent } from './component/order-history/order-history.component';
 
 export const routes: Routes = [
-  {path: '', component: StoreComponent},
+  {path: '', component: HomeComponent},
+  {path: 'store', component: StoreComponent},
   {path: 'home', component: HomeComponent},
   {path: 'login', component: LoginComponent},
   {

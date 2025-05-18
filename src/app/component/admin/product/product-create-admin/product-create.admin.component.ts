@@ -32,7 +32,8 @@ export class ProductCreateAdminComponent implements OnInit {
       description: ['', Validators.required],
       categoryId: ['', Validators.required],
       quantity: [0, [Validators.required, Validators.min(0)]],
-      warrantyCode: [{value: '', disabled: true}]
+      warrantyCode: [{value: '', disabled: true}],
+      isOnSale: [true] // Default to true to ensure products are visible
     });
   }
 
@@ -98,7 +99,8 @@ export class ProductCreateAdminComponent implements OnInit {
       price: this.productForm.value.price,
       description: this.productForm.value.description,
       categoryId: this.productForm.value.categoryId,
-      quantity: this.productForm.value.quantity
+      quantity: this.productForm.value.quantity,
+      isOnSale: this.productForm.value.isOnSale // Use the form value
     };
 
     this.submitting = true;
@@ -177,7 +179,8 @@ export class ProductCreateAdminComponent implements OnInit {
       description: this.productForm.value.description,
       categoryId: this.productForm.value.categoryId,
       thumbnail: imageUrl,
-      quantity: this.productForm.value.quantity
+      quantity: this.productForm.value.quantity,
+      isOnSale: this.productForm.value.isOnSale // Use the form value
     };
 
     this.productService.updateProduct(productId, updatedProduct).subscribe({

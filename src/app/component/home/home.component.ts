@@ -62,10 +62,13 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
+      console.log('Query params received:', params);
       if (params['category_id']) {
         this.currentCategoryId = +params['category_id'];
+        console.log('Set currentCategoryId to:', this.currentCategoryId);
       } else {
         this.currentCategoryId = null;
+        console.log('No category_id parameter, showing all products');
       }
       this.currentPage = 1;
       this.loadProducts();
@@ -78,6 +81,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   loadProducts(): void {
+    console.log('Loading products with categoryId:', this.currentCategoryId);
     if (this.currentCategoryId) {
       this.getProductsByCategory(this.currentPage, this.itemsPerPage, this.currentCategoryId);
     } else {
@@ -86,8 +90,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   getProducts(page: number, size: number): void {
+    console.log('Fetching all products (no category filter)');
     this.productService.getProducts(page - 1, size).subscribe({
       next: (response: any) => {
+        console.log('All products response:', response);
         const productListResponse = response.result;
         productListResponse.products.forEach((product: Product) => {
           product.url = `${environment.apiBaseUrl}/products/images/${product.thumbnail}`;
@@ -106,8 +112,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   getProductsByCategory(page: number, size: number, categoryId: number): void {
+    console.log(`Fetching products for category ID: ${categoryId}`);
     this.productService.getProductsByCategory(categoryId, page - 1, size).subscribe({
       next: (response: any) => {
+        console.log(`Products by category ${categoryId} response:`, response);
         const productListResponse = response.result;
         productListResponse.products.forEach((product: Product) => {
           product.url = `${environment.apiBaseUrl}/products/images/${product.thumbnail}`;
