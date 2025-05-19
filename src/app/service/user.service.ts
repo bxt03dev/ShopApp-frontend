@@ -15,7 +15,6 @@ export class UserService {
   private apiRegister = `${environment.apiBaseUrl}/users/register`;
   private apiLogin = `${environment.apiBaseUrl}/users/login`;
   private apiUserDetail = `${environment.apiBaseUrl}/users/details`;
-  private apiUpdateUser = `${environment.apiBaseUrl}/users/details`;
   private apiConfig = {
     headers: this.createHeaders()
   }
@@ -42,14 +41,6 @@ export class UserService {
       'Authorization': `Bearer ${token}`
     });
     return this.http.post(this.apiUserDetail, { headers });
-  }
-
-  updateUserProfile(userId: number, updateData: any, token: string): Observable<any> {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    });
-    return this.http.put(`${this.apiUpdateUser}/${userId}`, updateData, { headers });
   }
 
   saveUserResponseToLocalStorage(userResponse: UserResponse): void {
