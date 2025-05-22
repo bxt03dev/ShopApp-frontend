@@ -20,6 +20,7 @@ import { PaymentComponent } from './component/payment/payment.component';
 import { PaymentResultComponent } from './component/payment-result/payment-result.component';
 import { OrderHistoryComponent } from './component/order-history/order-history.component';
 import { ProfileComponent } from './component/profile/profile.component';
+import { OAuthCallbackComponent } from './component/oauth-callback/oauth-callback.component';
 
 export const routes: Routes = [
   {path: '', component: HomeComponent},
@@ -48,6 +49,8 @@ export const routes: Routes = [
   { path: 'payment-result', component: PaymentResultComponent, canActivate: [AuthGuard] },
   { path: 'order-history', component: OrderHistoryComponent, canActivate: [AuthGuard] },
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
+  { path: 'auth/callback/google', component: OAuthCallbackComponent },
+  { path: 'auth/callback/facebook', component: OAuthCallbackComponent },
 ];
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

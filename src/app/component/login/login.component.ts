@@ -8,6 +8,10 @@ import { TokenService } from '../../service/token.service';
 import { UserResponse } from '../../response/user/user.response';
 import { CustomToastService } from '../../service/custom-toast.service';
 import { CartService } from '../../service/cart.service';
+import { SocialLoginDTO } from '../../dto/user/social-login.dto';
+
+// Add Google Sign-In library type
+declare var google: any;
 
 @Component({
   selector: 'app-login',
@@ -19,6 +23,7 @@ export class LoginComponent implements OnInit {
   phoneNumber: string = '0886249250';
   password: string = 'hehee';
   rememberMe: boolean = false;
+  googleAuthURL: string = '';
 
   constructor(
     private router: Router,
@@ -28,7 +33,82 @@ export class LoginComponent implements OnInit {
     private customToast: CustomToastService
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    // Generate the Google auth URL
+    this.googleAuthURL = this.userService.generateGoogleAuthUrl();
+    
+    // If the URL contains a 'code' parameter, it means we are redirected back from Google
+    this.handleGoogleRedirect();
+  }
+
+  private handleGoogleRedirect(): void {
+    // Check URL for authentication parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    const accessToken = urlParams.get('accessToken'); 
+    
+    if (accessToken) {
+      // Clear the URL to remove the parameters
+      window.history.replaceState({}, document.title, window.location.pathname);
+      
+      const socialLoginDTO: SocialLoginDTO = {
+        accessToken: accessToken,
+        provider: 'google'
+      };
+      
+      this.processGoogleLogin(socialLoginDTO);
+    }
+    else if (code) {
+      // Clear the URL to remove the parameters
+      window.history.replaceState({}, document.title, window.location.pathname);
+      
+      const socialLoginDTO: SocialLoginDTO = {
+        code: code,
+        provider: 'google',
+        redirectUri: 'http://localhost:8080/api/v1/auth/oauth2/callback/google'
+      };
+      
+      this.processGoogleLogin(socialLoginDTO);
+    }
+  }
+
+  private processGoogleLogin(socialLoginDTO: SocialLoginDTO): void {
+    this.userService.googleLogin(socialLoginDTO).subscribe({
+      next: (response) => {
+        if (response && response.success && response.accessToken) {
+          const token = response.accessToken;
+          this.tokenService.setToken(token, this.rememberMe);
+          
+          // Get user details
+          this.userService.getUserDetail(token).subscribe({
+            next: (userResponse) => {
+              const user = userResponse.result;
+              this.userService.saveUserResponseToLocalStorage(user);
+              this.cartService.loadCart();
+              this.customToast.showAuthSuccess('Đăng nhập Google thành công!', 'Thông báo');
+              
+              if (user.role.name === 'ADMIN') {
+                this.router.navigate(['/admin']);
+              } else {
+                this.router.navigate(['/']);
+              }
+            },
+            error: (error) => {
+              console.error("Error getting user details:", error);
+              this.customToast.showAuthError('Lỗi khi lấy thông tin người dùng', 'Lỗi');
+            }
+          });
+        } else {
+          console.error("Invalid login response:", response);
+          this.customToast.showAuthError('Đăng nhập thất bại: Không tìm thấy token', 'Lỗi');
+        }
+      },
+      error: (error) => {
+        console.error('Google login error:', error);
+        this.customToast.showAuthError('Đăng nhập Google thất bại', 'Lỗi');
+      }
+    });
+  }
 
   onPhoneNumberChange() {
     console.log(`Phone typed: ${this.phoneNumber}`);
@@ -88,12 +168,8 @@ export class LoginComponent implements OnInit {
   }
 
   onGoogleLogin() {
-    // This is just a UI implementation. The actual authentication logic would be implemented later.
-    this.customToast.showInfo('Google login will be implemented in the backend', 'Coming Soon');
-    console.log('Google login clicked');
-    
-    // The real implementation would typically redirect to Google OAuth URL
-    // window.location.href = 'your-backend-url/oauth2/authorization/google';
+    // Redirect to Google authorization URL
+    window.location.href = this.googleAuthURL;
   }
 
   onFacebookLogin() {

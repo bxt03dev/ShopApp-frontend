@@ -6,6 +6,7 @@ import {environment} from "../common/environment";
 import {LoginDTO} from "../dto/user/login.dto";
 import {UserResponse} from "../response/user/user.response";
 import { Subscription } from 'rxjs';
+import { SocialLoginDTO } from "../dto/user/social-login.dto";
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,9 @@ export class UserService {
   private apiRegister = `${environment.apiBaseUrl}/users/register`;
   private apiLogin = `${environment.apiBaseUrl}/users/login`;
   private apiUserDetail = `${environment.apiBaseUrl}/users/details`;
+  private apiUpdateUser = `${environment.apiBaseUrl}/users/details`;
+  private apiGoogleLogin = `${environment.apiBaseUrl}/auth/google`;
+  private apiFacebookLogin = `${environment.apiBaseUrl}/auth/facebook`;
   private apiConfig = {
     headers: this.createHeaders()
   }
@@ -35,12 +39,40 @@ export class UserService {
     return this.http.post(this.apiLogin, loginDTO, this.apiConfig);
   }
 
+  googleLogin(socialLoginDTO: SocialLoginDTO): Observable<any> {
+    return this.http.post(this.apiGoogleLogin, socialLoginDTO, this.apiConfig);
+  }
+
+  facebookLogin(socialLoginDTO: SocialLoginDTO): Observable<any> {
+    return this.http.post(this.apiFacebookLogin, socialLoginDTO, this.apiConfig);
+  }
+
+  generateGoogleAuthUrl(): string {
+    const clientId = '530836479470-2kj9t38qda22n3rsdpjvq0nf6dpktpu5.apps.googleusercontent.com';
+    const redirectUri = encodeURIComponent('http://localhost:8080/api/v1/auth/oauth2/callback/google');
+    const scope = encodeURIComponent('email profile');
+    const responseType = 'code';
+    const state = encodeURIComponent(window.location.href); // Store current URL to return after login
+
+    return `https://accounts.google.com/o/oauth2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=${responseType}&state=${state}`;
+  }
+
   getUserDetail(token: string): Observable<any> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     });
-    return this.http.post(this.apiUserDetail, { headers });
+
+    // Use only headers as the options, not as the body
+    return this.http.post(this.apiUserDetail, {}, { headers });
+  }
+
+  updateUserProfile(userId: number, updateData: any, token: string): Observable<any> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+    return this.http.put(`${this.apiUpdateUser}/${userId}`, updateData, { headers });
   }
 
   saveUserResponseToLocalStorage(userResponse: UserResponse): void {

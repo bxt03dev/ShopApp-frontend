@@ -36,6 +36,7 @@ import localeVi from '@angular/common/locales/vi';
 import { LOCALE_ID } from '@angular/core';
 import { OrderHistoryComponent } from './component/order-history/order-history.component';
 import { ProfileComponent } from './component/profile/profile.component';
+import { OAuthCallbackComponent } from './component/oauth-callback/oauth-callback.component';
 
 // Register Vietnamese locale
 registerLocaleData(localeVi);
@@ -62,7 +63,8 @@ registerLocaleData(localeVi);
     PaymentComponent,
     PaymentResultComponent,
     OrderHistoryComponent,
-    ProfileComponent
+    ProfileComponent,
+    OAuthCallbackComponent
   ],
   imports: [
     ReactiveFormsModule,
