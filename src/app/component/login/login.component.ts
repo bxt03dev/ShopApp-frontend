@@ -24,6 +24,7 @@ export class LoginComponent implements OnInit {
   password: string = 'hehee';
   rememberMe: boolean = false;
   googleAuthURL: string = '';
+  facebookAuthURL: string = '';
 
   constructor(
     private router: Router,
@@ -34,18 +35,24 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Generate the Google auth URL
+    // Generate the auth URLs
     this.googleAuthURL = this.userService.generateGoogleAuthUrl();
+    this.facebookAuthURL = this.userService.generateFacebookAuthUrl();
     
-    // If the URL contains a 'code' parameter, it means we are redirected back from Google
-    this.handleGoogleRedirect();
+    // If the URL contains a 'code' parameter, it means we are redirected back from OAuth provider
+    this.handleOAuthRedirect();
   }
 
-  private handleGoogleRedirect(): void {
+  private handleOAuthRedirect(): void {
     // Check URL for authentication parameters
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
-    const accessToken = urlParams.get('accessToken'); 
+    const accessToken = urlParams.get('accessToken');
+    // Detect if we're in a Facebook callback based on state parameter or URL path
+    const pathSegments = window.location.pathname.split('/');
+    const isFromFacebook = pathSegments.includes('facebook') || 
+                          window.location.href.includes('facebook') ||
+                          (urlParams.get('state') && urlParams.get('state')?.includes('facebook'));
     
     if (accessToken) {
       // Clear the URL to remove the parameters
@@ -53,22 +60,34 @@ export class LoginComponent implements OnInit {
       
       const socialLoginDTO: SocialLoginDTO = {
         accessToken: accessToken,
-        provider: 'google'
+        provider: isFromFacebook ? 'facebook' : 'google'
       };
       
-      this.processGoogleLogin(socialLoginDTO);
+      if (isFromFacebook) {
+        this.processFacebookLogin(socialLoginDTO);
+      } else {
+        this.processGoogleLogin(socialLoginDTO);
+      }
     }
     else if (code) {
       // Clear the URL to remove the parameters
       window.history.replaceState({}, document.title, window.location.pathname);
       
-      const socialLoginDTO: SocialLoginDTO = {
-        code: code,
-        provider: 'google',
-        redirectUri: 'http://localhost:8080/api/v1/auth/oauth2/callback/google'
-      };
-      
-      this.processGoogleLogin(socialLoginDTO);
+      if (isFromFacebook) {
+        const socialLoginDTO: SocialLoginDTO = {
+          code: code,
+          provider: 'facebook',
+          redirectUri: 'http://localhost:8080/api/v1/auth/oauth2/callback/facebook'
+        };
+        this.processFacebookLogin(socialLoginDTO);
+      } else {
+        const socialLoginDTO: SocialLoginDTO = {
+          code: code,
+          provider: 'google',
+          redirectUri: 'http://localhost:8080/api/v1/auth/oauth2/callback/google'
+        };
+        this.processGoogleLogin(socialLoginDTO);
+      }
     }
   }
 
@@ -173,11 +192,45 @@ export class LoginComponent implements OnInit {
   }
 
   onFacebookLogin() {
-    // This is just a UI implementation. The actual authentication logic would be implemented later.
-    this.customToast.showInfo('Facebook login will be implemented in the backend', 'Coming Soon');
-    console.log('Facebook login clicked');
-    
-    // The real implementation would typically redirect to Facebook OAuth URL
-    // window.location.href = 'your-backend-url/oauth2/authorization/facebook';
+    // Redirect to Facebook authorization URL
+    window.location.href = this.facebookAuthURL;
+  }
+
+  private processFacebookLogin(socialLoginDTO: SocialLoginDTO): void {
+    this.userService.facebookLogin(socialLoginDTO).subscribe({
+      next: (response) => {
+        if (response && response.success && response.accessToken) {
+          const token = response.accessToken;
+          this.tokenService.setToken(token, this.rememberMe);
+          
+          // Get user details
+          this.userService.getUserDetail(token).subscribe({
+            next: (userResponse) => {
+              const user = userResponse.result;
+              this.userService.saveUserResponseToLocalStorage(user);
+              this.cartService.loadCart();
+              this.customToast.showAuthSuccess('Đăng nhập Facebook thành công!', 'Thông báo');
+              
+              if (user.role.name === 'ADMIN') {
+                this.router.navigate(['/admin']);
+              } else {
+                this.router.navigate(['/']);
+              }
+            },
+            error: (error) => {
+              console.error("Error getting user details:", error);
+              this.customToast.showAuthError('Lỗi khi lấy thông tin người dùng', 'Lỗi');
+            }
+          });
+        } else {
+          console.error("Invalid login response:", response);
+          this.customToast.showAuthError('Đăng nhập thất bại: Không tìm thấy token', 'Lỗi');
+        }
+      },
+      error: (error) => {
+        console.error('Facebook login error:', error);
+        this.customToast.showAuthError('Đăng nhập Facebook thất bại', 'Lỗi');
+      }
+    });
   }
 }

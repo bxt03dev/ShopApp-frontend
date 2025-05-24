@@ -57,6 +57,16 @@ export class UserService {
     return `https://accounts.google.com/o/oauth2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=${responseType}&state=${state}`;
   }
 
+  generateFacebookAuthUrl(): string {
+    const clientId = '1809162579958139';
+    const redirectUri = encodeURIComponent('http://localhost:8080/api/v1/auth/oauth2/callback/facebook');
+    const scope = encodeURIComponent('email');
+    const responseType = 'code';
+    const state = encodeURIComponent(window.location.href); // Store current URL to return after login
+
+    return `https://www.facebook.com/v17.0/dialog/oauth?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=${responseType}&state=${state}`;
+  }
+
   getUserDetail(token: string): Observable<any> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
