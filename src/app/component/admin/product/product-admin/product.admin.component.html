@@ -32,8 +32,10 @@
           </td>
           <td class="product-name col-name">{{ product.name }}</td>
           <td class="product-price col-price">{{ product.price | number }}</td>
-          <td class="product-quantity col-quantity" [ngClass]="{'low-stock': product.quantity !== undefined && product.quantity < 10}">
-            {{ product.quantity || 0 }}
+          <td class="quantity-cell">
+            <span class="product-quantity" [ngClass]="{'low-stock': product.quantity !== undefined && product.quantity < 10}">
+              {{ product.quantity || 0 }}
+            </span>
           </td>
           <td class="product-warranty col-warranty">{{ product.warrantyCode || 'N/A' }}</td>
           <td class="product-category col-category">{{ product.categoryId }}</td>
