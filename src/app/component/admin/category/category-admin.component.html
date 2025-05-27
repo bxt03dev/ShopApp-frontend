@@ -1,0 +1,90 @@
+<div class="admin-category-container">
+  <div class="admin-category-header">
+    <h2>Category Management</h2>
+    <button class="add-category-btn" (click)="showAddForm = true" *ngIf="!showAddForm">
+      <i class="fas fa-plus"></i>
+      Add Category
+    </button>
+  </div>
+
+  <!-- Add Category Form -->
+  <div class="category-form" *ngIf="showAddForm">
+    <h3>Add New Category</h3>
+    <div class="form-group">
+      <input 
+        type="text" 
+        [(ngModel)]="newCategory.name" 
+        placeholder="Category name"
+        class="form-control">
+    </div>
+    <div class="form-actions">
+      <button class="btn-save" (click)="addCategory()">Save</button>
+      <button class="btn-cancel" (click)="showAddForm = false">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div class="loading-spinner" *ngIf="loading">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Categories Table -->
+  <div class="table-responsive" *ngIf="!loading">
+    <table class="categories-table" *ngIf="categories.length > 0">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let category of categories">
+          <!-- View Mode -->
+          <ng-container *ngIf="editingCategory?.id !== category.id">
+            <td>{{category.id}}</td>
+            <td>{{category.name}}</td>
+            <td>
+              <div class="action-buttons">
+                <button class="action-btn edit-btn" (click)="startEdit(category)">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="action-btn delete-btn" (click)="deleteCategory(category.id)">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Edit Mode -->
+          <ng-container *ngIf="editingCategory?.id === category.id">
+            <td>{{category.id}}</td>
+            <td>
+              <input 
+                type="text" 
+                [ngModel]="editingCategory?.name"
+                (ngModelChange)="editingCategory!.name = $event"
+                class="edit-input"
+                placeholder="Category name">
+            </td>
+            <td>
+              <div class="action-buttons">
+                <button class="action-btn save-btn" (click)="updateCategory(editingCategory!)" [disabled]="!editingCategory?.name">
+                  <i class="fas fa-check"></i>
+                </button>
+                <button class="action-btn cancel-btn" (click)="cancelEdit()">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- No Categories Message -->
+    <div class="no-categories" *ngIf="categories.length === 0">
+      No categories found. Click "Add Category" to create one.
+    </div>
+  </div>
+</div> 

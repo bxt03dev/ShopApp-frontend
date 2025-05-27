@@ -37,6 +37,8 @@ import { LOCALE_ID } from '@angular/core';
 import { OrderHistoryComponent } from './component/order-history/order-history.component';
 import { ProfileComponent } from './component/profile/profile.component';
 import { OAuthCallbackComponent } from './component/oauth-callback/oauth-callback.component';
+import { CategoryAdminComponent } from './component/admin/category/category-admin.component';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 // Register Vietnamese locale
 registerLocaleData(localeVi);
@@ -64,7 +66,8 @@ registerLocaleData(localeVi);
     PaymentResultComponent,
     OrderHistoryComponent,
     ProfileComponent,
-    OAuthCallbackComponent
+    OAuthCallbackComponent,
+    CategoryAdminComponent
   ],
   imports: [
     ReactiveFormsModule,
@@ -100,6 +103,11 @@ registerLocaleData(localeVi);
     {
       provide: HTTP_INTERCEPTORS,
       useClass: LogInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
       multi: true
     },
     CustomToastService
