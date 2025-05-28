@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CategoryService } from '../../../services/category.service';
+import { CategoryService } from '../../../service/category.service';
 import { Category } from '../../../models/category';
 import { Router } from '@angular/router';
 import { CustomToastService } from '../../../service/custom-toast.service';
@@ -112,4 +112,4 @@ export class CategoryAdminComponent implements OnInit {
       }
     });
   }
-} 
+}
