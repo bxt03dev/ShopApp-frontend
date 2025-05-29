@@ -178,7 +178,11 @@ export class LoginComponent implements OnInit {
         const errorMessage = errorResponse?.message || 'Lỗi server';
         const errorCode = errorResponse?.code || 0;
         if (errorCode === 1001) {
-          this.customToast.showAuthError('Số điện thoại hoặc mật khẩu không đúng', 'Lỗi');
+          if (errorMessage.includes('not active')) {
+            this.customToast.showAuthError('Tài khoản chưa được kích hoạt', 'Lỗi');
+          } else {
+            this.customToast.showAuthError('Số điện thoại hoặc mật khẩu không đúng', 'Lỗi');
+          }
         } else {
           this.customToast.showAuthError(`Đăng nhập thất bại: ${errorMessage}`, 'Lỗi');
         }
