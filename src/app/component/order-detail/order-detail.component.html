@@ -26,7 +26,8 @@
         </div>
         <div class="warranty-note">
           <p>Quý khách vui lòng giữ lại mã bảo hành này để được hỗ trợ khi cần thiết.</p>
-          <p>Thời hạn bảo hành: 12 tháng kể từ ngày mua hàng.</p>
+          <p>Thời hạn bảo hành: 12 tháng kể từ ngày {{orderDetail.warrantyDate | date:'dd/MM/yyyy'}}</p>
+          <p>Hết hạn bảo hành: {{getWarrantyExpirationDate(orderDetail.warrantyDate) | date:'dd/MM/yyyy'}}</p>
         </div>
         <div class="warranty-contact">
           <p><i class="fas fa-phone"></i> Hotline bảo hành: <strong>1800-1234</strong></p>

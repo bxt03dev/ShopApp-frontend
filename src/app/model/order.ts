@@ -18,5 +18,6 @@ export interface Order {
   paymentMethod: string;
   active: boolean;
   warrantyCode?: string;
+  warrantyDate?: string;
   orderDetails: OrderDetail[];
 }

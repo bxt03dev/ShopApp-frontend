@@ -29,6 +29,7 @@ interface OrderDetail {
   orderDetails?: any[];
   active?: boolean;
   warrantyCode?: string;
+  warrantyDate?: string;
 }
 
 interface CartItem {
@@ -478,5 +479,12 @@ export class OrderDetailComponent implements OnInit {
       console.error('Could not copy text: ', err);
       this.toastService.showError('Không thể sao chép mã bảo hành', 'Lỗi');
     }
+  }
+
+  getWarrantyExpirationDate(warrantyDate: string | undefined): Date | null {
+    if (!warrantyDate) return null;
+    const date = new Date(warrantyDate);
+    date.setFullYear(date.getFullYear() + 1);
+    return date;
   }
 }
