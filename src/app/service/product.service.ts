@@ -20,6 +20,7 @@ export interface ProductDTO {
   warrantyCode?: string;
   dateRelease?: Date;
   isOnSale?: boolean;
+  isActive?: boolean;
 }
 
 export interface UpdateProductDTO extends ProductDTO {}

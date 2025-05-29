@@ -11,6 +11,7 @@ export interface Product {
   warrantyCode?: string;
   dateRelease?: Date;
   isOnSale?: boolean;
+  isActive?: boolean;
   url?: string; // Optional, used for image URL
   productImages?: ProductImage[];
 }
