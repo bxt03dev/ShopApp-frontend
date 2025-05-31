@@ -19,6 +19,8 @@ export class UserService {
   private apiUpdateUser = `${environment.apiBaseUrl}/users/details`;
   private apiGoogleLogin = `${environment.apiBaseUrl}/auth/google`;
   private apiFacebookLogin = `${environment.apiBaseUrl}/auth/facebook`;
+  private apiGetAllUsers = `${environment.apiBaseUrl}/users`;
+  private apiUpdateUserActive = `${environment.apiBaseUrl}/users`;
   private apiConfig = {
     headers: this.createHeaders()
   }
@@ -104,5 +106,21 @@ export class UserService {
 
   removeUserFromLocalStorage(): void {
     localStorage.removeItem(this.USER_KEY);
+  }
+
+  getAllUsers(token: string) {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+    return this.http.get<any>(this.apiGetAllUsers, { headers });
+  }
+
+  updateUserActive(userId: number, active: boolean, token: string) {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+    return this.http.patch<any>(`${this.apiUpdateUserActive}/${userId}/active`, active, { headers });
   }
 }

@@ -39,6 +39,7 @@ import { ProfileComponent } from './component/profile/profile.component';
 import { OAuthCallbackComponent } from './component/oauth-callback/oauth-callback.component';
 import { CategoryAdminComponent } from './component/admin/category/category-admin.component';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { UserAdminComponent } from './component/admin/user/user-admin/user.admin.component';
 
 // Register Vietnamese locale
 registerLocaleData(localeVi);
@@ -67,7 +68,8 @@ registerLocaleData(localeVi);
     OrderHistoryComponent,
     ProfileComponent,
     OAuthCallbackComponent,
-    CategoryAdminComponent
+    CategoryAdminComponent,
+    UserAdminComponent
   ],
   imports: [
     ReactiveFormsModule,

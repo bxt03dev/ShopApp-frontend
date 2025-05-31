@@ -6,7 +6,7 @@ export interface UserResponse {
   phoneNumber: string;
   email: string;
   address: string;
-  isActive: boolean;
+  active: boolean;
   dateOfBirth: Date;
   avatarUrl: string;
   socialAccounts?: SocialAccountResponse[];

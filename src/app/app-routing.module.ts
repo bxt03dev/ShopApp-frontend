@@ -22,6 +22,7 @@ import { OrderHistoryComponent } from './component/order-history/order-history.c
 import { ProfileComponent } from './component/profile/profile.component';
 import { OAuthCallbackComponent } from './component/oauth-callback/oauth-callback.component';
 import { CategoryAdminComponent } from './component/admin/category/category-admin.component';
+import { UserAdminComponent } from './component/admin/user/user-admin/user.admin.component';
 
 export const routes: Routes = [
   {path: '', component: HomeComponent},
@@ -39,7 +40,8 @@ export const routes: Routes = [
       {path: 'products', component: ProductAdminComponent},
       {path: 'products/create', component: ProductCreateAdminComponent},
       {path: 'products/:id', component: ProductDetailAdminComponent},
-      {path: 'categories', component: CategoryAdminComponent}
+      {path: 'categories', component: CategoryAdminComponent},
+      { path: 'users', component: UserAdminComponent },
     ]
   },
   {path: 'register', component: RegisterComponent},
