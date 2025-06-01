@@ -81,20 +81,7 @@ export class OrderAdminComponent implements OnInit{
     return index + 1;
   }
 
-  deleteOrder(id: number) {
-    const confirmation = window
-      .confirm('Are you sure you want to delete this order?')
-    if (confirmation) {
-      this.orderService.deleteOrder(id).subscribe({
-        next: (response: any) => {
-          location.reload()
-        },
-        error: (error: any) => {
-          console.error('Error deleting order:', error)
-        }
-      })
-    }
-  }
+
 
   viewDetails(order: OrderResponse) {
     this.router.navigate(['/admin/orders', order.id])
@@ -102,37 +89,37 @@ export class OrderAdminComponent implements OnInit{
 
   formatDate(date: any): string {
     if (!date) return 'N/A';
-    
+
     // Nếu date là timestamp (number)
     if (typeof date === 'number') {
       return new Date(date).toLocaleString();
     }
-    
+
     // Nếu date là Date object
     if (date instanceof Date) {
       return date.toLocaleString();
     }
-    
+
     // Nếu date là string ISO format
     if (typeof date === 'string') {
       return new Date(date).toLocaleString();
     }
-    
+
     return 'N/A';
   }
 
   formatArrayDate(dateArray: any): string {
     if (!dateArray) return 'N/A';
-    
+
     // Nếu là mảng [năm, tháng, ngày]
     if (Array.isArray(dateArray) && dateArray.length >= 3) {
       // JavaScript months are 0-based, so we subtract 1 from the month
       return new Date(dateArray[0], dateArray[1] - 1, dateArray[2]).toLocaleDateString();
     }
-    
+
     return 'N/A';
   }
-  
+
   isArray(obj: any): boolean {
     return Array.isArray(obj);
   }

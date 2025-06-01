@@ -20,8 +20,8 @@ declare var google: any;
 })
 export class LoginComponent implements OnInit {
   @ViewChild('loginForm') loginForm!: NgForm;
-  phoneNumber: string = '0886249250';
-  password: string = 'hehee';
+  phoneNumber: string = '0000000000';
+  password: string = '11111';
   rememberMe: boolean = false;
   googleAuthURL: string = '';
   facebookAuthURL: string = '';
@@ -38,7 +38,7 @@ export class LoginComponent implements OnInit {
     // Generate the auth URLs
     this.googleAuthURL = this.userService.generateGoogleAuthUrl();
     this.facebookAuthURL = this.userService.generateFacebookAuthUrl();
-    
+
     // If the URL contains a 'code' parameter, it means we are redirected back from OAuth provider
     this.handleOAuthRedirect();
   }
@@ -50,19 +50,19 @@ export class LoginComponent implements OnInit {
     const accessToken = urlParams.get('accessToken');
     // Detect if we're in a Facebook callback based on state parameter or URL path
     const pathSegments = window.location.pathname.split('/');
-    const isFromFacebook = pathSegments.includes('facebook') || 
+    const isFromFacebook = pathSegments.includes('facebook') ||
                           window.location.href.includes('facebook') ||
                           (urlParams.get('state') && urlParams.get('state')?.includes('facebook'));
-    
+
     if (accessToken) {
       // Clear the URL to remove the parameters
       window.history.replaceState({}, document.title, window.location.pathname);
-      
+
       const socialLoginDTO: SocialLoginDTO = {
         accessToken: accessToken,
         provider: isFromFacebook ? 'facebook' : 'google'
       };
-      
+
       if (isFromFacebook) {
         this.processFacebookLogin(socialLoginDTO);
       } else {
@@ -72,7 +72,7 @@ export class LoginComponent implements OnInit {
     else if (code) {
       // Clear the URL to remove the parameters
       window.history.replaceState({}, document.title, window.location.pathname);
-      
+
       if (isFromFacebook) {
         const socialLoginDTO: SocialLoginDTO = {
           code: code,
@@ -97,7 +97,7 @@ export class LoginComponent implements OnInit {
         if (response && response.success && response.accessToken) {
           const token = response.accessToken;
           this.tokenService.setToken(token, this.rememberMe);
-          
+
           // Get user details
           this.userService.getUserDetail(token).subscribe({
             next: (userResponse) => {
@@ -105,7 +105,7 @@ export class LoginComponent implements OnInit {
               this.userService.saveUserResponseToLocalStorage(user);
               this.cartService.loadCart();
               this.customToast.showAuthSuccess('Đăng nhập Google thành công!', 'Thông báo');
-              
+
               if (user.role.name === 'ADMIN') {
                 this.router.navigate(['/admin']);
               } else {
@@ -149,7 +149,7 @@ export class LoginComponent implements OnInit {
         const { result } = response;
         if (result) {
           this.tokenService.setToken(result, this.rememberMe);
-          
+
           // Get user details after successful login
           this.userService.getUserDetail(result).subscribe({
             next: (response) => {
@@ -157,7 +157,7 @@ export class LoginComponent implements OnInit {
               this.userService.saveUserResponseToLocalStorage(userResponse);
               this.cartService.loadCart(); // Load cart after successful login
               this.customToast.showAuthSuccess('Đăng nhập thành công!', 'Thông báo');
-              
+
               // Điều hướng dựa trên role
               if (userResponse.role.name === 'ADMIN') {
                 this.router.navigate(['/admin']);
@@ -206,7 +206,7 @@ export class LoginComponent implements OnInit {
         if (response && response.success && response.accessToken) {
           const token = response.accessToken;
           this.tokenService.setToken(token, this.rememberMe);
-          
+
           // Get user details
           this.userService.getUserDetail(token).subscribe({
             next: (userResponse) => {
@@ -214,7 +214,7 @@ export class LoginComponent implements OnInit {
               this.userService.saveUserResponseToLocalStorage(user);
               this.cartService.loadCart();
               this.customToast.showAuthSuccess('Đăng nhập Facebook thành công!', 'Thông báo');
-              
+
               if (user.role.name === 'ADMIN') {
                 this.router.navigate(['/admin']);
               } else {
