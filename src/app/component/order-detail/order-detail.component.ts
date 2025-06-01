@@ -52,7 +52,7 @@ export class OrderDetailComponent implements OnInit {
   orderDetail: OrderDetail | null = null;
   orderId: number = 0;
   isGeneratingWarranty: boolean = false;
-  
+
   constructor(
     private productService: ProductService,
     private cartService: CartService,
@@ -75,7 +75,7 @@ export class OrderDetailComponent implements OnInit {
         }
       }
     });
-    
+
     // Always load cart items
     this.loadCartItems();
   }
@@ -85,35 +85,35 @@ export class OrderDetailComponent implements OnInit {
       console.log('Invalid or missing order ID, skipping order details load');
       return;
     }
-    
+
     console.log('Loading order details for order ID:', this.orderId);
     this.orderService.getOrderById(this.orderId).subscribe({
       next: (response: any) => {
         console.log('Raw order details response:', response);
-        
+
         // Xử lý dữ liệu trả về từ API
         let orderData = response;
-        
+
         // Kiểm tra xem response có phải là ApiResponse format không
         if (response && response.result) {
           console.log('Response contains result property, extracting data');
           orderData = response.result;
         }
-        
+
         this.orderDetail = orderData;
         console.log('Parsed order details:', this.orderDetail);
         console.log('Order status:', this.orderDetail?.status);
-        
+
         if (this.orderDetail && this.orderDetail.orderDetails) {
           console.log('Order items:', this.orderDetail.orderDetails.length);
-          
+
           // Xử lý hình ảnh sản phẩm nếu có
           this.orderDetail.orderDetails.forEach(item => {
             if (item.product && item.product.thumbnail) {
               item.product.thumbnail = this.getProductImageUrl(item.product.thumbnail);
             }
           });
-          
+
           // Đảm bảo totalAmount có giá trị
           if (!this.orderDetail.totalAmount || this.orderDetail.totalAmount === 0) {
             console.log('totalAmount is missing or zero, calculating it');
@@ -127,7 +127,7 @@ export class OrderDetailComponent implements OnInit {
         } else {
           console.log('No order items found in the response');
         }
-        
+
         // Debug: Kiểm tra xem trạng thái đơn hàng có phải là PENDING không
         if (this.orderDetail?.status === 'PENDING') {
           console.log('Order is in PENDING status, payment button should be visible');
@@ -137,7 +137,7 @@ export class OrderDetailComponent implements OnInit {
       },
       error: (error: any) => {
         console.error('Error loading order details:', error);
-        
+
         // Only show the error toast if we're on an order detail page (with orderId)
         if (this.orderId > 0) {
           this.toastService.showError('Không thể tải thông tin đơn hàng', 'Lỗi');
@@ -258,28 +258,6 @@ export class OrderDetailComponent implements OnInit {
     return Math.max(0, this.getSelectedTotal() - this.discountAmount);
   }
 
-  // Coupon handling
-  applyCoupon(): void {
-    if (!this.couponCode) {
-      this.couponMessage = 'Vui lòng nhập mã giảm giá';
-      return;
-    }
-
-    // This is a demo implementation - in a real app, you would validate with backend
-    if (this.couponCode.toUpperCase() === 'SALE10') {
-      this.discountAmount = this.getSelectedTotal() * 0.1; // 10% discount
-      this.couponMessage = 'Đã áp dụng mã giảm giá: Giảm 10%';
-      this.toastService.showSuccess('Đã áp dụng mã giảm giá', 'Thành công');
-    } else if (this.couponCode.toUpperCase() === 'SALE20') {
-      this.discountAmount = this.getSelectedTotal() * 0.2; // 20% discount
-      this.couponMessage = 'Đã áp dụng mã giảm giá: Giảm 20%';
-      this.toastService.showSuccess('Đã áp dụng mã giảm giá', 'Thành công');
-    } else {
-      this.discountAmount = 0;
-      this.couponMessage = 'Mã giảm giá không hợp lệ';
-      this.toastService.showError('Mã giảm giá không hợp lệ', 'Lỗi');
-    }
-  }
 
   // Checkout method
   checkout(): void {
@@ -296,31 +274,31 @@ export class OrderDetailComponent implements OnInit {
         checkoutCart.set(item.product.id, item.quantity);
       }
     });
-    
+
     // Store the checkout cart in sessionStorage for the checkout process
     sessionStorage.setItem('checkout_cart', JSON.stringify(Array.from(checkoutCart.entries())));
-    
+
     // Create a flag in sessionStorage to indicate we're using a temporary cart
     sessionStorage.setItem('using_temp_cart', 'true');
-    
+
     // Navigate to order page
     this.router.navigate(['/orders']);
   }
 
   // Add currency formatting method
   formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('vi-VN', { 
-      style: 'currency', 
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
       currency: 'VND',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0
     }).format(amount);
   }
-  
+
   // Order detail specific methods
   getStatusText(status: string | undefined): string {
     if (!status) return 'Không xác định';
-    
+
     const statusMap: {[key: string]: string} = {
       'PENDING': 'Chờ xác nhận',
       'PROCESSING': 'Đang xử lý',
@@ -328,38 +306,38 @@ export class OrderDetailComponent implements OnInit {
       'COMPLETED': 'Đã hoàn thành',
       'CANCELLED': 'Đã hủy'
     };
-    
+
     return statusMap[status] || status;
   }
-  
+
   getPaymentMethodText(method: string | undefined): string {
     if (!method) return 'Không xác định';
-    
+
     const methodMap: {[key: string]: string} = {
       'cod': 'Thanh toán khi nhận hàng (COD)',
       'vnpay': 'Thanh toán qua VNPay',
       'momo': 'Thanh toán qua MoMo',
       'bank_transfer': 'Chuyển khoản ngân hàng'
     };
-    
+
     return methodMap[method] || method;
   }
-  
+
   getShippingMethodText(method: string | undefined): string {
     if (!method) return 'Không xác định';
-    
+
     const methodMap: {[key: string]: string} = {
       'standard': 'Giao hàng tiêu chuẩn',
       'express': 'Giao hàng nhanh',
       'same_day': 'Giao hàng trong ngày'
     };
-    
+
     return methodMap[method] || method;
   }
-  
+
   formatDate(date: string | undefined): string {
     if (!date) return 'Không xác định';
-    
+
     const dateObj = new Date(date);
     return new Intl.DateTimeFormat('vi-VN', {
       day: '2-digit',
@@ -369,56 +347,57 @@ export class OrderDetailComponent implements OnInit {
       minute: '2-digit'
     }).format(dateObj);
   }
-  
+
   getProductImageUrl(thumbnail: string): string {
     if (!thumbnail) return 'assets/images/placeholder.jpg';
-    
+
     // Check if it's already a full URL
     if (thumbnail.startsWith('http')) {
       return thumbnail;
     }
-    
+
     return `${environment.apiBaseUrl}/products/images/${thumbnail}`;
   }
-  
+
   calculateSubtotal(): number {
     if (!this.orderDetail || !this.orderDetail.orderDetails) return 0;
-    
+
     return this.orderDetail.orderDetails.reduce((total, item) => {
       return total + ((item.price || 0) * (item.numberOfProducts || 0));
     }, 0);
   }
-  
+
   getShippingCost(): number {
     // In a real app, this would come from the order data
     // For demo purposes, we'll use fixed values based on shipping method
     if (!this.orderDetail) return 0;
-    
+
     const shippingMethod = this.orderDetail.shippingMethod || '';
-    
+
     const shippingCosts: {[key: string]: number} = {
       'standard': 15000,
       'express': 30000,
       'same_day': 50000
     };
-    
+
     return shippingCosts[shippingMethod] || 0;
   }
-  
+
   // Thêm phương thức tính tổng tiền
   calculateTotalAmount(): number {
     const subtotal = this.calculateSubtotal();
     const shippingCost = this.getShippingCost();
+    const discount = this.discountAmount || 0;
     return subtotal + shippingCost;
   }
-  
+
   navigateBack(): void {
     this.router.navigate(['/order-history']);
   }
-  
+
   cancelOrder(): void {
     if (!this.orderDetail || !this.orderDetail.id) return;
-    
+
     if (confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?')) {
       this.orderService.cancelOrder(this.orderDetail.id).subscribe({
         next: () => {
@@ -432,11 +411,11 @@ export class OrderDetailComponent implements OnInit {
       });
     }
   }
-  
+
   // Warranty code methods
   generateWarrantyCode(): void {
     if (!this.orderDetail || !this.orderDetail.id) return;
-    
+
     this.isGeneratingWarranty = true;
     this.orderService.generateWarrantyCode(this.orderDetail.id).subscribe({
       next: (response) => {
@@ -455,10 +434,10 @@ export class OrderDetailComponent implements OnInit {
       }
     });
   }
-  
+
   copyWarrantyCode(): void {
     if (!this.orderDetail || !this.orderDetail.warrantyCode) return;
-    
+
     // Simple fallback method using DOM clipboard API
     try {
       const textArea = document.createElement('textarea');
@@ -466,10 +445,10 @@ export class OrderDetailComponent implements OnInit {
       document.body.appendChild(textArea);
       textArea.focus();
       textArea.select();
-      
+
       const successful = document.execCommand('copy');
       document.body.removeChild(textArea);
-      
+
       if (successful) {
         this.toastService.showSuccess('Đã sao chép mã bảo hành', 'Thành công');
       } else {

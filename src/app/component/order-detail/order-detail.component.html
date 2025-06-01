@@ -148,6 +148,10 @@
         <span class="label">Phí vận chuyển:</span>
         <span class="value">{{getShippingCost() | currency:'VND':'symbol':'1.0-0'}}</span>
       </div>
+      <div class="summary-row shipping">
+        <span class="label">Giảm giá:</span>
+        <span class="value">{{getShippingCost() | currency:'VND':'symbol':'1.0-0'}}</span>
+      </div>
       <div class="summary-row total">
         <span class="label">Tổng cộng:</span>
         <span class="value">{{formatCurrency(calculateTotalAmount())}}</span>
@@ -251,10 +255,6 @@
         </div>
 
         <div class="coupon-section">
-          <div class="coupon-input">
-            <input type="text" [(ngModel)]="couponCode" placeholder="Nhập mã giảm giá">
-            <button class="btn-apply" (click)="applyCoupon()">Áp dụng</button>
-          </div>
           <div class="coupon-message" *ngIf="couponMessage">
             {{couponMessage}}
           </div>
