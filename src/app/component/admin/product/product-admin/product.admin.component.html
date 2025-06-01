@@ -20,7 +20,6 @@
           <th class="col-name">Tên sản phẩm</th>
           <th class="col-price">Giá (₫)</th>
           <th class="col-quantity">Số lượng</th>
-          <th class="col-warranty">Mã bảo hành</th>
           <th class="col-category">Danh mục</th>
           <th class="col-actions">Thao tác</th>
         </tr>
@@ -37,7 +36,6 @@
               {{ product.quantity || 0 }}
             </span>
           </td>
-          <td class="product-warranty col-warranty">{{ product.warrantyCode || 'N/A' }}</td>
           <td class="product-category col-category">{{ product.categoryId }}</td>
           <td class="col-actions">
             <div class="action-buttons">
@@ -70,15 +68,15 @@
     <button class="page-btn" (click)="prevPage()" [disabled]="currentPage === 1">
       <i class="fas fa-angle-left"></i>
     </button>
-    
-    <button 
-      *ngFor="let page of visiblePages" 
-      class="page-btn" 
+
+    <button
+      *ngFor="let page of visiblePages"
+      class="page-btn"
       [class.active]="currentPage === page"
       (click)="changePage(page)">
       {{ page }}
     </button>
-    
+
     <button class="page-btn" (click)="nextPage()" [disabled]="currentPage === totalPages">
       <i class="fas fa-angle-right"></i>
     </button>

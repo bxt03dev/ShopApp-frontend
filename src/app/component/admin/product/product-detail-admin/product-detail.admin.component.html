@@ -39,10 +39,6 @@
           </div>
         </div>
         <div class="info-row">
-          <div class="info-label">Mã bảo hành:</div>
-          <div class="info-value warranty-code">{{ product.warrantyCode || 'N/A' }}</div>
-        </div>
-        <div class="info-row">
           <div class="info-label">Danh mục:</div>
           <div class="info-value">{{ product.categoryId }}</div>
         </div>
@@ -65,56 +61,56 @@
           <!-- Image preview -->
           <div class="image-preview-container">
             <img [src]="imagePreviewUrl" alt="{{ product.name }}" class="product-detail-image">
-            
+
             <!-- Image upload controls -->
             <div class="image-upload-controls">
               <label for="product-image" class="upload-btn">
                 <i class="fas fa-upload"></i> Chọn ảnh mới
               </label>
-              <input 
-                type="file" 
-                id="product-image" 
-                accept="image/png, image/jpeg, image/jpg" 
-                (change)="onFileSelected($event)" 
+              <input
+                type="file"
+                id="product-image"
+                accept="image/png, image/jpeg, image/jpg"
+                (change)="onFileSelected($event)"
                 class="file-input">
-              
-              <button 
-                type="button" 
-                class="remove-image-btn" 
-                *ngIf="selectedFile" 
+
+              <button
+                type="button"
+                class="remove-image-btn"
+                *ngIf="selectedFile"
                 (click)="removeSelectedImage()">
                 <i class="fas fa-times"></i> Hủy chọn
               </button>
             </div>
-            
+
             <div class="file-info" *ngIf="selectedFile">
               <p class="file-name">{{ selectedFile.name }}</p>
               <p class="file-size">{{ (selectedFile.size / 1024).toFixed(2) }} KB</p>
             </div>
           </div>
         </div>
-  
+
         <div class="product-info-section">
           <div class="form-group">
             <label for="name">Tên sản phẩm <span class="required">*</span></label>
-            <input 
-              type="text" 
-              id="name" 
-              formControlName="name" 
-              class="form-control" 
+            <input
+              type="text"
+              id="name"
+              formControlName="name"
+              class="form-control"
               [ngClass]="{'invalid': productForm.get('name')?.invalid && productForm.get('name')?.touched}">
             <div class="error-message" *ngIf="productForm.get('name')?.invalid && productForm.get('name')?.touched">
               <span *ngIf="productForm.get('name')?.errors?.['required']">Tên sản phẩm là bắt buộc</span>
               <span *ngIf="productForm.get('name')?.errors?.['minlength']">Tên sản phẩm phải có ít nhất 3 ký tự</span>
             </div>
           </div>
-  
+
           <div class="form-group">
             <label for="price">Giá <span class="required">*</span></label>
-            <input 
-              type="number" 
-              id="price" 
-              formControlName="price" 
+            <input
+              type="number"
+              id="price"
+              formControlName="price"
               class="form-control"
               [ngClass]="{'invalid': productForm.get('price')?.invalid && productForm.get('price')?.touched}">
             <div class="error-message" *ngIf="productForm.get('price')?.invalid && productForm.get('price')?.touched">
@@ -122,13 +118,13 @@
               <span *ngIf="productForm.get('price')?.errors?.['min']">Giá sản phẩm phải lớn hơn hoặc bằng 0</span>
             </div>
           </div>
-  
+
           <div class="form-group">
             <label for="quantity">Số lượng <span class="required">*</span></label>
-            <input 
-              type="number" 
-              id="quantity" 
-              formControlName="quantity" 
+            <input
+              type="number"
+              id="quantity"
+              formControlName="quantity"
               class="form-control"
               [ngClass]="{'invalid': productForm.get('quantity')?.invalid && productForm.get('quantity')?.touched}">
             <div class="error-message" *ngIf="productForm.get('quantity')?.invalid && productForm.get('quantity')?.touched">
@@ -136,38 +132,25 @@
               <span *ngIf="productForm.get('quantity')?.errors?.['min']">Số lượng sản phẩm phải lớn hơn hoặc bằng 0</span>
             </div>
           </div>
-  
-          <div class="form-group">
-            <label for="warrantyCode">Mã bảo hành</label>
-            <input 
-              type="text" 
-              id="warrantyCode" 
-              formControlName="warrantyCode" 
-              class="form-control"
-              readonly>
-            <div class="warranty-note">
-              <small><i>Mã bảo hành được tạo tự động và không thể chỉnh sửa</i></small>
-            </div>
-          </div>
-  
+
           <div class="form-group">
             <label for="categoryId">Danh mục <span class="required">*</span></label>
-            <input 
-              type="text" 
-              id="categoryId" 
-              formControlName="categoryId" 
+            <input
+              type="text"
+              id="categoryId"
+              formControlName="categoryId"
               class="form-control"
               [ngClass]="{'invalid': productForm.get('categoryId')?.invalid && productForm.get('categoryId')?.touched}">
             <div class="error-message" *ngIf="productForm.get('categoryId')?.invalid && productForm.get('categoryId')?.touched">
               <span *ngIf="productForm.get('categoryId')?.errors?.['required']">Danh mục là bắt buộc</span>
             </div>
           </div>
-  
+
           <div class="form-group">
             <label for="description">Mô tả <span class="required">*</span></label>
-            <textarea 
-              id="description" 
-              formControlName="description" 
+            <textarea
+              id="description"
+              formControlName="description"
               class="form-control description-textarea"
               [ngClass]="{'invalid': productForm.get('description')?.invalid && productForm.get('description')?.touched}"></textarea>
             <div class="error-message" *ngIf="productForm.get('description')?.invalid && productForm.get('description')?.touched">
@@ -202,4 +185,4 @@
   <div class="no-product" *ngIf="!loading && !product">
     <p>Không tìm thấy thông tin sản phẩm.</p>
   </div>
-</div> 
+</div>

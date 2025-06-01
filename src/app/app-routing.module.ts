@@ -23,6 +23,7 @@ import { ProfileComponent } from './component/profile/profile.component';
 import { OAuthCallbackComponent } from './component/oauth-callback/oauth-callback.component';
 import { CategoryAdminComponent } from './component/admin/category/category-admin.component';
 import { UserAdminComponent } from './component/admin/user/user-admin/user.admin.component';
+import { DashboardComponent } from './component/admin/dashboard/dashboard.component';
 
 export const routes: Routes = [
   {path: '', component: HomeComponent},
@@ -34,7 +35,8 @@ export const routes: Routes = [
     component: AdminComponent,
     canActivate: [AdminGuard],
     children: [
-      {path: '', redirectTo: 'order', pathMatch: 'full'},
+      {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
+      {path: 'dashboard', component: DashboardComponent},
       {path: 'order', component: OrderAdminComponent},
       {path: 'orders/:id', component: OrderDetailAdminComponent},
       {path: 'products', component: ProductAdminComponent},

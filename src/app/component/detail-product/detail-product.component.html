@@ -15,8 +15,8 @@
 
   <div *ngIf="!loading && !error && product" class="product-content">
     <div class="breadcrumb">
-      <a [routerLink]="['/']">Trang chủ</a> / 
-      <a [routerLink]="['/products']">Sản phẩm</a> / 
+      <a [routerLink]="['/']">Trang chủ</a> /
+      <a [routerLink]="['/products']">Sản phẩm</a> /
       <span>{{ product.name }}</span>
     </div>
 
@@ -27,7 +27,7 @@
           <div *ngIf="product.productImages && product.productImages.length > 0" class="main-image">
             <img [src]="product.productImages[currentImageIndex].imageUrl" [alt]="product.name">
           </div>
-          
+
           <div class="image-controls" *ngIf="product.productImages && product.productImages.length > 1">
             <button class="control-btn prev-btn" (click)="previousImage()">
               <i class="fas fa-chevron-left"></i>
@@ -40,7 +40,7 @@
 
         <div class="thumbnails" *ngIf="product.productImages && product.productImages.length > 1">
           <div *ngFor="let image of product.productImages; let i = index"
-               class="thumbnail" 
+               class="thumbnail"
                [ngClass]="{ 'active': i === currentImageIndex }"
                (click)="thumbnailClick(i)">
             <img [src]="image.imageUrl" [alt]="product.name + ' thumbnail ' + i">
@@ -51,18 +51,14 @@
       <!-- Product Info Section -->
       <div class="product-info">
         <h1 class="product-name">{{ product.name }}</h1>
-        
+
         <div class="product-meta">
           <div class="meta-item" *ngIf="product.dateRelease">
             <span class="meta-label">Ngày phát hành:</span>
             <span class="meta-value">{{ product.dateRelease | date:'dd/MM/yyyy' }}</span>
           </div>
-          <div class="meta-item" *ngIf="product.warrantyCode">
-            <span class="meta-label">Mã bảo hành:</span>
-            <span class="meta-value">{{ product.warrantyCode }}</span>
-          </div>
         </div>
-        
+
         <div class="product-price-container">
           <div class="product-price" [ngClass]="{'sale-price': product.isOnSale}">
             {{ product.price.toLocaleString() }} đ
@@ -71,7 +67,7 @@
             Giảm giá
           </div>
         </div>
-        
+
         <div class="product-availability">
           <div class="availability-label">Tình trạng:</div>
           <div class="availability-status" [ngClass]="{'in-stock': product.quantity && product.quantity > 10, 'low-stock': product.quantity && product.quantity <= 10 && product.quantity > 0, 'out-of-stock': !product.quantity || product.quantity <= 0}">
@@ -81,7 +77,7 @@
             <span *ngIf="!product.quantity || product.quantity <= 0">Hết hàng</span>
           </div>
         </div>
-        
+
         <div class="order-controls">
           <div class="quantity-control">
             <button class="quantity-btn" (click)="decreaseQuantity()">
@@ -92,21 +88,21 @@
               <i class="fas fa-plus"></i>
             </button>
           </div>
-          
+
           <div class="product-buttons">
-            <button class="cart-btn" 
-                    (click)="addToCart()" 
+            <button class="cart-btn"
+                    (click)="addToCart()"
                     [disabled]="product.quantity === undefined || product.quantity <= 0 || quantity > product.quantity">
               <i class="fas fa-shopping-cart"></i> Thêm vào giỏ
             </button>
-            <button class="buy-btn" 
-                    (click)="buyNow()" 
+            <button class="buy-btn"
+                    (click)="buyNow()"
                     [disabled]="product.quantity === undefined || product.quantity <= 0 || quantity > product.quantity">
               <i class="fas fa-bolt"></i> Mua ngay
             </button>
           </div>
         </div>
-        
+
         <div class="product-features">
           <div class="feature">
             <i class="fas fa-truck"></i>
@@ -132,7 +128,7 @@
         </div>
       </div>
     </div>
-    
+
     <!-- Product Description Section (Moved to bottom) -->
     <div class="product-description-section">
       <h2>Mô tả sản phẩm</h2>
