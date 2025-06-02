@@ -283,4 +283,12 @@ export class OrderService {
       })
     );
   }
+
+  getOrderStats(): Observable<any> {
+    return this.http.get(`${environment.apiBaseUrl}/orders/stats`);
+  }
+
+  getSoldProducts(): Observable<any> {
+    return this.http.get(`${environment.apiBaseUrl}/orders/sold-products`);
+  }
 }

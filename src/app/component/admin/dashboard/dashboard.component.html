@@ -13,5 +13,17 @@
       <div class="card-title">Đơn hàng</div>
       <div class="card-value">{{ totalOrders }}</div>
     </div>
+    <div class="dashboard-card sold">
+      <div class="card-title">Sản phẩm đã bán</div>
+      <div class="card-value">{{ totalProductsSold }}</div>
+    </div>
+    <div class="dashboard-card revenue">
+      <div class="card-title">Doanh thu</div>
+      <div class="card-value">{{ totalRevenue | currency:'VND' }}</div>
+    </div>
+  </div>
+  <div style="margin-top: 40px; background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.08);">
+    <h3>Biểu đồ sản phẩm đã bán</h3>
+    <canvas id="soldProductsChart"></canvas>
   </div>
 </div> 
