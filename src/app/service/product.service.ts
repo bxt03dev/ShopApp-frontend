@@ -86,4 +86,12 @@ export class ProductService {
       { headers }
     );
   }
+
+  searchProductsByName(name: string, page: number, limit: number): Observable<ApiResponse<ProductListResponse>> {
+    const params = new HttpParams()
+      .set('name', name)
+      .set('page', page.toString())
+      .set('limit', limit.toString());
+    return this.http.get<ApiResponse<ProductListResponse>>(`${this.apiGetProducts}/search`, { params });
+  }
 }

@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Product } from '../../model/product';
-import { ProductService } from '../../service/product.service';
-import { environment } from '../../common/environment';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {Product} from '../../model/product';
+import {ProductService} from '../../service/product.service';
+import {environment} from '../../common/environment';
 
 @Component({
   selector: 'app-search',
@@ -36,25 +36,15 @@ export class SearchComponent implements OnInit {
   searchProducts(): void {
     this.loading = true;
     this.error = '';
-    
-    // TODO: Implement actual search API call
-    // For now, we'll just get all products and filter them
-    this.productService.getProducts(0, 100).subscribe({
+    this.productService.searchProductsByName(this.searchQuery, this.currentPage - 1, this.pageSize).subscribe({
       next: (response: any) => {
-        const products = response.result.products;
-        this.searchResults = products.filter((product: Product) => 
-          product.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          product.description.toLowerCase().includes(this.searchQuery.toLowerCase())
-        );
+        this.searchResults = response.result.products;
         // Set product.url for image
         this.searchResults.forEach((product: Product) => {
           product.url = `${environment.apiBaseUrl}/products/images/${product.thumbnail}`;
         });
-        
-        // Calculate total pages based on search results
-        this.totalPages = Math.ceil(this.searchResults.length / this.pageSize);
+        this.totalPages = response.result.totalPages;
         this.visiblePages = this.generateVisiblePageArray(this.currentPage, this.totalPages);
-        
         this.loading = false;
       },
       error: (error) => {
@@ -64,39 +54,39 @@ export class SearchComponent implements OnInit {
       }
     });
   }
-  
+
   generateVisiblePageArray(currentPage: number, totalPages: number): number[] {
     const maxPagesToShow = 5;
     let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
     let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
-    
+
     if (endPage - startPage + 1 < maxPagesToShow && startPage > 1) {
       startPage = Math.max(1, endPage - maxPagesToShow + 1);
     }
-    
+
     const pages = [];
     for (let i = startPage; i <= endPage; i++) {
       pages.push(i);
     }
     return pages;
   }
-  
+
   onPageChange(page: number): void {
     if (page !== this.currentPage && page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
       this.visiblePages = this.generateVisiblePageArray(this.currentPage, this.totalPages);
     }
   }
-  
+
   prevPage(): void {
     if (this.currentPage > 1) {
       this.onPageChange(this.currentPage - 1);
     }
   }
-  
+
   nextPage(): void {
     if (this.currentPage < this.totalPages) {
       this.onPageChange(this.currentPage + 1);
     }
   }
-} 
+}
