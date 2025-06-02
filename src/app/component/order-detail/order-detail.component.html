@@ -148,9 +148,9 @@
         <span class="label">Phí vận chuyển:</span>
         <span class="value">{{getShippingCost() | currency:'VND':'symbol':'1.0-0'}}</span>
       </div>
-      <div class="summary-row shipping">
+      <div class="summary-row discount">
         <span class="label">Giảm giá:</span>
-        <span class="value">{{getShippingCost() | currency:'VND':'symbol':'1.0-0'}}</span>
+        <span class="value">-{{discountAmount | currency:'VND':'symbol':'1.0-0'}}</span>
       </div>
       <div class="summary-row total">
         <span class="label">Tổng cộng:</span>

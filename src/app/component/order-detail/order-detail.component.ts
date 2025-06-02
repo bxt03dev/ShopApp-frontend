@@ -388,7 +388,7 @@ export class OrderDetailComponent implements OnInit {
     const subtotal = this.calculateSubtotal();
     const shippingCost = this.getShippingCost();
     const discount = this.discountAmount || 0;
-    return subtotal + shippingCost;
+    return subtotal + shippingCost - discount;
   }
 
   navigateBack(): void {
