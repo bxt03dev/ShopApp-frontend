@@ -109,7 +109,7 @@ export class LoginComponent implements OnInit {
               if (user.role.name === 'ADMIN') {
                 this.router.navigate(['/admin']);
               } else {
-                this.router.navigate(['/']);
+                this.router.navigate(['/store']);
               }
             },
             error: (error) => {
@@ -162,7 +162,7 @@ export class LoginComponent implements OnInit {
               if (userResponse.role.name === 'ADMIN') {
                 this.router.navigate(['/admin']);
               } else {
-                this.router.navigate(['/']);
+                this.router.navigate(['/store']);
               }
             },
             error: (error) => {
@@ -218,7 +218,7 @@ export class LoginComponent implements OnInit {
               if (user.role.name === 'ADMIN') {
                 this.router.navigate(['/admin']);
               } else {
-                this.router.navigate(['/']);
+                this.router.navigate(['/store']);
               }
             },
             error: (error) => {
